@@ -19,7 +19,6 @@ PowerGlitch.glitch(".glitch", {
   timing: {
     duration: 600,     // glitch duration
     iterations: 1,     // only once per cycle
-    delay: 5000       // wait 5 seconds before next glitch
   },
 
   glitchTimeSpan: {
