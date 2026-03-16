@@ -1,6 +1,6 @@
 import { Mouse, Smartphone, Headphones, Gamepad2, Tv2, Watch, Camera } from "lucide-react";
 import { Zap } from "lucide-react";
-import { useState, type CSSProperties } from "react";
+import {  type CSSProperties } from "react";
 
 // ─── Types ────────────────────────────────────────────────────────────────────
 export interface Product {

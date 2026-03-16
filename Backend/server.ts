@@ -27,4 +27,8 @@ app.use(errorHandler)
 //     const results = products.find((p) => p._id.toString() === id)
 //     res.json(results)
 // })
-app.listen(port,()=> console.log(`server is running on port ${port}`))
+if (process.env.VERCEL !== '1') {
+    app.listen(port, () => console.log(`server is running on port ${port}`))
+}
+
+export default app
