@@ -5,7 +5,6 @@ import path from 'path'
 import { fileURLToPath } from 'url'
 const __dirname = path.dirname(fileURLToPath(import.meta.url))
 dotenv.config({ path: path.resolve(__dirname, '.env') })
-import products from './data/products.ts'
 import connectDB from './config/db.ts'
 import { ProductsRouter } from './routes/products.routes.ts'
 import { errorHandler, notFound } from './Middleware/errorMiddleware.ts'
@@ -26,8 +25,11 @@ app.use(cors({
 }))
 app.use(express.json())
 app.use('/images', express.static(path.join(process.cwd(), 'public/images')))
-app.get('/',(req,res,next)=>{
-    res.send( products)
+app.get('/',(_req,res)=>{
+        res.status(200).json({
+            message: 'TechMart API is running',
+            status: 'ok',
+        })
 })
 
 app.use("/api",ProductsRouter)
