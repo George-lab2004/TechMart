@@ -2,13 +2,11 @@ import { useState } from 'react'
 import { Button } from '@/Components/ui/button'
 import { Badge }  from '@/Components/ui/badge'
 import AnimatedDot from './AnimatedDot'
+import { Link, NavLink } from 'react-router-dom'
 
 const navLinks = [
-  { label: 'Home',     href: './', active: true  },
-  { label: 'Products', href: '/products', active: false },
-  { label: 'Deals',    href: '#', active: false },
-  { label: 'New',      href: '#', active: false },
-  { label: 'Support',  href: '#', active: false },
+  { label: 'Home',     to: '/' },
+  { label: 'Products', to: '/products' },
 ]
 
 export default function Header() {
@@ -29,23 +27,23 @@ export default function Header() {
         dark:shadow-[0_0_0_1px_rgba(79,142,255,0.12),0_8px_40px_rgba(0,0,0,0.5),0_0_24px_rgba(79,142,255,0.07)]">
 
         {/* Logo */}
-        <a href="#" className="font-mono text-[15px] md:text-[17px] font-medium tracking-[8px] uppercase text-text no-underline flex items-center gap-3 shrink-0">
+        <Link to="/" className="font-mono text-[15px] md:text-[17px] font-medium tracking-[8px] uppercase text-text no-underline flex items-center gap-3 shrink-0">
 <AnimatedDot color="a" size="lg" />   
           TECHMART
-        </a>
+        </Link>
 
         {/* Nav Pills — hidden on mobile/tablet, visible on lg+ */}
         <div className="hidden lg:flex gap-1.5 bg-glass border border-gb rounded-full p-[6px]">
           {navLinks.map((link) => (
-            <a
+            <NavLink
               key={link.label}
-              href={link.href}
-              className={`text-[13px] font-medium px-5 py-[6px] rounded-full transition-colors tracking-[0.2px] no-underline ${
-                link.active ? 'text-a bg-gb' : 'text-text2 hover:text-text hover:bg-gb'
+              to={link.to}
+              className={({ isActive }) => `text-[13px] font-medium px-5 py-[6px] rounded-full transition-colors tracking-[0.2px] no-underline ${
+                isActive ? 'text-a bg-gb' : 'text-text2 hover:text-text hover:bg-gb'
               }`}
             >
               {link.label}
-            </a>
+            </NavLink>
           ))}
         </div>
 
@@ -122,16 +120,16 @@ export default function Header() {
 
           {/* Nav links */}
           {navLinks.map((link) => (
-            <a
+            <NavLink
               key={link.label}
-              href={link.href}
+              to={link.to}
               onClick={() => setMenuOpen(false)}
-              className={`text-[14px] font-medium px-4 py-3 rounded-[12px] transition-colors no-underline ${
-                link.active ? 'text-a bg-gb' : 'text-text2 hover:text-text hover:bg-gb'
+              className={({ isActive }) => `text-[14px] font-medium px-4 py-3 rounded-[12px] transition-colors no-underline ${
+                isActive ? 'text-a bg-gb' : 'text-text2 hover:text-text hover:bg-gb'
               }`}
             >
               {link.label}
-            </a>
+            </NavLink>
           ))}
         </div>
       </div>

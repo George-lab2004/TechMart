@@ -12,7 +12,18 @@ import { errorHandler, notFound } from './Middleware/errorMiddleware.ts'
 const port = process.env.PORT || 8000
 connectDB()
 const app = express()
-app.use(cors({ origin: 'http://localhost:5173', credentials: true }))
+const allowedOrigins = ['http://localhost:5173', 'https://tech-mart-e1dv.vercel.app']
+
+app.use(cors({
+    origin: (origin, callback) => {
+        if (!origin || allowedOrigins.includes(origin)) {
+            callback(null, true)
+            return
+        }
+        callback(new Error('Not allowed by CORS'))
+    },
+    credentials: true,
+}))
 app.use(express.json())
 app.use('/images', express.static(path.join(process.cwd(), 'public/images')))
 app.get('/',(req,res,next)=>{
