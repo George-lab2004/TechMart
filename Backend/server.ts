@@ -5,9 +5,9 @@ import path from 'path'
 import { fileURLToPath } from 'url'
 const __dirname = path.dirname(fileURLToPath(import.meta.url))
 dotenv.config({ path: path.resolve(__dirname, '.env') })
-import connectDB from './config/db'
-import { ProductsRouter } from './routes/products.routes'
-import { errorHandler, notFound } from './Middleware/errorMiddleware'
+import connectDB from './config/db.js'
+import { ProductsRouter } from './routes/products.routes.js'
+import { errorHandler, notFound } from './Middleware/errorMiddleware.js'
 const port = process.env.PORT || 8000
 connectDB()
 const app = express()

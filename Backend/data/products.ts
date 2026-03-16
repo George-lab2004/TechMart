@@ -1,5 +1,5 @@
 import mongoose from "mongoose"
-import { CATEGORY_IDS } from "./categories"
+import { CATEGORY_IDS } from "./categories.js"
 
 // ── Pre-assigned IDs so relatedProducts cross-references work ──────────────
 const ID = {

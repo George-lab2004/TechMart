@@ -1,7 +1,7 @@
 import { Request, Response, NextFunction } from "express"
-import Product from "../Models/productModel"
-import "../Models/categoryModel"
-import { asyncHandler } from "../Middleware/asyncHandler"
+import Product from "../Models/productModel.js"
+import "../Models/categoryModel.js"
+import { asyncHandler } from "../Middleware/asyncHandler.js"
 
 const getProduct = asyncHandler(async (req: Request, res: Response) => {
   const result = await Product.find().populate("category", "name slug")
