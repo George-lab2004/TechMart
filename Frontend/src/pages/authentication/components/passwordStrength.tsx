@@ -1,11 +1,10 @@
 import { useState } from "react"
 
 export default function PasswordStrength() {
-  const [strength, setStrength] = useState(0)
-  const [label, setLabel] = useState("")
+  const [strength] = useState(0)
+  const [label] = useState("")
 
   const colors = ["bg-[#ff4f8e]", "bg-[#ffc84f]", "bg-[#4f8eff]", "bg-[#4fffb0]"]
-  const labels = ["Weak", "Fair", "Good", "Strong"]
 
   // const check = (e: React.ChangeEvent<HTMLInputElement>) => {
   //   const v = e.target.value
