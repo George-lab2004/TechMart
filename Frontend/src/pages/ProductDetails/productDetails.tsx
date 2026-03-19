@@ -5,11 +5,29 @@ import Loader from "@/Components/Loader";
 import GridBackground from "@/Components/GridBackground";
 import ProductCard, { type Product } from "@/pages/Products/components/ProductCard";
 import { PowerGlitch } from "powerglitch";
-
+import { Minus, Plus, ShoppingBag } from "lucide-react";
+import {useDispatch} from "react-redux"
+import {addToCart} from "@/slices/cartSlice"
+import {useNavigate} from "react-router-dom"
 export default function ProductDetails() {
   const { id } = useParams<{ id: string }>();
   const { data, isLoading, isError } = useGetSingleProductQuery(id!);
   const product = data?.result;
+  const [qty, setqty] = useState(1)
+  function qtyController(action: string) {
+  setqty((prev) => {
+    if (action === "plus" && product?.countInStock && prev < product.countInStock) {
+      return prev + 1;
+    } else if (action === "minus" && prev > 1) {
+      return prev - 1;
+    } else {
+      return prev;
+    }
+  });
+}
+const dispatch = useDispatch()
+const navigate = useNavigate()
+
 useEffect(() => {
   if (!product) return;
 
@@ -61,7 +79,20 @@ PowerGlitch.glitch(".glitch", {
   const [selectedColor, setSelectedColor] = useState<string | null>(null);
   const [showReviewDetails, setShowReviewDetails] = useState(false);
   const [activeTechTab, setActiveTechTab] = useState<"specs" | "box">("specs");
-
+const addToCartHandler = () => {
+  if (!product) return;
+  const cartItem = {
+    _id: product._id,
+    name: product.name,
+    image: product.images?.[0]?.url ?? "",
+    price: product.price,
+    qty,
+    brand: product.brand,
+    category: product.category?.name ?? "",
+  };
+  dispatch(addToCart(cartItem));
+  navigate('/cart');
+}
   useEffect(() => {
     setActiveImage(images[0]);
   }, [images]);
@@ -293,72 +324,145 @@ PowerGlitch.glitch(".glitch", {
               <p className="text-sm text-text2 mt-1">{product.returnDays ?? 30}-day returns</p>
               <p className="text-sm text-text2 mt-1">{product.warrantyYears ?? 1} year warranty</p>
             </div>
+
+
           </div>
+                      <div className="flex">
+              <div className="border rounded-2xl bg-white py-3 px-5 gap-4 items-center justify-center flex font-bold font-mono me-3 dark:text-bg text-xl"><Minus className="cursor-pointer" onClick={() => qtyController("minus")}/> {qty} <Plus className="cursor-pointer" onClick={() => qtyController("plus")}/>
+              
+              </div>
+               <button
+  className="
+    w-full sm:w-[200px] md:w-[300px] lg:w-[350px] xl:w-[400px] 2xl:w-[500px]
+    relative overflow-hidden
+    flex items-center justify-center gap-2
+    px-8 py-4 rounded-2xl
+    bg-text text-bg
+    font-body font-bold text-[15px]
+    border border-transparent
+    shadow-[0_4px_24px_rgba(0,0,0,0.3)]
+    hover:-translate-y-0.5
+    hover:shadow-[0_8px_40px_rgba(0,0,0,0.4)]
+    active:scale-[0.98]
+    transition-all duration-200
+    group  cursor-pointer
+  "
+   onClick={()=> addToCartHandler()}
+>
+  {/* shimmer sweep on hover */}
+  <span
+    className="
+      pointer-events-none absolute inset-0
+      translate-x-[-100%] group-hover:translate-x-[100%]
+      bg-gradient-to-r from-transparent via-white/10 to-transparent
+      transition-transform duration-500 
+    "
+  />
+
+  <ShoppingBag className="w-5 h-5 transition-transform duration-200 group-hover:rotate-12" />
+  Add to Cart
+</button>
+            </div>
         </section>
       </div>
 
       {!!(product.specs?.length || product.boxItems?.length) && (
-        <section className="rounded-xl border border-gb bg-surf p-4 sm:p-5 space-y-4">
-          <div className="flex flex-wrap items-center justify-between gap-3">
-            <h2 className="text-xl sm:text-2xl font-bold text-text">Technical Details</h2>
-            <div className="inline-flex rounded-xl border border-gb bg-card p-1">
-              <button
-                type="button"
-                onClick={() => setActiveTechTab("specs")}
-                className={`px-3 py-1.5 rounded-lg text-xs sm:text-sm font-mono transition-all ${activeTechTab === "specs" ? "bg-a/12 text-a border border-a/30" : "text-text2"}`}
-              >
-                Full Specs ({product.specs?.length ?? 0})
-              </button>
-              <button
-                type="button"
-                onClick={() => setActiveTechTab("box")}
-                className={`px-3 py-1.5 rounded-lg text-xs sm:text-sm font-mono transition-all ${activeTechTab === "box" ? "bg-a/12 text-a border border-a/30" : "text-text2"}`}
-              >
-                In the Box ({product.boxItems?.length ?? 0})
-              </button>
-            </div>
-          </div>
+<section className="rounded-2xl border border-gb bg-surf p-5 sm:p-6 space-y-6 shadow-sm">
+  
+  {/* Header */}
+  <div className="flex flex-wrap items-center justify-between gap-4">
+    <h2 className="text-2xl font-bold text-text tracking-tight">
+      Technical Details
+    </h2>
 
-          {activeTechTab === "specs" ? (
-            <>
-              {product.specs?.length ? (
-                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3 sm:gap-4">
-                  {product.specs.map((spec, idx) => (
-                    <article
-                      key={`${spec.label}-${idx}`}
-                      className="rounded-xl border border-gb bg-card p-4 hover:border-a/35 hover:shadow-[0_8px_20px_var(--ag)] transition-all"
-                    >
-                      <p className="text-xs font-mono uppercase tracking-wide text-muted">{spec.icon} {spec.label}</p>
-                      <p className="text-lg font-semibold text-text mt-1">{spec.value}</p>
-                      <p className="text-sm text-text2 mt-2 leading-relaxed">{spec.description}</p>
-                    </article>
-                  ))}
-                </div>
-              ) : (
-                <div className="rounded-xl border border-gb bg-card p-4 text-sm text-text2">No full specifications available for this product.</div>
-              )}
-            </>
-          ) : (
-            <>
-              {product.boxItems?.length ? (
-                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3 sm:gap-4">
-                  {product.boxItems.map((item, idx) => (
-                    <article
-                      key={`${item.name}-${idx}`}
-                      className="rounded-xl border border-gb bg-card p-4 hover:border-a/35 hover:shadow-[0_8px_20px_var(--ag)] transition-all"
-                    >
-                      <p className="text-xs font-mono uppercase tracking-wide text-muted">In the Box</p>
-                      <p className="text-base font-semibold text-text mt-1">{item.icon} {item.name}</p>
-                      <p className="text-sm text-text2 mt-2">Quantity: <span className="font-mono text-text">{item.quantity}</span></p>
-                    </article>
-                  ))}
-                </div>
-              ) : (
-                <div className="rounded-xl border border-gb bg-card p-4 text-sm text-text2">No in-box details available for this product.</div>
-              )}
-            </>
-          )}
-        </section>
+    {/* Tabs */}
+    <div className="flex rounded-xl border border-gb bg-card p-1 shadow-sm">
+      <button
+        onClick={() => setActiveTechTab("specs")}
+        className={`px-4 py-1.5 rounded-lg text-sm font-medium transition-all
+        ${
+          activeTechTab === "specs"
+            ? "bg-a text-white shadow-sm"
+            : "text-text2 hover:text-text"
+        }`}
+      >
+        Specs ({product.specs?.length ?? 0})
+      </button>
+
+      <button
+        onClick={() => setActiveTechTab("box")}
+        className={`px-4 py-1.5 rounded-lg text-sm font-medium transition-all
+        ${
+          activeTechTab === "box"
+            ? "bg-a text-white shadow-sm"
+            : "text-text2 hover:text-text"
+        }`}
+      >
+        In Box ({product.boxItems?.length ?? 0})
+      </button>
+    </div>
+  </div>
+
+  {/* Content */}
+  {activeTechTab === "specs" ? (
+    product.specs?.length ? (
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+        {product.specs.map((spec, idx) => (
+          <article
+            key={idx}
+            className="group rounded-2xl border border-gb bg-card p-4 transition-all duration-300
+            hover:shadow-lg hover:-translate-y-1 hover:border-a/40"
+          >
+            <p className="text-xs uppercase tracking-wide text-muted font-mono">
+              {spec.icon} {spec.label}
+            </p>
+
+            <p className="text-lg font-semibold text-text mt-1">
+              {spec.value}
+            </p>
+
+            <p className="text-sm text-text2 mt-2 leading-relaxed">
+              {spec.description}
+            </p>
+          </article>
+        ))}
+      </div>
+    ) : (
+      <div className="rounded-xl border border-dashed border-gb bg-card p-6 text-center text-text2">
+        No specifications available
+      </div>
+    )
+  ) : product.boxItems?.length ? (
+    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+      {product.boxItems.map((item, idx) => (
+        <article
+          key={idx}
+          className="group rounded-2xl border border-gb bg-card p-4 transition-all duration-300
+          hover:shadow-lg hover:-translate-y-1 hover:border-a/40"
+        >
+          <p className="text-xs uppercase tracking-wide text-muted font-mono">
+            In the Box
+          </p>
+
+          <p className="text-base font-semibold text-text mt-1">
+            {item.icon} {item.name}
+          </p>
+
+          <p className="text-sm text-text2 mt-2">
+            Quantity:{" "}
+            <span className="font-semibold text-text">
+              {item.quantity}
+            </span>
+          </p>
+        </article>
+      ))}
+    </div>
+  ) : (
+    <div className="rounded-xl border border-dashed border-gb bg-card p-6 text-center text-text2">
+      No box details available
+    </div>
+  )}
+</section>
       )}
 
       <section className="rounded-xl border border-gb bg-surf p-4 space-y-3">

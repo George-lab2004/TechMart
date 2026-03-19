@@ -1,11 +1,15 @@
-import { Outlet } from 'react-router-dom'
+import { Outlet, useLocation } from 'react-router-dom'
 import Header from '@/Components/Header'
 
 export default function UserLayout() {
+  const { pathname } = useLocation()
+  // Hide Header on login route
+  const hideHeader = pathname === '/login'
+
   return (
     <div className="min-h-screen bg-bg font-body overflow-x-hidden">
-      <Header />
-      <main className="pt-22.5 px-6 overflow-x-hidden">
+      {!hideHeader && <Header />}
+      <main className={` px-6 overflow-x-hidden ${hideHeader ? "":"pt-22.5"}`}>
         <Outlet />
       </main>
     </div>

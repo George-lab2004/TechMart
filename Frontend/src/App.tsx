@@ -9,6 +9,8 @@ import  { Toaster } from 'react-hot-toast'
 const Home = lazy(() => import('./pages/Home/Home'))
 const Products = lazy(()=> import('./pages/Products/Products'))
 const ProductDetails = lazy(()=> import('./pages/ProductDetails/productDetails'))
+const Cart = lazy(()=> import('./pages/Cart/Cart'))
+const Login = lazy(()=> import('./pages/authentication/Login'))
 
 // Router defined outside the component — same reason as above
 const router = createBrowserRouter([
@@ -36,6 +38,20 @@ const router = createBrowserRouter([
         element:(
           <Suspense fallback ={null}>
             <ProductDetails/>
+          </Suspense>
+        )
+      },
+                  {path:"cart",
+        element:(
+          <Suspense fallback ={null}>
+            <Cart/>
+          </Suspense>
+        )
+      },
+                  {path:"login",
+        element:(
+          <Suspense fallback ={null}>
+            <Login/>
           </Suspense>
         )
       }

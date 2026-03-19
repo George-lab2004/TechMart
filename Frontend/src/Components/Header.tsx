@@ -3,20 +3,28 @@ import { Button } from '@/Components/ui/button'
 import { Badge }  from '@/Components/ui/badge'
 import AnimatedDot from './AnimatedDot'
 import { Link, NavLink } from 'react-router-dom'
-
+import ThemeToggle from './ui/themeToggle'
+import {useSelector} from "react-redux"
 const navLinks = [
   { label: 'Home',     to: '/' },
   { label: 'Products', to: '/products' },
+
 ]
-
+export interface CartItem {
+  _id:      string
+  name:     string
+  image:    string
+  price:    number
+  qty:      number
+  brand:    string
+  category: string
+}
 export default function Header() {
-  const [isDark, setIsDark]       = useState(false)
   const [menuOpen, setMenuOpen]   = useState(false)
+const { cartItems } = useSelector((state: { cart: { cartItems: CartItem[] } }) => state.cart)
+const totalQty = cartItems.reduce((acc: number, item: CartItem) => acc + item.qty, 0)
+console.log(totalQty)
 
-  const toggleTheme = () => {
-    setIsDark(!isDark)
-    document.documentElement.classList.toggle('dark')
-  }
 
   return (
     <>
@@ -63,25 +71,24 @@ export default function Header() {
           </div>
 
           {/* Theme toggle */}
-          <button
-            onClick={toggleTheme}
-            className="w-[48px] md:w-[54px] h-[26px] md:h-[30px] rounded-full bg-glass border border-gb cursor-pointer p-[3px] flex items-center shrink-0"
-          >
-            <div className={`w-5 h-5 md:w-6 md:h-6 rounded-full bg-a flex items-center justify-center text-[11px] md:text-[13px] transition-transform duration-[400ms] ${isDark ? 'translate-x-[22px] md:translate-x-[24px]' : ''}`}>
-              {isDark ? '☀️' : '🌙'}
-            </div>
-          </button>
-
-          {/* Cart — shadcn Button, className overrides extend the base styles with brand tokens */}
+<ThemeToggle/>
+<Link to="/login">
+  <Button
+    variant="ghost"
+    className="text-text2 hover:text-text px-3 md:px-4"
+  >
+    Sign in
+  </Button>
+</Link><Link to="/cart">
           <Button
             className="bg-a text-white rounded-[12px] px-3 md:px-5 h-[34px] md:h-[38px] text-[13px] md:text-[14px] font-semibold font-body shadow-[0_4px_16px_var(--ag)] hover:bg-a hover:-translate-y-0.5 hover:shadow-[0_8px_28px_var(--ag)] shrink-0 transition-all"
           >
             🛒 <span className="hidden sm:inline">Cart</span>
-            {/* shadcn Badge — variant outline keeps it borderless; className overrides color to white/accent */}
             <Badge className="bg-white text-a border-transparent text-[9px] md:text-[10px] font-bold min-w-[17px] md:min-w-[19px] h-[17px] md:h-[19px] p-0 rounded-full">
-              3
+              {totalQty}
             </Badge>
-          </Button>
+          </Button></Link>
+
 
           {/* Hamburger — shadcn Button with ghost+icon variant, className adds brand glass surface */}
           <Button
@@ -141,11 +148,6 @@ export default function Header() {
           onClick={() => setMenuOpen(false)}
         />
       )}
-
-
-
-
-
     </>
   )
 }
