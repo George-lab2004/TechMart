@@ -6,70 +6,70 @@ import GridBackground from "@/Components/GridBackground";
 import ProductCard, { type Product } from "@/pages/Products/components/ProductCard";
 import { PowerGlitch } from "powerglitch";
 import { Minus, Plus, ShoppingBag } from "lucide-react";
-import {useDispatch} from "react-redux"
-import {addToCart} from "@/slices/cartSlice"
-import {useNavigate} from "react-router-dom"
+import { useDispatch } from "react-redux"
+import { addToCart } from "@/slices/cartSlice"
+import { useNavigate } from "react-router-dom"
 export default function ProductDetails() {
   const { id } = useParams<{ id: string }>();
   const { data, isLoading, isError } = useGetSingleProductQuery(id!);
   const product = data?.result;
   const [qty, setqty] = useState(1)
   function qtyController(action: string) {
-  setqty((prev) => {
-    if (action === "plus" && product?.countInStock && prev < product.countInStock) {
-      return prev + 1;
-    } else if (action === "minus" && prev > 1) {
-      return prev - 1;
-    } else {
-      return prev;
-    }
-  });
-}
-const dispatch = useDispatch()
-const navigate = useNavigate()
-
-useEffect(() => {
-  if (!product) return;
-
-PowerGlitch.glitch(".glitch", {
-  playMode: "always",
-
-  timing: {
-    duration: 600,     // glitch duration
-    iterations: 1,     // only once per cycle
-  },
-
-  glitchTimeSpan: {
-    start: 0.2,
-    end: 0.8
-  },
-
-  shake: {
-    velocity: 10,
-    amplitudeX: 0.15,
-    amplitudeY: 0.15
-  },
-
-  slice: {
-    count: 6,
-    velocity: 15,
-    minHeight: 0.02,
-    maxHeight: 0.2
-  },
-
-  pulse: {
-    scale: 1.05
+    setqty((prev) => {
+      if (action === "plus" && product?.countInStock && prev < product.countInStock) {
+        return prev + 1;
+      } else if (action === "minus" && prev > 1) {
+        return prev - 1;
+      } else {
+        return prev;
+      }
+    });
   }
-});
-}, [product]);
+  const dispatch = useDispatch()
+  const navigate = useNavigate()
+
+  useEffect(() => {
+    if (!product) return;
+
+    PowerGlitch.glitch(".glitch", {
+      playMode: "always",
+
+      timing: {
+        duration: 600,     // glitch duration
+        iterations: 1,     // only once per cycle
+      },
+
+      glitchTimeSpan: {
+        start: 0.2,
+        end: 0.8
+      },
+
+      shake: {
+        velocity: 10,
+        amplitudeX: 0.15,
+        amplitudeY: 0.15
+      },
+
+      slice: {
+        count: 6,
+        velocity: 15,
+        minHeight: 0.02,
+        maxHeight: 0.2
+      },
+
+      pulse: {
+        scale: 1.05
+      }
+    });
+  }, [product]);
 
   const images = useMemo(
     () =>
       product?.images
         ? [
-            ...product.images.filter((i) => i.isPrimary),
-            ...product.images.filter((i) => !i.isPrimary),
-          ]
+          ...product.images.filter((i) => i.isPrimary),
+          ...product.images.filter((i) => !i.isPrimary),
+        ]
         : [],
     [product?.images],
   );
@@ -79,20 +79,21 @@ PowerGlitch.glitch(".glitch", {
   const [selectedColor, setSelectedColor] = useState<string | null>(null);
   const [showReviewDetails, setShowReviewDetails] = useState(false);
   const [activeTechTab, setActiveTechTab] = useState<"specs" | "box">("specs");
-const addToCartHandler = () => {
-  if (!product) return;
-  const cartItem = {
-    _id: product._id,
-    name: product.name,
-    image: product.images?.[0]?.url ?? "",
-    price: product.price,
-    qty,
-    brand: product.brand,
-    category: product.category?.name ?? "",
-  };
-  dispatch(addToCart(cartItem));
-  navigate('/cart');
-}
+  const addToCartHandler = () => {
+    if (!product) return;
+    const cartItem = {
+      _id: product._id,
+      name: product.name,
+      image: product.images?.[0]?.url ?? "",
+      price: product.price,
+      qty,
+      brand: product.brand,
+      category: product.category?.name ?? "",
+      countInStock: product.countInStock,
+    };
+    dispatch(addToCart(cartItem));
+    navigate('/cart');
+  }
   useEffect(() => {
     setActiveImage(images[0]);
   }, [images]);
@@ -327,12 +328,12 @@ const addToCartHandler = () => {
 
 
           </div>
-                      <div className="flex">
-              <div className="border rounded-2xl bg-white py-3 px-5 gap-4 items-center justify-center flex font-bold font-mono me-3 dark:text-bg text-xl"><Minus className="cursor-pointer" onClick={() => qtyController("minus")}/> {qty} <Plus className="cursor-pointer" onClick={() => qtyController("plus")}/>
-              
-              </div>
-               <button
-  className="
+          <div className="flex">
+            <div className="border rounded-2xl bg-white py-3 px-5 gap-4 items-center justify-center flex font-bold font-mono me-3 dark:text-bg text-xl"><Minus className="cursor-pointer" onClick={() => qtyController("minus")} /> {qty} <Plus className="cursor-pointer" onClick={() => qtyController("plus")} />
+
+            </div>
+            <button
+              className="
     w-full sm:w-[200px] md:w-[300px] lg:w-[350px] xl:w-[400px] 2xl:w-[500px]
     relative overflow-hidden
     flex items-center justify-center gap-2
@@ -347,122 +348,120 @@ const addToCartHandler = () => {
     transition-all duration-200
     group  cursor-pointer
   "
-   onClick={()=> addToCartHandler()}
->
-  {/* shimmer sweep on hover */}
-  <span
-    className="
+              onClick={() => addToCartHandler()}
+            >
+              {/* shimmer sweep on hover */}
+              <span
+                className="
       pointer-events-none absolute inset-0
       translate-x-[-100%] group-hover:translate-x-[100%]
       bg-gradient-to-r from-transparent via-white/10 to-transparent
       transition-transform duration-500 
     "
-  />
+              />
 
-  <ShoppingBag className="w-5 h-5 transition-transform duration-200 group-hover:rotate-12" />
-  Add to Cart
-</button>
-            </div>
+              <ShoppingBag className="w-5 h-5 transition-transform duration-200 group-hover:rotate-12" />
+              Add to Cart
+            </button>
+          </div>
         </section>
       </div>
 
       {!!(product.specs?.length || product.boxItems?.length) && (
-<section className="rounded-2xl border border-gb bg-surf p-5 sm:p-6 space-y-6 shadow-sm">
-  
-  {/* Header */}
-  <div className="flex flex-wrap items-center justify-between gap-4">
-    <h2 className="text-2xl font-bold text-text tracking-tight">
-      Technical Details
-    </h2>
+        <section className="rounded-2xl border border-gb bg-surf p-5 sm:p-6 space-y-6 shadow-sm">
 
-    {/* Tabs */}
-    <div className="flex rounded-xl border border-gb bg-card p-1 shadow-sm">
-      <button
-        onClick={() => setActiveTechTab("specs")}
-        className={`px-4 py-1.5 rounded-lg text-sm font-medium transition-all
-        ${
-          activeTechTab === "specs"
-            ? "bg-a text-white shadow-sm"
-            : "text-text2 hover:text-text"
-        }`}
-      >
-        Specs ({product.specs?.length ?? 0})
-      </button>
+          {/* Header */}
+          <div className="flex flex-wrap items-center justify-between gap-4">
+            <h2 className="text-2xl font-bold text-text tracking-tight">
+              Technical Details
+            </h2>
 
-      <button
-        onClick={() => setActiveTechTab("box")}
-        className={`px-4 py-1.5 rounded-lg text-sm font-medium transition-all
-        ${
-          activeTechTab === "box"
-            ? "bg-a text-white shadow-sm"
-            : "text-text2 hover:text-text"
-        }`}
-      >
-        In Box ({product.boxItems?.length ?? 0})
-      </button>
-    </div>
-  </div>
+            {/* Tabs */}
+            <div className="flex rounded-xl border border-gb bg-card p-1 shadow-sm">
+              <button
+                onClick={() => setActiveTechTab("specs")}
+                className={`px-4 py-1.5 rounded-lg text-sm font-medium transition-all
+        ${activeTechTab === "specs"
+                    ? "bg-a text-white shadow-sm"
+                    : "text-text2 hover:text-text"
+                  }`}
+              >
+                Specs ({product.specs?.length ?? 0})
+              </button>
 
-  {/* Content */}
-  {activeTechTab === "specs" ? (
-    product.specs?.length ? (
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-        {product.specs.map((spec, idx) => (
-          <article
-            key={idx}
-            className="group rounded-2xl border border-gb bg-card p-4 transition-all duration-300
+              <button
+                onClick={() => setActiveTechTab("box")}
+                className={`px-4 py-1.5 rounded-lg text-sm font-medium transition-all
+        ${activeTechTab === "box"
+                    ? "bg-a text-white shadow-sm"
+                    : "text-text2 hover:text-text"
+                  }`}
+              >
+                In Box ({product.boxItems?.length ?? 0})
+              </button>
+            </div>
+          </div>
+
+          {/* Content */}
+          {activeTechTab === "specs" ? (
+            product.specs?.length ? (
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                {product.specs.map((spec, idx) => (
+                  <article
+                    key={idx}
+                    className="group rounded-2xl border border-gb bg-card p-4 transition-all duration-300
             hover:shadow-lg hover:-translate-y-1 hover:border-a/40"
-          >
-            <p className="text-xs uppercase tracking-wide text-muted font-mono">
-              {spec.icon} {spec.label}
-            </p>
+                  >
+                    <p className="text-xs uppercase tracking-wide text-muted font-mono">
+                      {spec.icon} {spec.label}
+                    </p>
 
-            <p className="text-lg font-semibold text-text mt-1">
-              {spec.value}
-            </p>
+                    <p className="text-lg font-semibold text-text mt-1">
+                      {spec.value}
+                    </p>
 
-            <p className="text-sm text-text2 mt-2 leading-relaxed">
-              {spec.description}
-            </p>
-          </article>
-        ))}
-      </div>
-    ) : (
-      <div className="rounded-xl border border-dashed border-gb bg-card p-6 text-center text-text2">
-        No specifications available
-      </div>
-    )
-  ) : product.boxItems?.length ? (
-    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
-      {product.boxItems.map((item, idx) => (
-        <article
-          key={idx}
-          className="group rounded-2xl border border-gb bg-card p-4 transition-all duration-300
+                    <p className="text-sm text-text2 mt-2 leading-relaxed">
+                      {spec.description}
+                    </p>
+                  </article>
+                ))}
+              </div>
+            ) : (
+              <div className="rounded-xl border border-dashed border-gb bg-card p-6 text-center text-text2">
+                No specifications available
+              </div>
+            )
+          ) : product.boxItems?.length ? (
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+              {product.boxItems.map((item, idx) => (
+                <article
+                  key={idx}
+                  className="group rounded-2xl border border-gb bg-card p-4 transition-all duration-300
           hover:shadow-lg hover:-translate-y-1 hover:border-a/40"
-        >
-          <p className="text-xs uppercase tracking-wide text-muted font-mono">
-            In the Box
-          </p>
+                >
+                  <p className="text-xs uppercase tracking-wide text-muted font-mono">
+                    In the Box
+                  </p>
 
-          <p className="text-base font-semibold text-text mt-1">
-            {item.icon} {item.name}
-          </p>
+                  <p className="text-base font-semibold text-text mt-1">
+                    {item.icon} {item.name}
+                  </p>
 
-          <p className="text-sm text-text2 mt-2">
-            Quantity:{" "}
-            <span className="font-semibold text-text">
-              {item.quantity}
-            </span>
-          </p>
-        </article>
-      ))}
-    </div>
-  ) : (
-    <div className="rounded-xl border border-dashed border-gb bg-card p-6 text-center text-text2">
-      No box details available
-    </div>
-  )}
-</section>
+                  <p className="text-sm text-text2 mt-2">
+                    Quantity:{" "}
+                    <span className="font-semibold text-text">
+                      {item.quantity}
+                    </span>
+                  </p>
+                </article>
+              ))}
+            </div>
+          ) : (
+            <div className="rounded-xl border border-dashed border-gb bg-card p-6 text-center text-text2">
+              No box details available
+            </div>
+          )}
+        </section>
       )}
 
       <section className="rounded-xl border border-gb bg-surf p-4 space-y-3">
