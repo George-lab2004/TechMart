@@ -2,21 +2,21 @@ import { useState } from "react"
 
 export default function PasswordStrength() {
   const [strength, setStrength] = useState(0)
-  const [label,    setLabel   ] = useState("")
+  const [label, setLabel] = useState("")
 
   const colors = ["bg-[#ff4f8e]", "bg-[#ffc84f]", "bg-[#4f8eff]", "bg-[#4fffb0]"]
   const labels = ["Weak", "Fair", "Good", "Strong"]
 
-  const check = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const v = e.target.value
-    let s = 0
-    if (v.length >= 8)           s++
-    if (/[A-Z]/.test(v))         s++
-    if (/[0-9]/.test(v))         s++
-    if (/[^A-Za-z0-9]/.test(v))  s++
-    setStrength(s)
-    setLabel(s > 0 ? labels[s - 1] : "")
-  }
+  // const check = (e: React.ChangeEvent<HTMLInputElement>) => {
+  //   const v = e.target.value
+  //   let s = 0
+  //   if (v.length >= 8)           s++
+  //   if (/[A-Z]/.test(v))         s++
+  //   if (/[0-9]/.test(v))         s++
+  //   if (/[^A-Za-z0-9]/.test(v))  s++
+  //   setStrength(s)
+  //   setLabel(s > 0 ? labels[s - 1] : "")
+  // }
 
   // attach to the password input above via onChange
   // or just expose this as a prop
@@ -33,7 +33,7 @@ export default function PasswordStrength() {
       </div>
       {label && (
         <span className={`font-mono text-[9px] tracking-[1px] uppercase
-                          ${colors[strength-1].replace("bg-","text-")}`}>
+                          ${colors[strength - 1].replace("bg-", "text-")}`}>
           {label} Password
         </span>
       )}
