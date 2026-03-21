@@ -11,6 +11,7 @@ const Products = lazy(()=> import('./pages/Products/Products'))
 const ProductDetails = lazy(()=> import('./pages/ProductDetails/productDetails'))
 const Cart = lazy(()=> import('./pages/Cart/Cart'))
 const Login = lazy(()=> import('./pages/authentication/Login'))
+const ForgetPassword = lazy(()=> import('./pages/authentication/ForgetPassword'))
 
 // Router defined outside the component — same reason as above
 const router = createBrowserRouter([
@@ -52,6 +53,14 @@ const router = createBrowserRouter([
         element:(
           <Suspense fallback ={null}>
             <Login/>
+          </Suspense>
+        )
+      },
+      {
+        path: "forget-password",
+        element: (
+          <Suspense fallback={null}>
+            <ForgetPassword />
           </Suspense>
         )
       }

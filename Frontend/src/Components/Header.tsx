@@ -1,34 +1,55 @@
 import { useState } from 'react'
 import { Button } from '@/Components/ui/button'
-import { Badge }  from '@/Components/ui/badge'
+import { Badge } from '@/Components/ui/badge'
 import AnimatedDot from './AnimatedDot'
-import { Link, NavLink } from 'react-router-dom'
+import { Link, NavLink, useNavigate } from 'react-router-dom'
 import ThemeToggle from './ui/themeToggle'
-import {useSelector} from "react-redux"
-const navLinks = [
-  { label: 'Home',     to: '/' },
-  { label: 'Products', to: '/products' },
+import { useDispatch, useSelector } from "react-redux"
+import { useLogoutMutation } from '@/slices/usersApiSlice'
+import { logout } from '@/slices/authSlice'
+import toast from 'react-hot-toast'
+import type { RootState } from '@/store/store'
 
+const navLinks = [
+  { label: 'Home', to: '/' },
+  { label: 'Products', to: '/products' },
 ]
+
 export interface CartItem {
-  _id:      string
-  name:     string
-  image:    string
-  price:    number
-  qty:      number
-  brand:    string
+  _id: string
+  name: string
+  image: string
+  price: number
+  qty: number
+  brand: string
   category: string
 }
-export default function Header() {
-  const [menuOpen, setMenuOpen]   = useState(false)
-const { cartItems } = useSelector((state: { cart: { cartItems: CartItem[] } }) => state.cart)
-const totalQty = cartItems.reduce((acc: number, item: CartItem) => acc + item.qty, 0)
-console.log(totalQty)
 
+export default function Header() {
+  const [menuOpen, setMenuOpen] = useState(false)
+  const dispatch = useDispatch()
+  const navigate = useNavigate()
+
+  const { cartItems } = useSelector((state: RootState) => state.cart)
+  const { userInfo } = useSelector((state: RootState) => state.auth)
+  const [logoutApiCall] = useLogoutMutation()
+
+  const totalQty = (cartItems || []).reduce((acc: number, item: CartItem) => acc + item.qty, 0)
+
+  const logoutHandler = async () => {
+    try {
+      await logoutApiCall({}).unwrap()
+      dispatch(logout())
+      toast.success("Logged out successfully")
+      navigate("/login")
+    } catch (err: any) {
+      toast.error(err?.data?.message || err.error || "Logout failed")
+    }
+  }
 
   return (
     <>
-      {/* ── Navbar bar ───────────────────────────────────────── */}
+      {/* ── Navbar ── */}
       <nav className="fixed top-4 left-1/2 -translate-x-1/2 z-[500] w-[calc(100%-32px)] sm:w-[calc(100%-80px)] max-w-[1280px] h-[64px] md:h-[70px] flex items-center justify-between px-4 sm:px-6 md:px-8 bg-nav backdrop-blur-[28px] border border-gb rounded-[18px] md:rounded-[22px] 
         shadow-[0_8px_32px_rgba(0,0,0,0.15)]
         dark:border-[rgba(79,142,255,0.25)]
@@ -36,19 +57,18 @@ console.log(totalQty)
 
         {/* Logo */}
         <Link to="/" className="font-mono text-[15px] md:text-[17px] font-medium tracking-[8px] uppercase text-text no-underline flex items-center gap-3 shrink-0">
-<AnimatedDot color="a" size="lg" />   
+          <AnimatedDot color="a" size="lg" />
           TECHMART
         </Link>
 
-        {/* Nav Pills — hidden on mobile/tablet, visible on lg+ */}
+        {/* Nav Pills */}
         <div className="hidden lg:flex gap-1.5 bg-glass border border-gb rounded-full p-[6px]">
           {navLinks.map((link) => (
             <NavLink
               key={link.label}
               to={link.to}
-              className={({ isActive }) => `text-[13px] font-medium px-5 py-[6px] rounded-full transition-colors tracking-[0.2px] no-underline ${
-                isActive ? 'text-a bg-gb' : 'text-text2 hover:text-text hover:bg-gb'
-              }`}
+              className={({ isActive }) => `text-[13px] font-medium px-5 py-[6px] rounded-full transition-colors tracking-[0.2px] no-underline ${isActive ? 'text-a bg-gb' : 'text-text2 hover:text-text hover:bg-gb'
+                }`}
             >
               {link.label}
             </NavLink>
@@ -58,7 +78,7 @@ console.log(totalQty)
         {/* Right side */}
         <div className="flex items-center gap-2 md:gap-3">
 
-          {/* Search — hidden on mobile, visible on md+ */}
+          {/* Search */}
           <div className="hidden md:flex items-center gap-2 bg-glass border border-gb rounded-[12px] px-3.5 py-2 transition-colors focus-within:border-a">
             <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" className="opacity-40 shrink-0">
               <circle cx="11" cy="11" r="8" />
@@ -70,27 +90,39 @@ console.log(totalQty)
             />
           </div>
 
-          {/* Theme toggle */}
-<ThemeToggle/>
-<Link to="/login">
-  <Button
-    variant="ghost"
-    className="text-text2 hover:text-text px-3 md:px-4"
-  >
-    Sign in
-  </Button>
-</Link><Link to="/cart">
-          <Button
-            className="bg-a text-white rounded-[12px] px-3 md:px-5 h-[34px] md:h-[38px] text-[13px] md:text-[14px] font-semibold font-body shadow-[0_4px_16px_var(--ag)] hover:bg-a hover:-translate-y-0.5 hover:shadow-[0_8px_28px_var(--ag)] shrink-0 transition-all"
-          >
-            🛒 <span className="hidden sm:inline">Cart</span>
-            <Badge className="bg-white text-a border-transparent text-[9px] md:text-[10px] font-bold min-w-[17px] md:min-w-[19px] h-[17px] md:h-[19px] p-0 rounded-full">
-              {totalQty}
-            </Badge>
-          </Button></Link>
+          <ThemeToggle />
 
+          {userInfo ? (
+            <Button
+              variant="ghost"
+              onClick={logoutHandler}
+              className="hidden sm:flex text-text2 hover:text-text px-3 md:px-4"
+            >
+              Sign Out
+            </Button>
+          ) : (
+            <Link to="/login" className="hidden sm:flex">
+              <Button
+                variant="ghost"
+                className="text-text2 hover:text-text px-3 md:px-4"
+              >
+                Sign In
+              </Button>
+            </Link>
+          )}
 
-          {/* Hamburger — shadcn Button with ghost+icon variant, className adds brand glass surface */}
+          <Link to="/cart">
+            <Button
+              className="bg-a text-white rounded-[12px] px-3 md:px-5 h-[34px] md:h-[38px] text-[13px] md:text-[14px] font-semibold font-body shadow-[0_4px_16px_var(--ag)] hover:bg-a hover:-translate-y-0.5 hover:shadow-[0_8px_28px_var(--ag)] shrink-0 transition-all"
+            >
+              🛒 <span className="hidden sm:inline px-1">Cart</span>
+              <Badge className="bg-white text-a border-transparent text-[9px] md:text-[10px] font-bold min-w-[17px] md:min-w-[19px] h-[17px] md:h-[19px] p-0 rounded-full flex items-center justify-center">
+                {totalQty}
+              </Badge>
+            </Button>
+          </Link>
+
+          {/* Hamburger */}
           <Button
             variant="ghost"
             size="icon"
@@ -105,7 +137,7 @@ console.log(totalQty)
         </div>
       </nav>
 
-      {/* ── Mobile dropdown menu ─────────────────────────────── */}
+      {/* Mobile dropdown menu */}
       <div className={`lg:hidden fixed top-[84px] left-1/2 -translate-x-1/2 z-[499] w-[calc(100%-32px)] sm:w-[calc(100%-80px)] max-w-[1280px] bg-nav backdrop-blur-[28px] border border-gb rounded-[18px] overflow-hidden transition-all duration-300
         dark:border-[rgba(79,142,255,0.25)]
         dark:shadow-[0_0_0_1px_rgba(79,142,255,0.12),0_8px_40px_rgba(0,0,0,0.5)]
@@ -131,17 +163,35 @@ console.log(totalQty)
               key={link.label}
               to={link.to}
               onClick={() => setMenuOpen(false)}
-              className={({ isActive }) => `text-[14px] font-medium px-4 py-3 rounded-[12px] transition-colors no-underline ${
-                isActive ? 'text-a bg-gb' : 'text-text2 hover:text-text hover:bg-gb'
-              }`}
+              className={({ isActive }) => `text-[14px] font-medium px-4 py-3 rounded-[12px] transition-colors no-underline ${isActive ? 'text-a bg-gb' : 'text-text2 hover:text-text hover:bg-gb'
+                }`}
             >
               {link.label}
             </NavLink>
           ))}
+
+          {/* Mobile Auth Button */}
+          {userInfo ? (
+            <Button
+              variant="ghost"
+              onClick={() => { logoutHandler(); setMenuOpen(false); }}
+              className="text-[14px] font-medium px-4 py-3 rounded-[12px] transition-colors text-text2 hover:text-text hover:bg-gb w-full justify-start h-auto"
+            >
+              Sign Out
+            </Button>
+          ) : (
+            <Link
+              to="/login"
+              onClick={() => setMenuOpen(false)}
+              className="text-[14px] font-medium px-4 py-3 rounded-[12px] transition-colors text-text2 hover:text-text hover:bg-gb w-full justify-start h-auto no-underline flex items-center"
+            >
+              Sign In
+            </Link>
+          )}
         </div>
       </div>
 
-      {/* Backdrop — closes menu on outside click */}
+      {/* Backdrop */}
       {menuOpen && (
         <div
           className="lg:hidden fixed inset-0 z-[498]"

@@ -25,7 +25,9 @@ const UserSchema = new Schema<IUser>(
     password:       { type: String, required: true },
     confirmedEmail: { type: Boolean, default: false },
     delivery:       { type: [DeliverySchema] },
-    isAdmin:{type:Boolean, default:false, required:true}
+    isAdmin:        { type: Boolean, default: false, required: true },
+    resetPasswordOTP:       { type: String },
+    resetPasswordOTPExpiry: { type: Date },
   },
   {
     timestamps: true,
@@ -33,12 +35,14 @@ const UserSchema = new Schema<IUser>(
 )
 
 export interface IUser extends Document {
-  name:           string
-  password:       string
-  email:          string
-  confirmedEmail: boolean
-  isAdmin:boolean
-  delivery:       {
+  name:                   string
+  password:               string
+  email:                  string
+  confirmedEmail:         boolean
+  isAdmin:                boolean
+  resetPasswordOTP?:      string
+  resetPasswordOTPExpiry?: Date
+  delivery:               {
     address: {
       streetNumber?:    string
       buildingNumber?:  string

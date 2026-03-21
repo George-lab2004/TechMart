@@ -1,25 +1,26 @@
 import { Button } from "@/Components/ui/button"
-import { ArrowBigRight, Minus, Plus, TicketPlus, Trash } from "lucide-react"
+import { ArrowBigRight, Minus, Plus, TicketPlus, Trash, Truck } from "lucide-react"
 import { useDispatch, useSelector } from "react-redux"
 import { addToCart, removeFromCart, type CartItem } from "@/slices/cartSlice"
 import { useGetProductsQuery } from "@/slices/productApiSlice"
 import type { Product } from "@/pages/Products/components/ProductCard"
+import { motion } from "framer-motion"
 
 interface CartState {
   cart: {
-    cartItems:     CartItem[]
+    cartItems: CartItem[]
     shippingPrice: number
-    taxPrice:      number
-    totalPrice:    string
+    taxPrice: number
+    totalPrice: string
   }
 }
 
 export default function Cart() {
-  const dispatch      = useDispatch()
-  const cartItems     = useSelector((state: CartState) => state.cart.cartItems)
+  const dispatch = useDispatch()
+  const cartItems = useSelector((state: CartState) => state.cart.cartItems)
   const shippingPrice = useSelector((state: CartState) => state.cart.shippingPrice)
-  const taxPrice      = useSelector((state: CartState) => state.cart.taxPrice)
-  const totalPrice    = useSelector((state: CartState) => state.cart.totalPrice)
+  const taxPrice = useSelector((state: CartState) => state.cart.taxPrice)
+  const totalPrice = useSelector((state: CartState) => state.cart.totalPrice)
 
   // ── Live stock from API ────────────────────────────────────
   const { data: productsData } = useGetProductsQuery()
@@ -34,8 +35,8 @@ export default function Cart() {
   // ── Qty control ────────────────────────────────────────────
   function qtyController(item: CartItem, action: "plus" | "minus") {
     const stock = liveStock(item)
-    if (action === "plus"  && item.qty >= stock) return
-    if (action === "minus" && item.qty <= 1)      return
+    if (action === "plus" && item.qty >= stock) return
+    if (action === "minus" && item.qty <= 1) return
 
     const newQty = action === "plus" ? item.qty + 1 : item.qty - 1
     dispatch(addToCart({ ...item, qty: newQty, countInStock: stock }))
@@ -48,8 +49,9 @@ export default function Cart() {
 
   // ── Totals ─────────────────────────────────────────────────
   const totalItems = cartItems.reduce((acc, i) => acc + i.qty, 0)
-  const subtotal   = cartItems.reduce((acc, i) => acc + i.price * i.qty, 0)
-
+  const subtotal = cartItems.reduce((acc, i) => acc + i.price * i.qty, 0)
+  const progress = subtotal
+  const shippingMessage = progress < 101 ? `You are ${101 - progress}$ away from free shipping ` : "Congratulations you unlocked free shipping"
   return (
     <div className="p-6 min-h-screen bg-bg dark:bg-gray-900">
       {/* Breadcrumb */}
@@ -64,6 +66,43 @@ export default function Cart() {
           {totalItems} Items
         </span>
       </div>
+      {/*Progress bar  */}
+      <div className="bg-surf p-4 rounded-xl shadow-sm w-full m">
+
+        {/* Title */}
+        <div className="flex items-center gap-2 mb-2">
+          <Truck size={18} className="text-a3" />
+          <h4 className="font-display uppercase text-a3 text-sm">
+            Free Shipping Progress
+          </h4>
+        </div>
+
+        {/* Text */}
+        <p className="font-mono font-bold text-sm mb-3">
+          {shippingMessage}        </p>
+
+        {/* Progress Bar */}
+        <div className="w-full">
+          <div className="w-full bg-gray-200 rounded-full h-3 overflow-hidden shadow-inner">
+            <motion.div
+              className="h-full rounded-full bg-gradient-to-r from-blue-500 to-indigo-600"
+              initial={{ width: 0 }}
+              animate={{ width: `${progress}%` }}
+              transition={{ duration: 3, ease: "easeInOut" }}
+            />
+          </div>
+
+          {/* Labels */}
+          <div className="flex justify-between text-xs text-gray-500 mt-1 px-1">
+            <span>0$</span>
+            <span>50$</span>
+            <span>100$</span>
+          </div>
+        </div>
+
+      </div>
+
+
 
       <div className="grid grid-cols-1 md:grid-cols-6 gap-4 mt-8">
         {/* Left: Cart Items */}
