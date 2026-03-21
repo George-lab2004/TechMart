@@ -1,4 +1,4 @@
-import { USERS_URL, SIGNIN_URL, SIGNUP_URL, LOG_OUT, FORGET_PASSWORD_URL, VERIFY_OTP_URL, RESET_PASSWORD_URL } from "@/constants";
+import { SIGNIN_URL, SIGNUP_URL, LOG_OUT, FORGET_PASSWORD_URL, VERIFY_OTP_URL, RESET_PASSWORD_URL } from "@/constants";
 import { apiSlice } from "./apiSlice";
 
 // export const usersApiSlice = apiSlice.injectEndpoints({

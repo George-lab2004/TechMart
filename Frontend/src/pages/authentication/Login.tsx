@@ -429,12 +429,13 @@ export default function login() {
 
                         {/* Submit */}
                         <Button
+                          disabled={isRegisterLoading}
                           type="submit"
                           className="w-full h-12 bg-text  font-body  font-bold text-sm
-                         hover:-translate-y-0.5 hover:shadow-[0_8px_32px_rgba(79,142,255,0.4)]
+                         hover:-translate-y-0.5 hover:shadow-[0_8px_32_rgba(79,142,255,0.4)]
                          transition-all duration-200 mt-1"
                         >
-                          Create Account →
+                          {isRegisterLoading ? "Creating Account..." : "Create Account →"}
                         </Button>
 
                         {/* Divider */}
