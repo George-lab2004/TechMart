@@ -214,12 +214,7 @@ export default function login() {
                             >
                               Password
                             </Label>
-                            <button
-                              type="button"
-                              className="font-mono text-[9px] tracking-[1px] uppercase text-muted hover:text-a transition-colors"
-                            >
-                              Forgot password?
-                            </button>
+
                           </div>
                           <div className="relative">
                             <span className="absolute left-3 top-1/2 -translate-y-1/2 text-muted text-sm pointer-events-none">
@@ -248,7 +243,7 @@ export default function login() {
                             </p>
                           )}
                           <div className="flex justify-end -mt-2">
-                            <Link to="/forget-password" className="text-[10px] uppercase tracking-wider font-mono text-muted hover:text-a transition-colors">Forget Password?</Link>
+                            <Link to="/forget-password" className="text-[10px] uppercase tracking-wider font-mono text-muted hover:text-a transition-colors mt-5">Forget Password?</Link>
                           </div>
                         </div>
 
@@ -264,15 +259,15 @@ export default function login() {
                         </Button>
 
                         {/* Divider */}
-                        <div className="flex items-center gap-3">
+                        {/* <div className="flex items-center gap-3">
                           <div className="flex-1 h-px bg-gb" />
                           <span className="font-mono text-[9px] tracking-[2px] uppercase text-muted">
                             or continue with
                           </span>
                           <div className="flex-1 h-px bg-gb" />
-                        </div>
+                        </div> */}
 
-                        {/* Social */}
+                        {/* Social
                         <div className="flex gap-3">
                           <button
                             type="button"
@@ -294,7 +289,7 @@ export default function login() {
                           >
                             🍎 Apple
                           </button>
-                        </div>
+                        </div> */}
 
                         {/* Terms */}
                         <p className="text-center text-xs text-muted leading-relaxed">

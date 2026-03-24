@@ -9,6 +9,7 @@ import connectDB from './config/db.js'
 import { ProductsRouter } from './routes/products.routes.js'
 import { errorHandler, notFound } from './Middleware/errorMiddleware.js'
 import { userRouter } from './routes/user.routes.js'
+import { CategoriesRouter } from "./routes/categories.routes.js";
 const port = process.env.PORT || 8000
 connectDB()
 const app = express()
@@ -44,6 +45,7 @@ app.get('/', (_req, res) => {
 
 app.use("/api", ProductsRouter)
 app.use("/api", userRouter)
+app.use("/api", CategoriesRouter)
 app.use(notFound)
 app.use(errorHandler)
 // app.get('/api/product/:id',async(req,res,next)=>{

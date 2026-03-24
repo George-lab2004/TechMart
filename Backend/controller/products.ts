@@ -16,5 +16,22 @@ const getSingleProduct = asyncHandler(async (req: Request, res: Response) => {
   }
   res.status(200).json({ message: "SUCCESS", result })
 })
+const getProductByCategory = asyncHandler(
+  async (req, res) => {
+    const { category } = req.params;
 
-export { getProduct, getSingleProduct }
+    const products = await Product.find({ category });
+
+    if (products.length === 0) {
+      res.status(404).json({ message: "No products found in this category" });
+      return;
+    }
+
+    res.status(200).json({
+      message: "SUCCESS",
+      products,
+    });
+  }
+);
+
+export { getProduct, getSingleProduct, getProductByCategory }

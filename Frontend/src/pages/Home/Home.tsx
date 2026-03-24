@@ -1,8 +1,10 @@
 import GridBackground from "@/Components/GridBackground";
 import HeroHeadline from "@/Components/HeroHeadline";
 import HeroSection from "@/Components/HeroSection";
+import Marquee from "./Components/marquee";
 import { motion } from "framer-motion";
 import { Truck, ShieldCheck, Zap } from "lucide-react";
+import CategroiesSection from "./Components/categroiesSection";
 
 const heroCards = [
   {
@@ -64,6 +66,12 @@ export default function Home() {
         secondaryBtnLabel="Watch Story"
         floatingCards={heroCards}
       />
+      <div className="mt-20">
+        <Marquee />
+      </div>
+      <div className="mt-20">
+        <CategroiesSection />
+      </div>
     </div>
   );
 }
