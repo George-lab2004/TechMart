@@ -15,10 +15,7 @@ interface CategroyResponse {
     message: string,
     result: category[]
 }
-// interface SingleCategroyResponse {
-//     message: string,
-//     result: category
-// }
+
 export const categoryApiSlice = apiSlice.injectEndpoints({
     endpoints: (builder) => ({
         getCategories: builder.query<CategroyResponse, void>({

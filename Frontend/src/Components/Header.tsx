@@ -5,10 +5,11 @@ import AnimatedDot from './AnimatedDot'
 import { Link, NavLink, useNavigate } from 'react-router-dom'
 import ThemeToggle from './ui/themeToggle'
 import { useDispatch, useSelector } from "react-redux"
-import { useLogoutMutation } from '@/slices/usersApiSlice'
+import { useLogoutMutation } from '@/slices/authApiSlice'
 import { logout } from '@/slices/authSlice'
 import toast from 'react-hot-toast'
 import type { RootState } from '@/store/store'
+import { User } from 'lucide-react'
 
 const navLinks = [
   { label: 'Home', to: '/' },
@@ -29,12 +30,11 @@ export default function Header() {
   const [menuOpen, setMenuOpen] = useState(false)
   const dispatch = useDispatch()
   const navigate = useNavigate()
-
   const { cartItems } = useSelector((state: RootState) => state.cart)
-  const { userInfo } = useSelector((state: RootState) => state.auth)
   const [logoutApiCall] = useLogoutMutation()
 
   const totalQty = (cartItems || []).reduce((acc: number, item: CartItem) => acc + item.qty, 0)
+  const { userInfo } = useSelector((state: RootState) => state.auth);
 
   const logoutHandler = async () => {
     try {
@@ -107,6 +107,14 @@ export default function Header() {
                 className="text-text2 hover:text-text px-3 md:px-4"
               >
                 Sign In
+              </Button>
+            </Link>
+          )}
+
+          {userInfo && (
+            <Link to="/profile">
+              <Button className='bg-[#000080] hover:bg-[#000080] text-white rounded-lg px-3 md:px-5 h-[34px] md:h-[38px] text-[13px] md:text-[14px] font-semibold font-body shadow-[0_4px_16px_var(--ag)] hover:bg-a hover:-translate-y-0.5 hover:shadow-[0_8px_28px_var(--ag)] shrink-0 transition-all flex items-center gap-2'>
+                Profile <User className="w-4 h-4" />
               </Button>
             </Link>
           )}

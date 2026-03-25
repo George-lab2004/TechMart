@@ -12,7 +12,7 @@ import PasswordStrength from "./components/passwordStrength";
 import { useForm } from "react-hook-form";
 import { toast } from "react-hot-toast";
 import { useDispatch, useSelector } from "react-redux";
-import { useLoginMutation, useRegisterMutation } from "@/slices/usersApiSlice";
+import { useLoginMutation, useRegisterMutation } from "@/slices/authApiSlice";
 import { setCredentials } from "@/slices/authSlice";
 import type { RootState } from "@/store/store";
 import { useEffect } from "react";

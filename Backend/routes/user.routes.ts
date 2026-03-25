@@ -1,5 +1,5 @@
 import { Router } from "express"
-import { signIn, signUp, logOut, getUserProfile, updateUserProfile, deleteUser, getAllUsers, updateUserByAdmin, addUserAddress, forgetPassword, verifyOTP, resetPassword } from "../controller/userController.js"
+import { signIn, signUp, logOut, getUserProfile, updateUserProfile, deleteUser, getAllUsers, updateUserByAdmin, addUserAddress, updateUserAddress, deleteUserAddress, forgetPassword, verifyOTP, resetPassword } from "../controller/userController.js"
 import { protect, admin } from "../Middleware/authMiddleware.js"
 
 export const userRouter = Router()
@@ -17,6 +17,10 @@ userRouter.route('/profile')
 
 userRouter.route('/profile/address')
     .post(protect, addUserAddress)
+    .put(protect, updateUserAddress)
+
+userRouter.route('/profile/address/:addressId')
+    .delete(protect, deleteUserAddress)
 
 userRouter.route('/allUsers')
     .get(protect, admin, getAllUsers)

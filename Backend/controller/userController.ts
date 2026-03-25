@@ -63,8 +63,7 @@ const signIn = async (req: Request, res: Response) => {
         _id: user._id,
         name: user.name,
         email: user.email,
-        isAdmin: user.isAdmin,
-        token
+        isAdmin: user.isAdmin
     })
 }
 
@@ -79,12 +78,7 @@ const logOut = asyncHandler(async (req, res) => {
 const getUserProfile = asyncHandler(async (req, res) => {
     // req.user is populated by protect middleware
     if (req.user) {
-        res.status(200).json({
-            _id: req.user._id,
-            name: req.user.name,
-            email: req.user.email,
-            isAdmin: req.user.isAdmin
-        })
+        res.status(200).json(req.user)
     } else {
         res.status(404)
         throw new Error("User not found")
@@ -103,12 +97,7 @@ const updateUserProfile = asyncHandler(async (req, res) => {
 
         const updatedUser = await user.save()
 
-        res.status(200).json({
-            _id: updatedUser._id,
-            name: updatedUser.name,
-            email: updatedUser.email,
-            isAdmin: updatedUser.isAdmin
-        })
+        res.status(200).json(updatedUser)
     } else {
         res.status(404)
         throw new Error("User not found")
@@ -161,9 +150,10 @@ const addUserAddress = asyncHandler(async (req, res) => {
     const user = await User.findById(req.user?._id)
 
     if (user) {
-        const { streetNumber, buildingNumber, floorNumber, apartmentNumber, city, country, landmark, notes, postalCode, phone } = req.body
+        const { title, streetNumber, buildingNumber, floorNumber, apartmentNumber, city, country, landmark, notes, postalCode, phone } = req.body
 
         const newAddress = {
+            title,
             address: [{
                 streetNumber,
                 buildingNumber,
@@ -187,6 +177,59 @@ const addUserAddress = asyncHandler(async (req, res) => {
         throw new Error("User not found")
     }
 })
+const updateUserAddress = asyncHandler(async (req, res) => {
+    const user = await User.findById(req.user?._id)
+
+    if (user) {
+        const { addressId, title, streetNumber, buildingNumber, floorNumber, apartmentNumber, city, country, landmark, notes, postalCode, phone } = req.body
+
+        const addressIndex = user.delivery.findIndex(d => d._id?.toString() === addressId)
+
+        if (addressIndex !== -1) {
+            user.delivery[addressIndex] = {
+                title: title || user.delivery[addressIndex].title,
+                phone: phone || user.delivery[addressIndex].phone,
+                address: [{
+                    streetNumber: streetNumber ?? user.delivery[addressIndex].address[0]?.streetNumber,
+                    buildingNumber: buildingNumber ?? user.delivery[addressIndex].address[0]?.buildingNumber,
+                    floorNumber: floorNumber ?? user.delivery[addressIndex].address[0]?.floorNumber,
+                    apartmentNumber: apartmentNumber ?? user.delivery[addressIndex].address[0]?.apartmentNumber,
+                    city: city ?? user.delivery[addressIndex].address[0]?.city,
+                    country: country ?? user.delivery[addressIndex].address[0]?.country,
+                    landmark: landmark ?? user.delivery[addressIndex].address[0]?.landmark,
+                    notes: notes ?? user.delivery[addressIndex].address[0]?.notes,
+                    postalCode: postalCode ?? user.delivery[addressIndex].address[0]?.postalCode,
+                }] as any
+            } as any
+
+            await user.save()
+            res.status(200).json({ message: "Address updated successfully", delivery: user.delivery })
+        } else {
+            res.status(404)
+            throw new Error("Address not found")
+        }
+    } else {
+        res.status(404)
+        throw new Error("User not found")
+    }
+})
+
+const deleteUserAddress = asyncHandler(async (req, res) => {
+    const user = await User.findById(req.user?._id)
+
+    if (user) {
+        const { addressId } = req.params
+
+        user.delivery = user.delivery.filter(d => d._id?.toString() !== addressId) as any
+        await user.save()
+
+        res.status(200).json({ message: "Address deleted successfully", delivery: user.delivery })
+    } else {
+        res.status(404)
+        throw new Error("User not found")
+    }
+})
+
 const forgetPassword = asyncHandler(async (req, res) => {
     const { email } = req.body
     console.log("HIT forgetPassword for email:", email);
@@ -261,6 +304,8 @@ export {
     getAllUsers,
     updateUserByAdmin,
     addUserAddress,
+    updateUserAddress,
+    deleteUserAddress,
     forgetPassword,
     verifyOTP,
     resetPassword

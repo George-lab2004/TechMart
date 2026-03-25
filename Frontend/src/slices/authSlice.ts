@@ -5,7 +5,21 @@ interface UserInfo {
     name: string;
     email: string;
     isAdmin: boolean;
-    token: string;
+    delivery?: {
+        title: string;
+        address: {
+            streetNumber?: string;
+            buildingNumber?: string;
+            floorNumber?: string;
+            apartmentNumber?: string;
+            city?: string;
+            country?: string;
+            landmark?: string;
+            notes?: string;
+            postalCode?: number;
+        }[];
+        phone?: string;
+    }[];
 }
 
 interface AuthState {

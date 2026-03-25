@@ -13,6 +13,7 @@ const AddressSchema = new Schema({
 })
 
 const DeliverySchema = new Schema({
+  title:   { type: String, required: true },
   address: { type: [AddressSchema] },
   phone:   { type: String },
 })
@@ -43,7 +44,10 @@ export interface IUser extends Document {
   resetPasswordOTP?:      string
   resetPasswordOTPExpiry?: Date
   delivery:               {
+    _id?: string
+    title: string
     address: {
+      _id?: string
       streetNumber?:    string
       buildingNumber?:  string
       floorNumber?:     string

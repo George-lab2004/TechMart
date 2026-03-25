@@ -6,7 +6,7 @@ import { Button } from "@/Components/ui/button";
 import { Card, CardContent } from "@/Components/ui/card";
 import { Input } from "@/Components/ui/input";
 import { Label } from "@/Components/ui/label";
-import { useForgetPasswordMutation, useVerifyOTPMutation, useResetPasswordMutation } from "@/slices/usersApiSlice";
+import { useForgetPasswordMutation, useVerifyOTPMutation, useResetPasswordMutation } from "@/slices/authApiSlice";
 import AnimatedDot from "@/Components/AnimatedDot";
 import HeroHeadline from "@/Components/HeroHeadline";
 import ThemeToggle from "@/Components/ui/themeToggle";
@@ -18,9 +18,9 @@ export default function ForgetPassword() {
   const [step, setStep] = useState<Step>("EMAIL");
   const [email, setEmail] = useState("");
   const [otp, setOtp] = useState("");
-  
+
   const navigate = useNavigate();
-  
+
   const [forgetPassword, { isLoading: isForgetLoading }] = useForgetPasswordMutation();
   const [verifyOTP, { isLoading: isVerifyLoading }] = useVerifyOTPMutation();
   const [resetPassword, { isLoading: isResetLoading }] = useResetPasswordMutation();
@@ -112,7 +112,7 @@ export default function ForgetPassword() {
 
             <Card className="border-gb bg-card backdrop-blur-xl shadow-none">
               <CardContent className="pt-6">
-                
+
                 {/* ── STEP 1: EMAIL ── */}
                 {step === "EMAIL" && (
                   <form onSubmit={handleEmail(onEmailSubmit)} className="flex flex-col gap-5">

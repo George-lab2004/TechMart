@@ -1,76 +1,75 @@
-import { SIGNIN_URL, SIGNUP_URL, LOG_OUT, FORGET_PASSWORD_URL, VERIFY_OTP_URL, RESET_PASSWORD_URL } from "@/constants";
-import { apiSlice } from "./apiSlice";
+import { ADD_ADDRESS_URL, PROFILE_URL } from "@/constants"
+import { apiSlice } from "./apiSlice"
 
-// export const usersApiSlice = apiSlice.injectEndpoints({
-//   endpoints: (builder) => ({
-//     login: builder.mutation({
-//       query: (data) => ({
-//         url: SIGNIN_URL, // This is '/api/signIn' in your constants
-//         method: 'POST',
-//         body: data,
-//       }),
-//     }),
-//     logout: builder.mutation({
-//       query: () => ({
-//         url: LOG_OUT,
-//         method: 'POST',
-//       }),
-//     }),
-//     register: builder.mutation({
-//       query: (data) => ({
-//         url: SIGNUP_URL, // This is '/api/signUp' in your constants
-//         method: 'POST',
-//         body: data,
-//       }),
-//     }),
-//   }),
-// });
+export interface user {
+    _id: string,
+    name: string,
+    email: string,
+    password: string,
+    isAdmin: boolean,
+    createdAt: string,
+    updatedAt: string
+    confirmedEmail: boolean,
+    delivery: {
+        title: string
+        address: {
+            streetNumber?: string
+            buildingNumber?: string
+            floorNumber?: string
+            apartmentNumber?: string
+            city?: string
+            country?: string
+            landmark?: string
+            notes?: string
+            postalCode?: number
+        }[]
+        phone?: string
+    }[]
+}
+export const profileApiSlice = apiSlice.injectEndpoints({
+    endpoints: (builder) => ({
 
-export const usersApiSlice = apiSlice.injectEndpoints({
-  endpoints: (builder) => ({
-    login: builder.mutation({
-      query: (data) => ({
-        url: SIGNIN_URL,
-        method: 'POST',
-        body: data
-      }),
+        getProfile: builder.query<user, void>({
+            query: () => ({ url: PROFILE_URL }),
+            providesTags: ['User'],
+        }),
+
+        updateProfile: builder.mutation<user, Partial<user>>({
+            query: (data) => ({
+                url: PROFILE_URL,
+                method: 'PUT',
+                body: data,
+            }),
+            invalidatesTags: ['User'],
+        }),
+
+        addAddress: builder.mutation<user, any>({
+            query: (address) => ({
+                url: ADD_ADDRESS_URL,
+                method: 'POST',
+                body: address,
+            }),
+            invalidatesTags: ['User'],
+        }),
+
+        updateAddress: builder.mutation<user, any>({
+            query: (data) => ({
+                url: ADD_ADDRESS_URL,
+                method: 'PUT',
+                body: data,
+            }),
+            invalidatesTags: ['User'],
+        }),
+
+        deleteAddress: builder.mutation<user, string>({
+            query: (id) => ({
+                url: `${ADD_ADDRESS_URL}/${id}`,
+                method: 'DELETE',
+            }),
+            invalidatesTags: ['User'],
+        }),
 
     }),
-    register: builder.mutation({
-      query: (data) => ({
-        url: SIGNUP_URL,
-        method: 'POST',
-        body: data
-      }),
+});
 
-    }),
-    logout: builder.mutation({
-      query: () => ({
-        url: LOG_OUT,
-        method: 'POST',
-      })
-    }),
-    forgetPassword: builder.mutation({
-      query: (data) => ({
-        url: FORGET_PASSWORD_URL,
-        method: 'POST',
-        body: data
-      })
-    }),
-    verifyOTP: builder.mutation({
-      query: (data) => ({
-        url: VERIFY_OTP_URL,
-        method: 'POST',
-        body: data
-      })
-    }),
-    resetPassword: builder.mutation({
-      query: (data) => ({
-        url: RESET_PASSWORD_URL,
-        method: 'POST',
-        body: data
-      })
-    })
-  })
-})
-export const { useLoginMutation, useLogoutMutation, useRegisterMutation, useForgetPasswordMutation, useVerifyOTPMutation, useResetPasswordMutation } = usersApiSlice;
+export const { useGetProfileQuery, useUpdateProfileMutation, useAddAddressMutation, useUpdateAddressMutation, useDeleteAddressMutation } = profileApiSlice;

@@ -1,6 +1,6 @@
 import Loader from "@/Components/Loader"
 import { Card, CardContent } from "@/Components/ui/card";
-import { useGetCategoriesQuery, type category } from "@/slices/categorySlice"
+import { useGetCategoriesQuery, type category } from "@/slices/categoryApiSlice"
 import { motion } from "framer-motion"
 import { ArrowRight } from "lucide-react";
 function CategroiesSection() {
