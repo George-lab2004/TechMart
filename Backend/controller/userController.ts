@@ -51,10 +51,11 @@ const signIn = async (req: Request, res: Response) => {
     )
 
     // 5. set cookie
+    const isProd = process.env.NODE_ENV !== "development"
     res.cookie("jwt", token, {
         httpOnly: true,
-        secure: process.env.NODE_ENV !== "development",
-        sameSite: "strict",
+        secure: isProd,
+        sameSite: isProd ? "none" : "strict",
         maxAge: 1 * 24 * 60 * 60 * 1000,
     })
 
@@ -68,8 +69,11 @@ const signIn = async (req: Request, res: Response) => {
 }
 
 const logOut = asyncHandler(async (req, res) => {
+    const isProd = process.env.NODE_ENV !== "development"
     res.cookie("jwt", "", {
         httpOnly: true,
+        secure: isProd,
+        sameSite: isProd ? "none" : "strict",
         expires: new Date(0)
     })
     res.status(200).json({ message: "Logged out successfully" })

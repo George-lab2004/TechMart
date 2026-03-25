@@ -15,9 +15,12 @@ connectDB()
 const app = express()
 app.use(express.json())
 app.use(cookieParser())
-const allowedOrigins = ['http://localhost:5173', 'https://tech-mart-e1dv.vercel.app']
-console.log("EMAIL_USER:", process.env.EMAIL_USER);
-console.log("EMAIL_PASS:", process.env.EMAIL_PASS);
+const allowedOrigins = [
+    'http://localhost:5173', 
+    'https://tech-mart-e1dv.vercel.app',
+    'https://tech-mart-e1dv-git-main-george-lab2004s-projects.vercel.app', // Adding a likely branch deploy URL
+]
+console.log("allowedOrigins:", allowedOrigins);
 app.use(cors({
     origin: (origin, callback) => {
         if (!origin || allowedOrigins.includes(origin)) {
