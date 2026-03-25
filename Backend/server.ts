@@ -14,6 +14,7 @@ import { orderRouter } from "./routes/order.routes.js";
 const port = process.env.PORT || 8000
 connectDB()
 const app = express()
+app.set("trust proxy", 1) // Trust Vercel's reverse proxy for secure cookies
 app.use(express.json())
 app.use(cookieParser())
 const allowedOrigins = [
