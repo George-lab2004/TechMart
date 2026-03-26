@@ -7,7 +7,7 @@ import toast from "react-hot-toast"
 import Section from "@/pages/checkout/components/Section"
 import InputField from "@/Components/InputField"
 import OrderSummary from "@/pages/checkout/components/OrderSummary"
-import StepIndicator from "@/pages/checkout/components/StepIndicator"
+import Steps from "@/pages/checkout/components/Steps"
 import { MapPin, Plus, CreditCard, AlertCircle, ShoppingBag } from "lucide-react"
 import PaymentRenderer from "@/pages/checkout/components/PaymentRenderer"
 
@@ -60,7 +60,7 @@ export default function Checkout() {
         <div className="container mx-auto py-8 md:py-12 px-4 max-w-7xl font-body">
 
             {/* STEP INDICATOR */}
-            <StepIndicator step={step} />
+            <Steps step={step} />
 
             <div className="grid lg:grid-cols-[1fr_400px] gap-8">
 

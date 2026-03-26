@@ -4,7 +4,7 @@ interface Props {
     step: number
 }
 
-export default function StepIndicator({ step }: Props) {
+export default function Steps({ step }: Props) {
     const steps = ["Shipping", "Payment", "Review"]
 
     return (
