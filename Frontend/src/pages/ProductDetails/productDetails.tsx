@@ -6,9 +6,11 @@ import GridBackground from "@/Components/GridBackground";
 import ProductCard, { type Product } from "@/pages/Products/components/ProductCard";
 import { PowerGlitch } from "powerglitch";
 import { Minus, Plus, ShoppingBag } from "lucide-react";
-import { useDispatch } from "react-redux"
+import { useDispatch, useSelector } from "react-redux"
 import { addToCart } from "@/slices/cartSlice"
 import { useNavigate } from "react-router-dom"
+import type { RootState } from "@/store/store"
+import { useAddToCartMutation } from "@/slices/cartApiSlice"
 export default function ProductDetails() {
   const { id } = useParams<{ id: string }>();
   const { data, isLoading, isError } = useGetSingleProductQuery(id!);
@@ -27,6 +29,8 @@ export default function ProductDetails() {
   }
   const dispatch = useDispatch()
   const navigate = useNavigate()
+  const { userInfo } = useSelector((state: RootState) => state.auth);
+  const [addToCartApi] = useAddToCartMutation();
 
   useEffect(() => {
     if (!product) return;
@@ -79,7 +83,7 @@ export default function ProductDetails() {
   const [selectedColor, setSelectedColor] = useState<string | null>(null);
   const [showReviewDetails, setShowReviewDetails] = useState(false);
   const [activeTechTab, setActiveTechTab] = useState<"specs" | "box">("specs");
-  const addToCartHandler = () => {
+  const addToCartHandler = async () => {
     if (!product) return;
     const cartItem = {
       _id: product._id,
@@ -90,8 +94,15 @@ export default function ProductDetails() {
       brand: product.brand,
       category: product.category?.name ?? "",
       countInStock: product.countInStock,
+      product: product._id
     };
-    dispatch(addToCart(cartItem));
+    
+    if (userInfo) {
+       await addToCartApi(cartItem).unwrap();
+    } else {
+       dispatch(addToCart(cartItem));
+    }
+    
     navigate('/cart');
   }
   useEffect(() => {

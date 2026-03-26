@@ -11,6 +11,7 @@ export interface CartItem {
   countInStock: number
   brand: string
   category: string
+  product: string
 }
 
 interface CartState {

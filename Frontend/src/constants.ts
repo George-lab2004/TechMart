@@ -34,3 +34,7 @@ export const PAYPAL_URL = '/api/config/paypal'
 
 // CATEGORIES
 export const CATEGORIES_URL = '/api/categories'
+// CART
+export const CART_URL = '/api/cart'
+export const CART_BY_ID_URL = (id: string) => `/api/cart/${id}`
+

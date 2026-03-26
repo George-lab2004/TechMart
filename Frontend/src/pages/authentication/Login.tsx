@@ -16,6 +16,8 @@ import { useLoginMutation, useRegisterMutation } from "@/slices/authApiSlice";
 import { setCredentials } from "@/slices/authSlice";
 import type { RootState } from "@/store/store";
 import { useEffect } from "react";
+import { useSyncCartMutation } from "@/slices/cartApiSlice";
+import { clearCart } from "@/slices/cartSlice";
 
 export default function login() {
   const dispatch = useDispatch();
@@ -23,7 +25,8 @@ export default function login() {
   const [login, { isLoading: isLoginLoading }] = useLoginMutation();
   const [register, { isLoading: isRegisterLoading }] = useRegisterMutation();
   const { userInfo } = useSelector((state: RootState) => state.auth);
-
+  const [syncCart] = useSyncCartMutation();
+  const { cartItems } = useSelector((state: RootState) => state.cart);
   useEffect(() => {
     if (userInfo) {
       navigate("/");
@@ -47,6 +50,13 @@ export default function login() {
     try {
       const res = await login(data).unwrap();
       dispatch(setCredentials({ ...res }));
+
+      if (cartItems?.length > 0) {
+        await syncCart([...cartItems]).unwrap();
+        dispatch(clearCart());
+        localStorage.removeItem("cartItems");
+      }
+
       toast.success("Welcome back!");
       navigate("/");
     } catch (err: any) {
@@ -72,6 +82,13 @@ export default function login() {
     try {
       const res = await register(data).unwrap();
       dispatch(setCredentials({ ...res }));
+
+      if (cartItems?.length > 0) {
+        await syncCart([...cartItems]).unwrap();
+        dispatch(clearCart());
+        localStorage.removeItem("cartItems");
+      }
+
       toast.success("Welcome back!");
       navigate("/");
     } catch (err: any) {

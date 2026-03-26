@@ -17,7 +17,7 @@ export default function Profile() {
     if (isLoading) return <Loader />;
     if (isError) return (
         <div className="container mx-auto py-20 px-4 text-center">
-            <p className="text-muted text-lg mb-4 text-destructive">Error loading profile. Please try logging in again.</p>
+            <p className="text-lg mb-4 text-destructive">Error loading profile. Please try logging in again.</p>
             <Link to="/login" className="text-a hover:underline font-mono uppercase tracking-widest text-sm">Login</Link>
         </div>
     );

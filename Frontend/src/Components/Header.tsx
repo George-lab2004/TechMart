@@ -10,7 +10,7 @@ import { logout } from '@/slices/authSlice'
 import toast from 'react-hot-toast'
 import type { RootState } from '@/store/store'
 import { User } from 'lucide-react'
-
+import { useGetCartQuery } from '@/slices/cartApiSlice'
 const navLinks = [
   { label: 'Home', to: '/' },
   { label: 'Products', to: '/products' },
@@ -33,9 +33,10 @@ export default function Header() {
   const { cartItems } = useSelector((state: RootState) => state.cart)
   const [logoutApiCall] = useLogoutMutation()
 
-  const totalQty = (cartItems || []).reduce((acc: number, item: CartItem) => acc + item.qty, 0)
   const { userInfo } = useSelector((state: RootState) => state.auth);
-
+  const { data: cartData } = useGetCartQuery(undefined, { skip: !userInfo });
+  const activeCartItems = userInfo && cartData ? cartData.cartItems : cartItems;
+  const totalQty = (activeCartItems || []).reduce((acc: number, item: any) => acc + item.qty, 0)
   const logoutHandler = async () => {
     try {
       await logoutApiCall({}).unwrap()
@@ -113,7 +114,7 @@ export default function Header() {
 
           {userInfo && (
             <Link to="/profile">
-              <Button className='bg-[#000080] hover:bg-[#000080] text-white rounded-lg px-3 md:px-5 h-[34px] md:h-[38px] text-[13px] md:text-[14px] font-semibold font-body shadow-[0_4px_16px_var(--ag)] hover:bg-a hover:-translate-y-0.5 hover:shadow-[0_8px_28px_var(--ag)] shrink-0 transition-all flex items-center gap-2'>
+              <Button className='bg-[#000080] hover:bg-[#000080] text-white rounded-lg px-3 md:px-5 h-[34px] md:h-[38px] text-[13px] md:text-[14px] font-semibold font-body shadow-[0_4px_16px_var(--ag)] hover:bg-a hover:-translate-y-0.5 hover:shadow-[0_8px_28px_var(--ag)] shrink-0 transition-all hidden md:flex  items-center gap-2'>
                 Profile <User className="w-4 h-4" />
               </Button>
             </Link>
@@ -140,6 +141,7 @@ export default function Header() {
             <span className={`block w-4 h-[2px] bg-text rounded-full transition-all duration-300 ${menuOpen ? 'rotate-45 translate-y-[7px]' : ''}`} />
             <span className={`block w-4 h-[2px] bg-text rounded-full transition-all duration-300 ${menuOpen ? 'opacity-0' : ''}`} />
             <span className={`block w-4 h-[2px] bg-text rounded-full transition-all duration-300 ${menuOpen ? '-rotate-45 -translate-y-[7px]' : ''}`} />
+
           </Button>
 
         </div>
@@ -155,6 +157,7 @@ export default function Header() {
 
           {/* Mobile search */}
           <div className="flex items-center gap-2 bg-glass border border-gb rounded-[12px] px-3.5 py-2.5 mb-2 transition-colors focus-within:border-a md:hidden">
+
             <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" className="opacity-40 shrink-0">
               <circle cx="11" cy="11" r="8" />
               <path d="m21 21-4.35-4.35" />
@@ -164,7 +167,22 @@ export default function Header() {
               className="bg-transparent border-none outline-none font-body text-[14px] text-text w-full placeholder:text-muted"
             />
           </div>
-
+          {userInfo && (
+            <Link to="/profile" className="w-full">
+              <div className="
+      flex items-center gap-3 
+      w-full px-4 py-3 
+      text-sm font-medium 
+      text-[var(--text)] 
+      hover:bg-[var(--bg2)] 
+      rounded-lg 
+      transition-all md:hidden
+    ">
+                <User className="w-4 h-4 text-[var(--a)]" />
+                <span>Profile</span>
+              </div>
+            </Link>
+          )}
           {/* Nav links */}
           {navLinks.map((link) => (
             <NavLink
@@ -177,6 +195,18 @@ export default function Header() {
               {link.label}
             </NavLink>
           ))}
+
+          {/* Mobile Cart Link */}
+          <Link
+            to="/cart"
+            onClick={() => setMenuOpen(false)}
+            className="text-[14px] font-medium px-4 py-3 rounded-[12px] transition-colors text-text2 hover:text-text hover:bg-gb w-full justify-between h-auto no-underline flex items-center"
+          >
+            Cart
+            <Badge className="bg-a text-white border-transparent text-[10px] font-bold min-w-[20px] h-[20px] p-0 rounded-full flex items-center justify-center">
+              {totalQty}
+            </Badge>
+          </Link>
 
           {/* Mobile Auth Button */}
           {userInfo ? (

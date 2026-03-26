@@ -1,10 +1,17 @@
 import { Button } from "@/Components/ui/button"
 import { ArrowBigRight, Minus, Plus, TicketPlus, Trash, Truck } from "lucide-react"
 import { useDispatch, useSelector } from "react-redux"
+import type { RootState } from "@/store/store"
 import { addToCart, removeFromCart, type CartItem } from "@/slices/cartSlice"
 import { useGetProductsQuery } from "@/slices/productApiSlice"
 import type { Product } from "@/pages/Products/components/ProductCard"
 import { motion } from "framer-motion"
+import {
+  useAddToCartMutation,
+  useRemoveFromCartMutation,
+  useGetCartQuery
+} from "@/slices/cartApiSlice"
+import { Link } from "react-router-dom"
 
 interface CartState {
   cart: {
@@ -17,16 +24,37 @@ interface CartState {
 
 export default function Cart() {
   const dispatch = useDispatch()
-  const cartItems = useSelector((state: CartState) => state.cart.cartItems)
-  const shippingPrice = useSelector((state: CartState) => state.cart.shippingPrice)
-  const taxPrice = useSelector((state: CartState) => state.cart.taxPrice)
-  const totalPrice = useSelector((state: CartState) => state.cart.totalPrice)
+  const reduxCartItems = useSelector((state: CartState) => state.cart.cartItems)
+  const reduxShippingPrice = useSelector((state: CartState) => state.cart.shippingPrice)
+  const reduxTaxPrice = useSelector((state: CartState) => state.cart.taxPrice)
+  const reduxTotalPrice = useSelector((state: CartState) => state.cart.totalPrice)
+
+  const { userInfo } = useSelector((state: RootState) => state.auth);
+  const isLoggedIn = localStorage.getItem("userInfo")
+  // API Hooks
+  const [addToCartApiFn] = useAddToCartMutation();
+  const [removeFromCartApiFn] = useRemoveFromCartMutation();
+  const { data: cartData } = useGetCartQuery(undefined, { skip: !userInfo });
+
+  // Fallback Logic
+  const cartItems = userInfo && cartData ? cartData.cartItems : reduxCartItems;
+  const shippingPrice = userInfo && cartData ? cartData.shippingPrice : reduxShippingPrice;
+  const taxPrice = userInfo && cartData ? cartData.taxPrice : reduxTaxPrice;
+  const totalPrice = userInfo && cartData ? cartData.totalPrice : Number(reduxTotalPrice);
 
   // ── Live stock from API ────────────────────────────────────
   const { data: productsData } = useGetProductsQuery()
   const stockMap = new Map<string, number>(
     (productsData?.result ?? []).map((p: Product) => [p._id, p.countInStock])
   )
+
+  async function handleAddToCart(item: CartItem) {
+    if (userInfo) {
+      await addToCartApiFn(item).unwrap();
+    } else {
+      dispatch(addToCart(item))
+    }
+  }
 
   // Returns the authoritative stock for a cart item
   const liveStock = (item: CartItem): number =>
@@ -39,12 +67,16 @@ export default function Cart() {
     if (action === "minus" && item.qty <= 1) return
 
     const newQty = action === "plus" ? item.qty + 1 : item.qty - 1
-    dispatch(addToCart({ ...item, qty: newQty, countInStock: stock }))
+    handleAddToCart({ ...item, qty: newQty, countInStock: stock })
   }
 
   // ── Remove item ────────────────────────────────────────────
   function removeItem(itemId: string) {
-    dispatch(removeFromCart(itemId))
+    if (userInfo) {
+      removeFromCartApiFn(itemId);
+    } else {
+      dispatch(removeFromCart(itemId))
+    }
   }
 
   // ── Totals ─────────────────────────────────────────────────
@@ -247,11 +279,23 @@ export default function Cart() {
             <span className="font-semibold text-base">Total</span>
             <span className="text-2xl font-bold font-display">${Number(totalPrice).toFixed(2)}</span>
           </div>
+          {isLoggedIn ? (
+            <Link to="/checkout">
+              <button className="mt-2 w-full flex items-center justify-center gap-2 bg-black text-white dark:bg-white dark:text-black py-3 rounded-xl font-medium hover:opacity-90 transition cursor-pointer">
+                Proceed to checkout
+                <ArrowBigRight size={18} />
+              </button>
+            </Link>
+          ) : (
+            <Link to="/login">
+              <button className="mt-2 w-full flex items-center justify-center gap-2 bg-black text-white dark:bg-white dark:text-black py-3 rounded-xl font-medium hover:opacity-90 transition cursor-pointer">
+                Login to proceed to checkout
+                <ArrowBigRight size={18} />
+              </button>
+            </Link>
+          )}
 
-          <button className="mt-2 w-full flex items-center justify-center gap-2 bg-black text-white dark:bg-white dark:text-black py-3 rounded-xl font-medium hover:opacity-90 transition cursor-pointer">
-            Proceed to checkout
-            <ArrowBigRight size={18} />
-          </button>
+
         </section>
       </div>
     </div>

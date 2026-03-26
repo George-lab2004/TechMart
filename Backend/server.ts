@@ -11,6 +11,7 @@ import { errorHandler, notFound } from './Middleware/errorMiddleware.js'
 import { userRouter } from './routes/user.routes.js'
 import { CategoriesRouter } from "./routes/categories.routes.js";
 import { orderRouter } from "./routes/order.routes.js";
+import { CartRouter } from "./routes/cart.routes.js";
 const port = process.env.PORT || 8000
 connectDB()
 const app = express()
@@ -18,7 +19,7 @@ app.set("trust proxy", 1) // Trust Vercel's reverse proxy for secure cookies
 app.use(express.json())
 app.use(cookieParser())
 const allowedOrigins = [
-    'http://localhost:5173', 
+    'http://localhost:5173',
     'https://tech-mart-e1dv.vercel.app',
     'https://tech-mart-theta.vercel.app',
     'https://tech-mart-e1dv-git-main-george-lab2004s-projects.vercel.app',
@@ -53,6 +54,7 @@ app.use("/api", ProductsRouter)
 app.use("/api", userRouter)
 app.use("/api", CategoriesRouter)
 app.use("/api/orders", orderRouter)
+app.use("/api/cart", CartRouter)
 app.use(notFound)
 app.use(errorHandler)
 // app.get('/api/product/:id',async(req,res,next)=>{

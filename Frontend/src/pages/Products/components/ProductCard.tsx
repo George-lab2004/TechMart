@@ -2,6 +2,10 @@ import { useRef, useState } from "react";
 import { motion } from "framer-motion";
 import { Eye, Heart } from "lucide-react";
 import { Link } from "react-router-dom";
+import { useDispatch, useSelector } from "react-redux";
+import type { RootState } from "@/store/store";
+import { addToCart } from "@/slices/cartSlice";
+import { useAddToCartMutation } from "@/slices/cartApiSlice";
 
 export interface Product {
   _id: string;
@@ -56,6 +60,10 @@ export default function ProductCard({ p, isListView }: { p: Product; isListView:
   const [wished, setWished] = useState(false);
   const [added,  setAdded]  = useState(false);
   const cardRef = useRef<HTMLDivElement>(null);
+  
+  const dispatch = useDispatch();
+  const { userInfo } = useSelector((state: RootState) => state.auth);
+  const [addToCartApi] = useAddToCartMutation();
 
   const handleMouseMove = (e: React.MouseEvent<HTMLDivElement>) => {
     const el = cardRef.current;
@@ -74,8 +82,27 @@ export default function ProductCard({ p, isListView }: { p: Product; isListView:
     el.style.transform = "perspective(900px) rotateY(0deg) rotateX(0deg) translateY(0px)";
   };
 
-  const handleAdd = (e: React.MouseEvent) => {
+  const handleAdd = async (e: React.MouseEvent) => {
     e.stopPropagation();
+    
+    const cartItem = {
+      _id: p._id,
+      name: p.name,
+      image: p.images?.[0]?.url ?? "",
+      price: p.price,
+      qty: 1,
+      brand: p.brand,
+      category: p.category.name,
+      countInStock: p.countInStock || 1,
+      product: p._id
+    };
+
+    if (userInfo) {
+       await addToCartApi(cartItem).unwrap();
+    } else {
+       dispatch(addToCart(cartItem));
+    }
+    
     setAdded(true);
     setTimeout(() => setAdded(false), 1800);
   };
