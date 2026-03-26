@@ -11,9 +11,9 @@ export default function StepIndicator({ step }: Props) {
         <div className="flex items-center justify-between mb-16 relative px-8 max-w-2xl mx-auto">
             {/* Background Track Line - Increased contrast and height */}
             <div className="absolute left-12 right-12 top-5 -translate-y-1/2 h-[4px] bg-[var(--gb)] z-0 opacity-50 rounded-full" />
-            
+
             {/* Active Track Line - Glowing but slightly offset to ensure visibility */}
-            <motion.div 
+            <motion.div
                 className="absolute left-12 top-5 -translate-y-1/2 h-[4px] bg-[var(--a)] z-10 shadow-[0_0_15px_rgba(0,128,255,0.6)] rounded-full origin-left"
                 initial={{ scaleX: 0 }}
                 animate={{ scaleX: (step - 1) / (steps.length - 1) }}
@@ -25,13 +25,13 @@ export default function StepIndicator({ step }: Props) {
                 const current = index + 1
                 const passed = step > current
                 const active = step === current
-                
+
                 return (
                     <div key={label} className="flex flex-col items-center gap-4 relative z-20">
                         {/* Circle */}
                         <motion.div
                             initial={false}
-                            animate={{ 
+                            animate={{
                                 scale: active ? 1.3 : 1,
                                 backgroundColor: passed || active ? "var(--a)" : "var(--card)",
                                 color: passed || active ? "#fff" : "var(--muted)",
@@ -43,8 +43,8 @@ export default function StepIndicator({ step }: Props) {
                         </motion.div>
 
                         {/* Label */}
-                        <motion.span 
-                            animate={{ 
+                        <motion.span
+                            animate={{
                                 color: active ? "var(--text)" : passed ? "var(--text2)" : "var(--muted)",
                                 opacity: active || passed ? 1 : 0.6,
                                 fontWeight: active ? 900 : 700
@@ -56,7 +56,7 @@ export default function StepIndicator({ step }: Props) {
 
                         {/* Sub-line for "Another one" beneath active step */}
                         {active && (
-                            <motion.div 
+                            <motion.div
                                 layoutId="activeStepLine"
                                 className="absolute -bottom-2 w-full h-[2px] bg-[var(--a)] rounded-full shadow-[0_0_8px_var(--a)]"
                                 initial={{ width: 0 }}
