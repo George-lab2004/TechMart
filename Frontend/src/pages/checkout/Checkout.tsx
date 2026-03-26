@@ -7,7 +7,7 @@ import toast from "react-hot-toast"
 import CheckoutSection from "@/pages/checkout/components/CheckoutSection"
 import InputField from "@/Components/InputField"
 import OrderSummary from "@/pages/checkout/components/OrderSummary"
-import StepIndicator from "../checkout/components/StepIndicator"
+import StepIndicator from "@/pages/checkout/components/StepIndicator"
 import { MapPin, Plus, CreditCard, AlertCircle, ShoppingBag } from "lucide-react"
 import PaymentRenderer from "@/pages/checkout/components/PaymentRenderer"
 
