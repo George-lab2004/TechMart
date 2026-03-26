@@ -4,10 +4,10 @@ import { useGetProfileQuery, useAddAddressMutation } from "@/slices/usersApiSlic
 import { useNavigate } from "react-router-dom"
 import toast from "react-hot-toast"
 
-import CheckoutSection from "./components/checkoutsection"
+import CheckoutSection from "./components/CheckoutSection"
 import InputField from "@/Components/InputField"
 import OrderSummary from "./components/OrderSummary"
-import StepIndicator from "./components/stepIndicator"
+import StepIndicator from "./components/StepIndicator"
 import { MapPin, Plus, CreditCard, AlertCircle, ShoppingBag } from "lucide-react"
 import PaymentRenderer from "./components/PaymentRenderer"
 
@@ -234,10 +234,12 @@ export default function Checkout() {
                                     </div>
                                 ))}
                             </div>
+
                             <PaymentRenderer
                                 method={paymentMethod}
                                 total={cart.totalPrice}
                             />
+
                             <div className="flex flex-col sm:flex-row gap-3">
                                 <button onClick={() => setStep(2)} className="py-5 px-8 border border-[var(--gb)] rounded-2xl font-bold bg-[var(--card)] hover:bg-[var(--gb)] transition-colors text-xs uppercase tracking-widest text-[var(--text)]">Back</button>
                                 <button
