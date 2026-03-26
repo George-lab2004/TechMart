@@ -4,7 +4,7 @@ import { useGetProfileQuery, useAddAddressMutation } from "@/slices/usersApiSlic
 import { useNavigate } from "react-router-dom"
 import toast from "react-hot-toast"
 
-import CheckoutSection from "@/pages/checkout/components/CheckoutSection"
+import Section from "@/pages/checkout/components/Section"
 import InputField from "@/Components/InputField"
 import OrderSummary from "@/pages/checkout/components/OrderSummary"
 import StepIndicator from "@/pages/checkout/components/StepIndicator"
@@ -68,7 +68,7 @@ export default function Checkout() {
                 <div className="space-y-6">
 
                     {/* STEP 1: SHIPPING */}
-                    <CheckoutSection
+                    <Section
                         number="1" title="Shipping Address"
                         isActive={step === 1}
                         isCompleted={step > 1}
@@ -152,13 +152,13 @@ export default function Checkout() {
                                 </div>
                             </div>
                         )}
-                    </CheckoutSection>
+                    </Section>
 
                     {/* VERTICAL STEP CONNECTOR */}
                     <div className="ml-[45px] w-0.5 h-10 bg-linear-to-b from-a to-transparent opacity-60" />
 
                     {/* STEP 2: PAYMENT */}
-                    <CheckoutSection
+                    <Section
                         number="2" title="Payment Details"
                         isActive={step === 2}
                         isCompleted={step > 2}
@@ -201,13 +201,13 @@ export default function Checkout() {
                             <button onClick={() => setStep(1)} className="py-4 px-8 border border-[var(--gb)] rounded-xl font-bold bg-[var(--card)] hover:bg-[var(--gb)] transition-colors text-xs uppercase tracking-widest text-[var(--text)]">Back</button>
                             <button onClick={() => setStep(3)} className="flex-1 bg-[var(--a)] text-white py-4 rounded-xl font-bold shadow-lg shadow-[var(--a)]/30 hover:scale-[1.01] transition-all text-xs uppercase tracking-widest">Review Order</button>
                         </div>
-                    </CheckoutSection>
+                    </Section>
 
                     {/* VERTICAL STEP CONNECTOR */}
                     <div className="ml-[45px] w-0.5 h-10 bg-linear-to-b from-a to-transparent opacity-60" />
 
                     {/* STEP 3: REVIEW & SUBMIT */}
-                    <CheckoutSection
+                    <Section
                         number="3" title="Review Your Order"
                         isActive={step === 3}
                         isCompleted={false}
@@ -251,7 +251,7 @@ export default function Checkout() {
                                 </button>
                             </div>
                         </div>
-                    </CheckoutSection>
+                    </Section>
 
                 </div>
 
