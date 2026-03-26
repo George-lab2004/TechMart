@@ -4,12 +4,12 @@ import { useGetProfileQuery, useAddAddressMutation } from "@/slices/usersApiSlic
 import { useNavigate } from "react-router-dom"
 import toast from "react-hot-toast"
 
-import CheckoutSection from "@/pages/checkout/components/checkoutsection"
+import CheckoutSection from "./components/checkoutsection"
 import InputField from "@/Components/InputField"
-import OrderSummary from "@/pages/checkout/components/OrderSummary"
-import StepIndicator from "@/pages/checkout/components/stepIndicator"
+import OrderSummary from "./components/OrderSummary"
+import StepIndicator from "./components/stepIndicator"
 import { MapPin, Plus, CreditCard, AlertCircle, ShoppingBag } from "lucide-react"
-import PaymentRenderer from "./components/paymentRenderer"
+import PaymentRenderer from "./components/PaymentRenderer"
 
 export default function Checkout() {
     const { data: cart, isLoading } = useGetCartQuery()

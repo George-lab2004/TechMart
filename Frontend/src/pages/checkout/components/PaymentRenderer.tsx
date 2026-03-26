@@ -1,8 +1,7 @@
 interface Props {
     method: string
-    total: number
 }
-export default function PaymentRenderer({ method, total }: Props) {
+export default function PaymentRenderer({ method }: Props) {
     if (method === "paypal") {
         return <div>paypal Button Here</div>
     }
