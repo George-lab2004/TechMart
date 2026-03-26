@@ -7,7 +7,7 @@ import toast from "react-hot-toast"
 import CheckoutSection from "@/pages/checkout/components/CheckoutSection"
 import InputField from "@/Components/InputField"
 import OrderSummary from "@/pages/checkout/components/OrderSummary"
-import StepIndicator from "@/pages/checkout/components/StepIndicator"
+import StepIndicator from "../checkout/components/StepIndicator"
 import { MapPin, Plus, CreditCard, AlertCircle, ShoppingBag } from "lucide-react"
 import PaymentRenderer from "@/pages/checkout/components/PaymentRenderer"
 
@@ -68,29 +68,29 @@ export default function Checkout() {
                 <div className="space-y-6">
 
                     {/* STEP 1: SHIPPING */}
-                    <CheckoutSection 
-                       number="1" title="Shipping Address" 
-                       isActive={step === 1} 
-                       isCompleted={step > 1}
-                       onEdit={() => setStep(1)}
-                       summary={selectedAddress ? (
-                           <div className="flex items-center gap-4 bg-[var(--card)] p-4 rounded-2xl border border-[var(--gb)]">
-                               <div className="w-10 h-10 rounded-full bg-[var(--a)]/10 text-[var(--a)] flex items-center justify-center shrink-0">
-                                   <MapPin size={20} />
-                               </div>
-                               <div>
-                                   <p className="font-bold text-[var(--text)]">{selectedAddress.title}</p>
-                                   <p className="text-xs text-[var(--text2)] leading-relaxed">{selectedAddress.address[0]?.streetNumber} {selectedAddress.address[0]?.buildingNumber}, {selectedAddress.address[0]?.city}</p>
-                               </div>
-                           </div>
-                       ) : <span className="opacity-50 text-xs italic">No address selected</span>}
+                    <CheckoutSection
+                        number="1" title="Shipping Address"
+                        isActive={step === 1}
+                        isCompleted={step > 1}
+                        onEdit={() => setStep(1)}
+                        summary={selectedAddress ? (
+                            <div className="flex items-center gap-4 bg-[var(--card)] p-4 rounded-2xl border border-[var(--gb)]">
+                                <div className="w-10 h-10 rounded-full bg-[var(--a)]/10 text-[var(--a)] flex items-center justify-center shrink-0">
+                                    <MapPin size={20} />
+                                </div>
+                                <div>
+                                    <p className="font-bold text-[var(--text)]">{selectedAddress.title}</p>
+                                    <p className="text-xs text-[var(--text2)] leading-relaxed">{selectedAddress.address[0]?.streetNumber} {selectedAddress.address[0]?.buildingNumber}, {selectedAddress.address[0]?.city}</p>
+                                </div>
+                            </div>
+                        ) : <span className="opacity-50 text-xs italic">No address selected</span>}
                     >
                         {!isAddingNewAddress ? (
                             <div className="space-y-4">
                                 {addresses.length > 0 ? (
                                     <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                                         {addresses.map((del: any, idx: number) => (
-                                            <div 
+                                            <div
                                                 key={idx}
                                                 onClick={() => setSelectedAddressIndex(idx)}
                                                 className={`p-5 rounded-2xl border flex flex-col justify-between cursor-pointer transition-all duration-300 relative overflow-hidden
@@ -106,7 +106,7 @@ export default function Checkout() {
                                                 </div>
                                             </div>
                                         ))}
-                                        <div 
+                                        <div
                                             onClick={() => setIsAddingNewAddress(true)}
                                             className="p-5 rounded-2xl border border-dashed border-[var(--gb)] flex flex-col items-center justify-center gap-2 cursor-pointer hover:bg-[var(--glass)] transition-all min-h-[140px]"
                                         >
@@ -123,7 +123,7 @@ export default function Checkout() {
                                         <button onClick={() => setIsAddingNewAddress(true)} className="bg-[var(--glass)] border border-[var(--gb)] px-8 py-3 rounded-full text-sm font-bold hover:bg-[var(--gb)] transition-colors shadow-sm text-[var(--text)]">Add New Address</button>
                                     </div>
                                 )}
-                                
+
                                 <button
                                     disabled={selectedAddressIndex === null}
                                     onClick={() => setStep(2)}
@@ -158,22 +158,22 @@ export default function Checkout() {
                     <div className="ml-[45px] w-0.5 h-10 bg-linear-to-b from-a to-transparent opacity-60" />
 
                     {/* STEP 2: PAYMENT */}
-                    <CheckoutSection 
-                       number="2" title="Payment Details" 
-                       isActive={step === 2} 
-                       isCompleted={step > 2}
-                       onEdit={() => setStep(2)}
-                       summary={step > 2 ? (
-                           <div className="flex items-center gap-4 bg-[var(--card)] p-4 rounded-2xl border border-[var(--gb)] capitalize">
-                               <div className="w-10 h-10 rounded-full bg-[var(--a)]/10 text-[var(--a)] flex items-center justify-center shrink-0">
-                                   <CreditCard size={20} />
-                               </div>
-                               <div>
-                                   <span className="font-bold text-[var(--text)] block">{paymentMethod.replace('-', ' ')}</span>
-                                   <span className="text-xs text-[var(--text2)]">Secure Checkout</span>
-                               </div>
-                           </div>
-                       ) : null}
+                    <CheckoutSection
+                        number="2" title="Payment Details"
+                        isActive={step === 2}
+                        isCompleted={step > 2}
+                        onEdit={() => setStep(2)}
+                        summary={step > 2 ? (
+                            <div className="flex items-center gap-4 bg-[var(--card)] p-4 rounded-2xl border border-[var(--gb)] capitalize">
+                                <div className="w-10 h-10 rounded-full bg-[var(--a)]/10 text-[var(--a)] flex items-center justify-center shrink-0">
+                                    <CreditCard size={20} />
+                                </div>
+                                <div>
+                                    <span className="font-bold text-[var(--text)] block">{paymentMethod.replace('-', ' ')}</span>
+                                    <span className="text-xs text-[var(--text2)]">Secure Checkout</span>
+                                </div>
+                            </div>
+                        ) : null}
                     >
                         <div className="space-y-3">
                             {[
@@ -207,15 +207,15 @@ export default function Checkout() {
                     <div className="ml-[45px] w-0.5 h-10 bg-linear-to-b from-a to-transparent opacity-60" />
 
                     {/* STEP 3: REVIEW & SUBMIT */}
-                    <CheckoutSection 
-                       number="3" title="Review Your Order" 
-                       isActive={step === 3} 
-                       isCompleted={false}
+                    <CheckoutSection
+                        number="3" title="Review Your Order"
+                        isActive={step === 3}
+                        isCompleted={false}
                     >
                         <div className="absolute right-6 top-6 text-[var(--a)] opacity-10 pointer-events-none">
                             <AlertCircle className="w-24 h-24" />
                         </div>
-                        
+
                         <div className="space-y-6 relative z-10">
                             <div className="bg-[var(--card)] shadow-inner border border-[var(--gb)] rounded-2xl overflow-hidden divide-y divide-[var(--gb)] max-h-[400px] overflow-y-auto custom-scrollbar">
                                 {cart.cartItems.map((item: any, idx: number) => (
