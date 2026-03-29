@@ -3,7 +3,6 @@ import HeroHeadline from '@/Components/HeroHeadline'
 import { motion } from 'framer-motion'
 import { Laptop, Mouse, Smartphone, Headphones, Gamepad2, Tv2, Watch, Camera, ChevronRight } from 'lucide-react'
 import CountUp from '@/Components/CountUp'
-import type { CSSProperties } from 'react'
 import { Link } from 'react-router-dom'
 import { useGetCategoriesQuery, type category } from '@/slices/categoryApiSlice'
 
