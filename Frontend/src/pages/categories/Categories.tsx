@@ -5,8 +5,7 @@ import { Laptop, Mouse, Smartphone, Headphones, Gamepad2, Tv2, Watch, Camera, Ch
 import CountUp from '@/Components/CountUp'
 import type { CSSProperties } from 'react'
 import { Link } from 'react-router-dom'
-import { useGetCategoriesQuery } from '@/slices/categoryApiSlice'
-
+import { useGetCategoriesQuery, type category } from '@/slices/categoryApiSlice'
 
 const stats = [
     { value: 12, suffix: "K", label: "Users" },
@@ -14,7 +13,7 @@ const stats = [
     { value: 12, suffix: "K", label: "Products" },
 ];
 
-const floatingIcons: { icon: React.ElementType; style: CSSProperties; delay: number; size: number }[] = [
+const floatingIcons = [
     { icon: Mouse, style: { top: "4%", left: "50%", marginLeft: -28 }, delay: 0.2, size: 28 },
     { icon: Smartphone, style: { top: "12%", left: "12%" }, delay: 0, size: 28 },
     { icon: Headphones, style: { top: "12%", right: "8%" }, delay: 0.4, size: 28 },
@@ -50,7 +49,7 @@ function Categories() {
                         </p>
 
                         <div className="flex flex-wrap gap-4">
-                            {stats.map((item, i) => (
+                            {stats.map((item, i: number) => (
                                 <motion.div key={i}
                                     initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }}
                                     transition={{ duration: 0.4, delay: i * 0.15 }}
@@ -67,7 +66,7 @@ function Categories() {
                     </div>
 
                     {/* Floating Hub — desktop only */}
-                    <div className="hidden lg:block relative w-80 h-[28rem] shrink-0 -mt-60 me-20 overflow-visible">
+                    <div className="hidden lg:block relative w-80 h-112 shrink-0 -mt-60 me-20 overflow-visible">
                         <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
                             <div className="w-48 h-48 rounded-full bg-a/10 blur-[80px] animate-pulse" />
                         </div>
@@ -82,7 +81,7 @@ function Categories() {
                             </motion.div>
                         </div>
 
-                        {floatingIcons.map(({ icon: Icon, style: s, delay, size }, i) => (
+                        {floatingIcons.map(({ icon: Icon, style: s, delay, size }, i: number) => (
                             <motion.div key={i}
                                 initial={{ opacity: 0, scale: 0.5 }}
                                 animate={{
@@ -123,7 +122,7 @@ function Categories() {
                     </div>
                 ) : (
                     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-                        {categories.map((cat, i) => (
+                        {categories.map((cat: category, i: number) => (
                             <Link to={`/products?category=${cat.name}`} key={cat._id}>
                                 <motion.div
                                     initial={{ opacity: 0, y: 30 }}
@@ -132,7 +131,7 @@ function Categories() {
                                     transition={{ duration: 0.5, delay: i * 0.05 }}
                                     className="group relative bg-surf border border-gb rounded-[2.5rem] overflow-hidden hover:border-a/20 transition-all duration-500"
                                 >
-                                    <div className="aspect-[16/10] overflow-hidden relative">
+                                    <div className="aspect-16/10 overflow-hidden relative">
                                         <img
                                             src={cat.images?.[0]?.url || 'https://images.unsplash.com/photo-1519389950473-acc7569d4035?q=80&w=2070&auto=format&fit=crop'}
                                             alt={cat.name}
