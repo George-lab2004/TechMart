@@ -5,7 +5,7 @@ interface Props {
 }
 
 export default function Steps({ step }: Props) {
-    const steps = ["Shipping", "Payment", "Review"]
+    const steps = ["Shipping", "Method", "Review", "Pay"]
 
     return (
         <div className="flex items-center justify-between mb-16 relative px-8 max-w-2xl mx-auto">

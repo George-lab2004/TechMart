@@ -1,11 +1,57 @@
 import { Request, Response } from "express";
 import { asyncHandler } from "../Middleware/asyncHandler.js";
 import Order from "../Models/ordersModel.js";
+import Cart from "../Models/cartModel.js";
 import { IUser } from "../Models/userModel.js";
 
 interface CustomRequest extends Request {
     user?: IUser | null;
 }
+
+// @desc    Create new order
+// @route   POST /api/orders
+// @access  Private
+const addOrderItems = asyncHandler(async (req: CustomRequest, res: Response) => {
+    const {
+        orderItems,
+        shippingAddress,
+        paymentMethod,
+        itemsPrice,
+        taxPrice,
+        shippingPrice,
+        totalPrice,
+    } = req.body;
+
+    if (orderItems && orderItems.length === 0) {
+        res.status(400);
+        throw new Error("No order items");
+    } else {
+        const order = new Order({
+            orderItems: orderItems.map((x: any) => ({
+                ...x,
+                productID: x._id,
+                _id: undefined,
+            })),
+            user: req.user?._id,
+            shippingAddress,
+            paymentMethod,
+            itemsPrice,
+            taxPrice,
+            shippingPrice,
+            totalPrice,
+            orderNumber: `ORD-${Date.now()}-${Math.floor(Math.random() * 1000)}`,
+            isPaid: paymentMethod !== "cod", // Assume paid if not COD (logic can be refined)
+            paidAt: paymentMethod !== "cod" ? new Date() : undefined,
+        });
+
+        const createdOrder = await order.save();
+
+        // Clear the user's cart after successful order
+        await Cart.findOneAndDelete({ user: req.user?._id });
+
+        res.status(201).json(createdOrder);
+    }
+});
 
 // @desc    Get logged in user orders
 // @route   GET /api/orders/mine
@@ -29,4 +75,4 @@ const getOrderById = asyncHandler(async (req: CustomRequest, res: Response) => {
     }
 });
 
-export { getMyOrders, getOrderById };
+export { addOrderItems, getMyOrders, getOrderById };

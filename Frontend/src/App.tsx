@@ -16,6 +16,8 @@ const Login = lazy(() => import('./pages/authentication/Login'))
 const ForgetPassword = lazy(() => import('./pages/authentication/ForgetPassword'))
 const Profile = lazy(() => import('./pages/Profile/Profile'))
 const Checkout = lazy(() => import('./pages/checkout/Checkout'))
+const Orders = lazy(() => import('./pages/orders/Orders'))
+const Categories = lazy(() => import('./pages/categories/Categories'))
 
 // Router defined outside the component
 const router = createBrowserRouter([
@@ -72,6 +74,14 @@ const router = createBrowserRouter([
           </Suspense>
         )
       },
+      {
+        path: "categories",
+        element: (
+          <Suspense fallback={null}>
+            <Categories />
+          </Suspense>
+        )
+      },
       // REGISTERED PROTECTED ROUTES
       {
         path: '',
@@ -90,6 +100,14 @@ const router = createBrowserRouter([
             element: (
               <Suspense fallback={null}>
                 <Checkout />
+              </Suspense>
+            )
+          },
+          {
+            path: "orders",
+            element: (
+              <Suspense fallback={null}>
+                <Orders />
               </Suspense>
             )
           }

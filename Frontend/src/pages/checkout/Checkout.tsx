@@ -1,6 +1,7 @@
 import { useState } from "react"
 import { useGetCartQuery } from "@/slices/cartApiSlice"
 import { useGetProfileQuery, useAddAddressMutation } from "@/slices/usersApiSlice"
+import { useCreateOrderMutation } from "@/slices/ordersApiSlice"
 import { useNavigate } from "react-router-dom"
 import toast from "react-hot-toast"
 
@@ -8,13 +9,14 @@ import Section from "@/pages/checkout/components/Section"
 import InputField from "@/Components/InputField"
 import OrderSummary from "@/pages/checkout/components/OrderSummary"
 import Steps from "@/pages/checkout/components/Steps"
-import { MapPin, Plus, CreditCard, AlertCircle, ShoppingBag } from "lucide-react"
+import { MapPin, Plus, CreditCard, ShoppingBag } from "lucide-react"
 import PaymentRenderer from "@/pages/checkout/components/PaymentRenderer"
 
 export default function Checkout() {
     const { data: cart, isLoading } = useGetCartQuery()
     const { data: user } = useGetProfileQuery()
     const [addAddress, { isLoading: isAddingAddress }] = useAddAddressMutation()
+    const [createOrder, { isLoading: isCreatingOrder }] = useCreateOrderMutation()
     const navigate = useNavigate()
 
     const [step, setStep] = useState(1)
@@ -49,11 +51,42 @@ export default function Checkout() {
         }
     }
 
-    const handlePlaceOrder = () => {
+    const handleOrderSuccess = async (paymentData: any = {}) => {
         if (!selectedAddress) return toast.error("Please select a shipping address")
-        console.log("PLACE ORDER PAYLOAD", { selectedAddress, paymentMethod, cart })
-        toast.success("Order Placed Successfully! (Simulation)")
-        navigate('/') // Simulation redirect
+        
+        try {
+            const orderPayload = {
+                orderItems: cart.cartItems,
+                shippingAddress: {
+                    streetNumber: selectedAddress.address[0].streetNumber,
+                    buildingNumber: selectedAddress.address[0].buildingNumber,
+                    floorNumber: selectedAddress.address[0].floorNumber,
+                    apartmentNumber: selectedAddress.address[0].apartmentNumber,
+                    city: selectedAddress.address[0].city,
+                    country: selectedAddress.address[0].country,
+                    postalCode: selectedAddress.address[0].postalCode,
+                    phone: selectedAddress.phone,
+                },
+                paymentMethod: paymentData.paymentMethod || paymentMethod,
+                paymentResult: paymentData.paymentResult,
+                itemsPrice: cart.itemsPrice,
+                shippingPrice: cart.shippingPrice,
+                taxPrice: cart.taxPrice,
+                totalPrice: cart.totalPrice,
+            }
+
+            await createOrder(orderPayload).unwrap()
+            toast.success("Order Placed Successfully!")
+            navigate(`/`) // Or navigate to order success page if available
+        } catch (err: any) {
+            toast.error(err?.data?.message || err.error || "Failed to place order")
+        }
+    }
+
+    const handlePlaceOrder = () => {
+        if (paymentMethod === 'cod') {
+            handleOrderSuccess({ paymentMethod: 'cod' })
+        }
     }
 
     return (
@@ -206,49 +239,78 @@ export default function Checkout() {
                     {/* VERTICAL STEP CONNECTOR */}
                     <div className="ml-[45px] w-0.5 h-10 bg-linear-to-b from-a to-transparent opacity-60" />
 
-                    {/* STEP 3: REVIEW & SUBMIT */}
+                    {/* STEP 3: REVIEW */}
                     <Section
                         number="3" title="Review Your Order"
                         isActive={step === 3}
-                        isCompleted={false}
+                        isCompleted={step > 3}
+                        onEdit={() => setStep(3)}
+                        summary={step > 3 ? (
+                            <div className="flex items-center gap-3 text-xs font-bold text-[var(--text2)] opacity-70">
+                                <ShoppingBag size={14} />
+                                <span>{cart.cartItems.length} Items Reviewed</span>
+                            </div>
+                        ) : null}
                     >
-                        <div className="absolute right-6 top-6 text-[var(--a)] opacity-10 pointer-events-none">
-                            <AlertCircle className="w-24 h-24" />
-                        </div>
-
-                        <div className="space-y-6 relative z-10">
-                            <div className="bg-[var(--card)] shadow-inner border border-[var(--gb)] rounded-2xl overflow-hidden divide-y divide-[var(--gb)] max-h-[400px] overflow-y-auto custom-scrollbar">
+                        <div className="space-y-6">
+                            <div className="bg-[var(--card)] shadow-inner border border-[var(--gb)] rounded-2xl overflow-hidden divide-y divide-[var(--gb)] max-h-[300px] overflow-y-auto custom-scrollbar">
                                 {cart.cartItems.map((item: any, idx: number) => (
                                     <div key={idx} className="flex gap-4 p-4 items-center bg-[var(--glass)] hover:bg-[var(--ag)] transition-colors">
-                                        <div className="w-16 h-16 bg-white rounded-xl border border-[var(--gb)] p-2 flex shrink-0 items-center justify-center">
+                                        <div className="w-12 h-12 bg-white rounded-xl border border-[var(--gb)] p-1 flex shrink-0 items-center justify-center">
                                             <img src={item.image} alt={item.name} className="max-w-full max-h-full object-contain" />
                                         </div>
                                         <div className="flex-1 min-w-0 pr-2">
-                                            <p className="font-bold text-[var(--text)] truncate">{item.name}</p>
-                                            <p className="text-[10px] text-[var(--text2)] uppercase font-mono tracking-widest mt-1 opacity-70">Quantity: {item.qty}</p>
+                                            <p className="font-bold text-[var(--text)] text-sm truncate">{item.name}</p>
+                                            <p className="text-[9px] text-[var(--text2)] uppercase font-mono tracking-widest mt-0.5 opacity-70">Qty: {item.qty}</p>
                                         </div>
                                         <div className="text-right shrink-0">
-                                            <p className="font-black text-[var(--a)]">{item.price}</p>
-                                            <p className="text-[10px] text-[var(--text2)] uppercase font-mono tracking-widest mt-1 opacity-70">EGP</p>
+                                            <p className="font-black text-[var(--a)] text-sm">${item.price}</p>
                                         </div>
                                     </div>
                                 ))}
                             </div>
 
+                            <div className="flex flex-col sm:flex-row gap-3">
+                                <button onClick={() => setStep(2)} className="py-4 px-8 border border-[var(--gb)] rounded-xl font-bold bg-[var(--card)] hover:bg-[var(--gb)] transition-colors text-xs uppercase tracking-widest text-[var(--text)]">Back</button>
+                                <button onClick={() => setStep(4)} className="flex-1 bg-[var(--text)] text-[var(--bg)] py-4 rounded-xl font-black text-xs uppercase tracking-widest transition-all shadow-lg hover:scale-[1.01]">Continue to Payment</button>
+                            </div>
+                        </div>
+                    </Section>
+
+                    {/* VERTICAL STEP CONNECTOR */}
+                    <div className="ml-[45px] w-0.5 h-10 bg-linear-to-b from-a to-transparent opacity-60" />
+
+                    {/* STEP 4: PAY */}
+                    <Section
+                        number="4" title="Finalize Payment"
+                        isActive={step === 4}
+                        isCompleted={false}
+                    >
+                        <div className="absolute right-6 top-6 text-[var(--a)] opacity-10 pointer-events-none">
+                            <CreditCard className="w-24 h-24" />
+                        </div>
+
+                        <div className="space-y-6 relative z-10">
                             <PaymentRenderer
                                 method={paymentMethod}
                                 total={cart.totalPrice}
+                                cart={cart}
+                                address={selectedAddress}
+                                onOrderSuccess={handleOrderSuccess}
                             />
 
                             <div className="flex flex-col sm:flex-row gap-3">
-                                <button onClick={() => setStep(2)} className="py-5 px-8 border border-[var(--gb)] rounded-2xl font-bold bg-[var(--card)] hover:bg-[var(--gb)] transition-colors text-xs uppercase tracking-widest text-[var(--text)]">Back</button>
-                                <button
-                                    onClick={handlePlaceOrder}
-                                    className="flex-1 flex items-center justify-center gap-3 bg-[var(--text)] text-[var(--bg)] py-5 rounded-2xl font-black text-sm uppercase tracking-widest transition-all shadow-[0_4px_24px_rgba(0,0,0,0.3)] hover:-translate-y-0.5 hover:shadow-[0_8px_40px_rgba(0,0,0,0.4)]"
-                                >
-                                    <ShoppingBag size={18} />
-                                    Place Order
-                                </button>
+                                <button onClick={() => setStep(3)} className="py-5 px-8 border border-[var(--gb)] rounded-2xl font-bold bg-[var(--card)] hover:bg-[var(--gb)] transition-colors text-xs uppercase tracking-widest text-[var(--text)]">Back</button>
+                                {paymentMethod === 'cod' && (
+                                    <button
+                                        onClick={handlePlaceOrder}
+                                        disabled={isCreatingOrder}
+                                        className="flex-1 flex items-center justify-center gap-3 bg-[var(--a)] text-white py-5 rounded-2xl font-black text-sm uppercase tracking-widest transition-all shadow-[0_4px_24px_rgba(0,128,255,0.3)] hover:-translate-y-0.5 hover:shadow-[0_8px_40px_rgba(0,128,255,0.4)] disabled:opacity-50"
+                                    >
+                                        <ShoppingBag size={18} />
+                                        {isCreatingOrder ? "Placing Order..." : "Place Order"}
+                                    </button>
+                                )}
                             </div>
                         </div>
                     </Section>

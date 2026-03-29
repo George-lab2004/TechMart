@@ -47,7 +47,7 @@ const signIn = async (req: Request, res: Response) => {
     const token = jwt.sign(
         { userId: user._id, name: user.name, email: user.email },
         process.env.JWT_SECRET!,
-        { expiresIn: "1d" }
+        { expiresIn: "24h" }
     )
 
     // 5. set cookie
@@ -277,10 +277,10 @@ const verifyOTP = asyncHandler(async (req, res) => {
 
 const resetPassword = asyncHandler(async (req, res) => {
     const { email, otp, newPassword } = req.body
-    const user = await User.findOne({ 
-        email, 
+    const user = await User.findOne({
+        email,
         resetPasswordOTP: otp,
-        resetPasswordOTPExpiry: { $gt: Date.now() } 
+        resetPasswordOTPExpiry: { $gt: Date.now() }
     })
 
     if (!user) {
@@ -292,7 +292,7 @@ const resetPassword = asyncHandler(async (req, res) => {
     user.password = hashedPassword
     user.resetPasswordOTP = undefined
     user.resetPasswordOTPExpiry = undefined
-    
+
     await user.save()
 
     res.status(200).json({ message: "Password reset successful" })

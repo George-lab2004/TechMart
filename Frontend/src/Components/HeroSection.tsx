@@ -41,7 +41,7 @@ export default function HeroSection({
       <div className="flex-1 flex-col">
         {/* Badge pill */}
         <span className="bg-surf border border-gb py-1 font-mono text-xs tracking-[1px] uppercase px-3 rounded-3xl flex items-center gap-3 w-fit shadow-sm text-text2">
-          <AnimatedDot color="green-500" size="sm" />
+          <AnimatedDot size="sm" />
           {badge}
         </span>
 

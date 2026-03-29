@@ -14,6 +14,8 @@ import { useGetCartQuery } from '@/slices/cartApiSlice'
 const navLinks = [
   { label: 'Home', to: '/' },
   { label: 'Products', to: '/products' },
+  { label: 'Orders', to: '/orders' },
+  { label: 'Categories', to: '/categories' },
 ]
 
 export interface CartItem {
