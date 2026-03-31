@@ -7,8 +7,10 @@ import store from './store/store.ts'
 import { PayPalScriptProvider } from "@paypal/react-paypal-js"
 import { loadStripe } from "@stripe/stripe-js";
 import { Elements } from "@stripe/react-stripe-js";
+import ChatWidget from './Components/ChatWidget.tsx'
 
 const stripePromise = loadStripe(import.meta.env.VITE_STRIPE_PUBLISHABLE_KEY || "");
+const currentUserId = "your-user-id"; // dynamically get logged-in user
 
 createRoot(document.getElementById('root')!).render(
   <StrictMode>
@@ -19,6 +21,7 @@ createRoot(document.getElementById('root')!).render(
       }}>
         <Elements stripe={stripePromise}>
           <App />
+          <ChatWidget userId={currentUserId} />
         </Elements>
       </PayPalScriptProvider>
     </Provider>

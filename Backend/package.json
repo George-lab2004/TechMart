@@ -13,6 +13,7 @@
     "data:destroy": "npx tsx seeder.ts -d"
   },
   "dependencies": {
+    "@google/generative-ai": "^0.24.1",
     "@types/cors": "^2.8.19",
     "@types/jsonwebtoken": "^9.0.10",
     "bcryptjs": "^3.0.3",
