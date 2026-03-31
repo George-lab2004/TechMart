@@ -21,7 +21,7 @@ export const productApiSlice = apiSlice.injectEndpoints({
     }),
     getSingleProduct: builder.query<SingleProductResponse, string>({
       query: (id) => ({ url: `${PRODUCTS_URL}/${id}` }),
-      providesTags: (result, error, id) => [{ type: "Product", id }],
+      providesTags: (_result, _error, id) => [{ type: "Product", id }],
       keepUnusedDataFor: 5,
     }),
     createProduct: builder.mutation<SingleProductResponse, Partial<Product>>({
@@ -38,7 +38,7 @@ export const productApiSlice = apiSlice.injectEndpoints({
         method: "PUT",
         body: data,
       }),
-      invalidatesTags: (result, error, { id }) => [{ type: "Product" }, { type: "Product", id }],
+      invalidatesTags: (_result, _error, { id }) => [{ type: "Product" }, { type: "Product", id }],
     }),
     deleteProduct: builder.mutation<{ message: string }, string>({
       query: (id) => ({

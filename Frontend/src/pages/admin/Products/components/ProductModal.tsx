@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react"
-import { X, Plus, Trash2, Layout, Image as ImageIcon, Cpu, Palette, Box, Tag, Shield, Truck } from "lucide-react"
+import { X, Plus, Trash2, Layout, Image as ImageIcon, Cpu, Palette, Tag, Truck } from "lucide-react"
 import { useGetCategoriesQuery } from "@/slices/categoryApiSlice"
 
 interface ProductModalProps {
@@ -84,15 +84,15 @@ export default function ProductModal({ isOpen, onClose, onSubmit, initialData }:
 
     const handleSubmit = (e: React.FormEvent) => {
         e.preventDefault()
-        
+
         // Remove internal fields that shouldn't be sent to the backend
         // eslint-disable-next-line @typescript-eslint/no-unused-vars
         const { user, _id, __v, createdAt, updatedAt, ...cleanData } = formData
 
         const submissionData = {
             ...cleanData,
-            tags: typeof formData.tags === 'string' 
-                ? formData.tags.split(",").map((t: string) => t.trim()).filter(Boolean) 
+            tags: typeof formData.tags === 'string'
+                ? formData.tags.split(",").map((t: string) => t.trim()).filter(Boolean)
                 : formData.tags
         }
         onSubmit(submissionData)

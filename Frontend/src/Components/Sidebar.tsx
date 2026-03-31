@@ -1,7 +1,7 @@
 import { Sheet, SheetContent, SheetTrigger } from "./ui/sheet"
 import { Button } from "./ui/button"
 import { NavLink } from "react-router-dom"
-import { Menu, LayoutDashboard, ShoppingCart, Tag, User, BarChart3, ChevronRight } from "lucide-react"
+import { Menu, LayoutDashboard, ShoppingCart, Tag, User, ChevronRight } from "lucide-react"
 import { useSelector } from "react-redux"
 import type { RootState } from "@/store/store"
 import ThemeToggle from "./ui/themeToggle"

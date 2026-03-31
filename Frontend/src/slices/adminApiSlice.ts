@@ -1,9 +1,7 @@
 import { apiSlice } from "./apiSlice";
 
 export const adminApiSlice = apiSlice.injectEndpoints({
-    endpoints: (builder) => ({
-        // Analytics removed
-    }),
+    endpoints: () => ({}),
 });
 
 export const { } = adminApiSlice;
