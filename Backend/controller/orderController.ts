@@ -75,4 +75,55 @@ const getOrderById = asyncHandler(async (req: CustomRequest, res: Response) => {
     }
 });
 
-export { addOrderItems, getMyOrders, getOrderById };
+// @desc    Get all orders
+// @route   GET /api/orders
+// @access  Private/Admin
+const getOrders = asyncHandler(async (req: CustomRequest, res: Response) => {
+    const orders = await Order.find({}).populate("user", "id name email");
+    res.status(200).json(orders);
+});
+
+// @desc    Update order to delivered
+// @route   PUT /api/orders/:id/deliver
+// @access  Private/Admin
+const updateOrderToDelivered = asyncHandler(async (req: Request, res: Response) => {
+    const order = await Order.findById(req.params.id);
+
+    if (order) {
+        order.status = "delivered";
+        order.deliveredAt = new Date();
+
+        const updatedOrder = await order.save();
+        res.status(200).json(updatedOrder);
+    } else {
+        res.status(404);
+        throw new Error("Order not found");
+    }
+});
+
+// @desc    Update order to paid
+// @route   PUT /api/orders/:id/pay
+// @access  Private/Admin
+const updateOrderToPaid = asyncHandler(async (req: CustomRequest, res: Response) => {
+    const order = await Order.findById(req.params.id);
+
+    if (order) {
+        order.isPaid = true;
+        order.paidAt = new Date();
+
+        const updatedOrder = await order.save();
+        res.status(200).json(updatedOrder);
+    } else {
+        res.status(404);
+        throw new Error("Order not found");
+    }
+});
+
+export { 
+    addOrderItems, 
+    getMyOrders, 
+    getOrderById, 
+    getOrders, 
+    updateOrderToDelivered, 
+    updateOrderToPaid 
+};

@@ -13,9 +13,11 @@ import { User } from 'lucide-react'
 import { useGetCartQuery } from '@/slices/cartApiSlice'
 const navLinks = [
   { label: 'Home', to: '/' },
+  { label: 'Admin', to: '/admin', admin: true },
   { label: 'Products', to: '/products' },
-  { label: 'Orders', to: '/orders' },
   { label: 'Categories', to: '/categories' },
+  { label: 'Orders', to: '/orders', private: true },
+
 ]
 
 export interface CartItem {
@@ -64,18 +66,31 @@ export default function Header() {
           TECHMART
         </Link>
 
+
         {/* Nav Pills */}
         <div className="hidden lg:flex gap-1.5 bg-glass border border-gb rounded-full p-[6px]">
-          {navLinks.map((link) => (
-            <NavLink
-              key={link.label}
-              to={link.to}
-              className={({ isActive }) => `text-[13px] font-medium px-5 py-[6px] rounded-full transition-colors tracking-[0.2px] no-underline ${isActive ? 'text-a bg-gb' : 'text-text2 hover:text-text hover:bg-gb'
-                }`}
-            >
-              {link.label}
-            </NavLink>
-          ))}
+          {navLinks
+            .filter(link => {
+              if (link.admin) return userInfo?.isAdmin === true;
+              if (link.private) return !!userInfo;
+              return true;
+            }).map((link) => (
+              <NavLink
+                key={link.label}
+                to={link.to}
+                className={({ isActive }) => `
+  text-[13px] font-medium px-4 py-[6px] rounded-full transition-all no-underline
+  ${link.admin && userInfo?.isAdmin
+                    ? "bg-red-500/10 text-red-500 border border-red-500/30 hover:bg-red-500/20"
+                    : isActive
+                      ? 'text-a bg-gb'
+                      : 'text-text2 hover:text-text hover:bg-gb'
+                  }
+`}
+              >
+                {link.label}
+              </NavLink>
+            ))}
         </div>
 
         {/* Right side */}
@@ -151,9 +166,9 @@ export default function Header() {
 
       {/* Mobile dropdown menu */}
       <div className={`lg:hidden fixed top-[84px] left-1/2 -translate-x-1/2 z-[499] w-[calc(100%-32px)] sm:w-[calc(100%-80px)] max-w-[1280px] bg-nav backdrop-blur-[28px] border border-gb rounded-[18px] overflow-hidden transition-all duration-300
-        dark:border-[rgba(79,142,255,0.25)]
+        dark:border-[rgba(79,142,255,0.25)] overflow-y-scroll
         dark:shadow-[0_0_0_1px_rgba(79,142,255,0.12),0_8px_40px_rgba(0,0,0,0.5)]
-        ${menuOpen ? 'max-h-[400px] opacity-100 shadow-[0_8px_32px_rgba(0,0,0,0.15)]' : 'max-h-0 opacity-0 shadow-none border-transparent'}`}>
+        ${menuOpen ? 'max-h-[400px] opacity-100 shadow-[0_8px_32px_rgba(0,0,0,0.15)]' : 'max-h-0 opacity-0 shadow-none border-transparent over'}`}>
 
         <div className="p-4 flex flex-col gap-1">
 
@@ -186,17 +201,30 @@ export default function Header() {
             </Link>
           )}
           {/* Nav links */}
-          {navLinks.map((link) => (
-            <NavLink
-              key={link.label}
-              to={link.to}
-              onClick={() => setMenuOpen(false)}
-              className={({ isActive }) => `text-[14px] font-medium px-4 py-3 rounded-[12px] transition-colors no-underline ${isActive ? 'text-a bg-gb' : 'text-text2 hover:text-text hover:bg-gb'
-                }`}
-            >
-              {link.label}
-            </NavLink>
-          ))}
+          {navLinks
+            .filter(link => {
+              if (link.admin) return userInfo?.isAdmin === true;
+              if (link.private) return !!userInfo;
+              return true;
+            })
+            .map((link) => (
+              <NavLink
+                key={link.label}
+                to={link.to}
+                onClick={() => setMenuOpen(false)}
+                className={({ isActive }) => `
+  text-[14px] font-medium px-4 py-2 rounded-[12px] transition-all no-underline
+  ${link.admin && userInfo?.isAdmin
+                    ? "bg-red-500/10 text-red-500 border border-red-500/30 hover:bg-red-500/20"
+                    : isActive
+                      ? 'text-a bg-gb'
+                      : 'text-text2 hover:text-text hover:bg-gb'
+                  }
+`}
+              >
+                {link.label}
+              </NavLink>
+            ))}
 
           {/* Mobile Cart Link */}
           <Link

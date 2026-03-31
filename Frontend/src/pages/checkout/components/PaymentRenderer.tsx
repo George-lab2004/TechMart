@@ -14,9 +14,9 @@ interface Props {
 export default function PaymentRenderer({ method, total, cart, address, onOrderSuccess }: Props) {
     if (!address) {
         return (
-            <div className="bg-[var(--ag)] p-4 rounded-2xl border border-[var(--gb)] flex items-start gap-3 mt-6">
-                <AlertCircle className="text-[var(--a)] mt-0.5" size={16} />
-                <p className="text-[10px] leading-relaxed text-[var(--text2)] font-bold uppercase tracking-wider">
+            <div className="bg-ag p-4 rounded-2xl border border-gb flex items-start gap-3 mt-6">
+                <AlertCircle className="text-a mt-0.5" size={16} />
+                <p className="text-[10px] leading-relaxed text-text2 font-bold uppercase tracking-wider">
                     Shipping Address Required. Please go back to step 1.
                 </p>
             </div>
@@ -27,7 +27,7 @@ export default function PaymentRenderer({ method, total, cart, address, onOrderS
         return (
             <div className="mt-6 space-y-4">
                 <div className="text-center">
-                    <p className="text-[10px] uppercase tracking-[0.2em] font-black text-[var(--text2)] opacity-50 mb-2">Secure Credit Card</p>
+                    <p className="text-[10px] uppercase tracking-[0.2em] font-black text-text2 opacity-50 mb-2">Secure Credit Card</p>
                 </div>
                 <StripeCheckout
                     total={cart.totalPrice}
@@ -95,9 +95,9 @@ export default function PaymentRenderer({ method, total, cart, address, onOrderS
 
     if (method === "cod") {
         return (
-            <div className="bg-[var(--card)] p-6 rounded-2xl border border-[var(--gb)] flex flex-col items-center gap-4 text-center">
-                <p className="text-xs uppercase tracking-[0.2em] font-black text-[var(--a)]">Pay on Delivery</p>
-                <p className="text-[10px] text-[var(--text2)] opacity-70">Please have ${total} ready upon arrival.</p>
+            <div className="bg-card p-6 rounded-2xl border border-gb flex flex-col items-center gap-4 text-center">
+                <p className="text-xs uppercase tracking-[0.2em] font-black text-a">Pay on Delivery</p>
+                <p className="text-[10px] text-text2 opacity-70">Please have ${total} ready upon arrival.</p>
             </div>
         )
     }

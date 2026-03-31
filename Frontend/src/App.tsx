@@ -1,4 +1,4 @@
-import { createBrowserRouter, RouterProvider } from 'react-router-dom'
+import { createBrowserRouter, RouterProvider, Navigate } from 'react-router-dom'
 import { lazy, Suspense } from 'react'
 import './App.css'
 import UserLayout from '@/layouts/UserLayout'
@@ -6,6 +6,7 @@ import Error from '@/Components/Error'
 import { Toaster } from 'react-hot-toast'
 import PrivateRoutes from './Components/security/PrivateRoutes'
 import AdminRoutes from './Components/security/AdminRoutes'
+import AdminLayout from './layouts/AdminLayout'
 
 // Lazy-loaded pages
 const Home = lazy(() => import('./pages/Home/Home'))
@@ -18,6 +19,11 @@ const Profile = lazy(() => import('./pages/Profile/Profile'))
 const Checkout = lazy(() => import('./pages/checkout/Checkout'))
 const Orders = lazy(() => import('./pages/orders/Orders'))
 const Categories = lazy(() => import('./pages/categories/Categories'))
+const Dashboard = lazy(() => import('./pages/admin/dashboard/Dashboard'))
+const Users = lazy(() => import('./pages/admin/Users/Users'))
+const AdminProducts = lazy(() => import('./pages/admin/Products/Products'))
+const AdminOrders = lazy(() => import('./pages/admin/orders/Orders'))
+const AdminCategories = lazy(() => import('./pages/admin/Categories/Categories'))
 
 // Router defined outside the component
 const router = createBrowserRouter([
@@ -113,16 +119,25 @@ const router = createBrowserRouter([
           }
         ]
       },
-      // ADMIN ROUTES
-      {
-        path: '',
-        element: <AdminRoutes />,
-        children: [
-          // Admin routes go here
-        ]
-      }
     ],
   },
+  {
+    path: '/admin',
+    element: <AdminRoutes />, // handles auth + role
+    children: [
+      {
+        element: <AdminLayout />, // 👈 create this
+        children: [
+          { index: true, element: <Navigate to="dashboard" replace /> },
+          { path: "dashboard", element: <Suspense fallback={null}><Dashboard /></Suspense> },
+          { path: "products", element: <Suspense fallback={null}><AdminProducts /></Suspense> },
+          { path: "orders", element: <Suspense fallback={null}><AdminOrders /></Suspense> },
+          { path: "categories", element: <Suspense fallback={null}><AdminCategories /></Suspense> },
+          { path: "users", element: <Suspense fallback={null}><Users /></Suspense> },
+        ]
+      }
+    ]
+  }
 ])
 
 export default function App() {

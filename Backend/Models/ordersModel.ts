@@ -51,6 +51,7 @@ const OrderSchema = new Schema(
     paymentResult: { type: PaymentResultSchema },              // populated after gateway confirms charge
     isPaid:        { type: Boolean, default: false },
     paidAt:        { type: Date },
+    deliveredAt:   { type: Date },
 
     // ── PRICING BREAKDOWN ───────────────────────────────
     itemsPrice:    { type: Number, default: 0.0 },             // sum of (price × qty) for all items
@@ -95,6 +96,7 @@ export interface IOrder extends Document {
   }
   isPaid:        boolean
   paidAt?:       Date
+  deliveredAt?:  Date
   itemsPrice:    number
   taxPrice:      number
   shippingPrice: number

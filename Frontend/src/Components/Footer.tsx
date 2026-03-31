@@ -4,10 +4,10 @@ import { useGetCategoriesQuery, type category } from "@/slices/categoryApiSlice"
 
 const Footer = () => {
     const { data, isLoading, isError } = useGetCategoriesQuery()
-    
+
     if (isLoading) return <p className="text-center py-20 text-muted">Loading categories...</p>;
     if (isError) return <p className="text-center py-20 text-muted">Failed to load categories.</p>;
-    
+
     const categories: category[] = data?.result ?? [];
 
     return (
@@ -16,7 +16,10 @@ const Footer = () => {
                 {/* Brand Section */}
                 <div className="flex flex-col gap-6 col-span-1 md:col-span-1">
                     <div className="flex items-center gap-2">
-                        <AnimatedDot color="gray-800" size="sm" />
+                        <span className="flex ">
+                            <AnimatedDot color="gray-700" size="lg" />
+
+                        </span>
                         <h1 className="text-2xl font-black uppercase tracking-tighter leading-none bg-linear-to-r from-gray-600 to-blue-900 bg-clip-text text-transparent">
                             TechMart
                         </h1>
@@ -61,8 +64,8 @@ const Footer = () => {
                 <div className="flex flex-col gap-6">
                     <h5 className="text-[11px] font-black uppercase tracking-[0.2em] bg-linear-to-r from-gray-600 to-blue-900 bg-clip-text text-transparent">Stay Updated</h5>
                     <div className="relative group">
-                        <input 
-                            type="email" 
+                        <input
+                            type="email"
                             placeholder="Enter Email"
                             className="w-full bg-card border border-gb py-3 px-5 rounded-2xl text-[10px] font-black uppercase tracking-widest focus:outline-none focus:ring-2 focus:ring-blue-900/20 focus:border-blue-900 transition-all"
                         />
@@ -86,4 +89,4 @@ const Footer = () => {
 }
 
 export default Footer
-
+

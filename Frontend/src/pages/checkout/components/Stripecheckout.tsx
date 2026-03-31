@@ -43,7 +43,7 @@ export default function StripeCheckout({ total, onOrderSuccess }: StripeCheckout
 
     return (
         <form onSubmit={handleSubmit} className="space-y-4 animate-in fade-in slide-in-from-bottom-2">
-            <div className="p-4 border border-[var(--gb)] rounded-2xl bg-[var(--ag)] shadow-inner">
+            <div className="p-4 border border-gb rounded-2xl bg-ag shadow-inner">
                 <CardElement 
                     onChange={(e) => setIsComplete(e.complete)}
                     options={{
@@ -63,7 +63,7 @@ export default function StripeCheckout({ total, onOrderSuccess }: StripeCheckout
                 type="submit"
                 disabled={!stripe || loading || !isComplete}
                 className={`w-full py-4 rounded-xl font-black uppercase tracking-widest text-xs transition-all
-                    ${!stripe || loading || !isComplete ? 'bg-[var(--gb)] text-[var(--muted)] opacity-50 cursor-not-allowed' : 'bg-[var(--a)] text-white hover:scale-[1.01] shadow-lg shadow-[var(--a)]/20'}`}
+                    ${!stripe || loading || !isComplete ? 'bg-gb text-muted opacity-50 cursor-not-allowed' : 'bg-a text-white hover:scale-[1.01] shadow-lg shadow-(--a)/20'}`}
             >
                 {loading ? "Processing..." : `Pay $${total.toFixed(2)}`}
             </button>

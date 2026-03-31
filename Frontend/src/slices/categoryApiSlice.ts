@@ -22,8 +22,37 @@ export const categoryApiSlice = apiSlice.injectEndpoints({
             query: () => ({
                 url: CATEGORIES_URL
             }),
+            providesTags: ['Category'],
             keepUnusedDataFor: 5
-        })
+        }),
+        createCategory: builder.mutation<category, Partial<category>>({
+            query: (data) => ({
+                url: CATEGORIES_URL,
+                method: 'POST',
+                body: data,
+            }),
+            invalidatesTags: ['Category'],
+        }),
+        updateCategory: builder.mutation<category, Partial<category>>({
+            query: (data) => ({
+                url: `${CATEGORIES_URL}/${data._id}`,
+                method: 'PUT',
+                body: data,
+            }),
+            invalidatesTags: ['Category', 'Product'],
+        }),
+        deleteCategory: builder.mutation<void, string>({
+            query: (categoryId) => ({
+                url: `${CATEGORIES_URL}/${categoryId}`,
+                method: 'DELETE',
+            }),
+            invalidatesTags: ['Category', 'Product'],
+        }),
     })
 })
-export const { useGetCategoriesQuery } = categoryApiSlice
+export const { 
+    useGetCategoriesQuery,
+    useCreateCategoryMutation,
+    useUpdateCategoryMutation,
+    useDeleteCategoryMutation
+} = categoryApiSlice

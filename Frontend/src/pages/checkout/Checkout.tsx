@@ -107,13 +107,13 @@ export default function Checkout() {
                         isCompleted={step > 1}
                         onEdit={() => setStep(1)}
                         summary={selectedAddress ? (
-                            <div className="flex items-center gap-4 bg-[var(--card)] p-4 rounded-2xl border border-[var(--gb)]">
-                                <div className="w-10 h-10 rounded-full bg-[var(--a)]/10 text-[var(--a)] flex items-center justify-center shrink-0">
+                            <div className="flex items-center gap-4 bg-card p-4 rounded-2xl border border-gb">
+                                <div className="w-10 h-10 rounded-full bg-a/10 text-a flex items-center justify-center shrink-0">
                                     <MapPin size={20} />
                                 </div>
                                 <div>
-                                    <p className="font-bold text-[var(--text)]">{selectedAddress.title}</p>
-                                    <p className="text-xs text-[var(--text2)] leading-relaxed">{selectedAddress.address[0]?.streetNumber} {selectedAddress.address[0]?.buildingNumber}, {selectedAddress.address[0]?.city}</p>
+                                    <p className="font-bold text-text">{selectedAddress.title}</p>
+                                    <p className="text-xs text-text2 leading-relaxed">{selectedAddress.address[0]?.streetNumber} {selectedAddress.address[0]?.buildingNumber}, {selectedAddress.address[0]?.city}</p>
                                 </div>
                             </div>
                         ) : <span className="opacity-50 text-xs italic">No address selected</span>}
@@ -127,40 +127,40 @@ export default function Checkout() {
                                                 key={idx}
                                                 onClick={() => setSelectedAddressIndex(idx)}
                                                 className={`p-5 rounded-2xl border flex flex-col justify-between cursor-pointer transition-all duration-300 relative overflow-hidden
-                                                    ${selectedAddressIndex === idx ? 'border-[var(--a)] bg-[var(--a)]/5 shadow-[0_4px_20px_rgba(0,128,255,0.15)] ring-1 ring-[var(--a)]' : 'border-[var(--gb)] bg-[var(--card)] hover:border-[var(--a)]/30'}`}
+                                                    ${selectedAddressIndex === idx ? 'border-a bg-a/5 shadow-[0_4px_20px_rgba(0,128,255,0.15)] ring-1 ring-a' : 'border-gb bg-card hover:border-a/30'}`}
                                             >
                                                 <div>
                                                     <div className="flex justify-between items-start mb-2">
-                                                        <p className={`font-black uppercase tracking-widest text-xs ${selectedAddressIndex === idx ? 'text-[var(--a)]' : 'text-[var(--text)]'}`}>{del.title}</p>
-                                                        {selectedAddressIndex === idx && <span className="w-5 h-5 rounded-full bg-[var(--a)] text-white flex items-center justify-center text-[10px]">✓</span>}
+                                                        <p className={`font-black uppercase tracking-widest text-xs ${selectedAddressIndex === idx ? 'text-a' : 'text-text'}`}>{del.title}</p>
+                                                        {selectedAddressIndex === idx && <span className="w-5 h-5 rounded-full bg-a text-white flex items-center justify-center text-[10px]">✓</span>}
                                                     </div>
                                                     <p className="text-sm font-semibold mt-2">{del.address[0]?.streetNumber} {del.address[0]?.buildingNumber}</p>
-                                                    <p className="text-xs text-[var(--text2)] mt-1">{del.address[0]?.city}, {del.address[0]?.country}</p>
+                                                    <p className="text-xs text-text2 mt-1">{del.address[0]?.city}, {del.address[0]?.country}</p>
                                                 </div>
                                             </div>
                                         ))}
                                         <div
                                             onClick={() => setIsAddingNewAddress(true)}
-                                            className="p-5 rounded-2xl border border-dashed border-[var(--gb)] flex flex-col items-center justify-center gap-2 cursor-pointer hover:bg-[var(--glass)] transition-all min-h-[140px]"
+                                            className="p-5 rounded-2xl border border-dashed border-gb flex flex-col items-center justify-center gap-2 cursor-pointer hover:bg-glass transition-all min-h-[140px]"
                                         >
-                                            <div className="w-10 h-10 rounded-full bg-[var(--gb)] flex items-center justify-center">
-                                                <Plus size={18} className="text-[var(--text2)]" />
+                                            <div className="w-10 h-10 rounded-full bg-gb flex items-center justify-center">
+                                                <Plus size={18} className="text-text2" />
                                             </div>
-                                            <span className="text-sm font-bold text-[var(--text2)]">Add New Address</span>
+                                            <span className="text-sm font-bold text-text2">Add New Address</span>
                                         </div>
                                     </div>
                                 ) : (
-                                    <div className="text-center py-12 border border-dashed border-[var(--gb)] rounded-3xl bg-[var(--card)]">
+                                    <div className="text-center py-12 border border-dashed border-gb rounded-3xl bg-card">
                                         <MapPin className="mx-auto mb-4 opacity-20" size={40} />
-                                        <p className="text-[var(--text2)] mb-4 font-mono text-xs uppercase tracking-widest">No existing locations.</p>
-                                        <button onClick={() => setIsAddingNewAddress(true)} className="bg-[var(--glass)] border border-[var(--gb)] px-8 py-3 rounded-full text-sm font-bold hover:bg-[var(--gb)] transition-colors shadow-sm text-[var(--text)]">Add New Address</button>
+                                        <p className="text-text2 mb-4 font-mono text-xs uppercase tracking-widest">No existing locations.</p>
+                                        <button onClick={() => setIsAddingNewAddress(true)} className="bg-glass border border-gb px-8 py-3 rounded-full text-sm font-bold hover:bg-gb transition-colors shadow-sm text-text">Add New Address</button>
                                     </div>
                                 )}
 
                                 <button
                                     disabled={selectedAddressIndex === null}
                                     onClick={() => setStep(2)}
-                                    className={`mt-6 w-full py-4 rounded-xl font-bold transition-all uppercase tracking-widest text-[11px] sm:text-xs ${selectedAddressIndex !== null ? 'bg-[var(--a)] text-white hover:scale-[1.01] shadow-lg shadow-[var(--a)]/20' : 'bg-[var(--gb)] text-[var(--muted)] cursor-not-allowed'}`}
+                                    className={`mt-6 w-full py-4 rounded-xl font-bold transition-all uppercase tracking-widest text-[11px] sm:text-xs ${selectedAddressIndex !== null ? 'bg-a text-white hover:scale-[1.01] shadow-lg shadow-(--a)/20' : 'bg-gb text-muted cursor-not-allowed'}`}
                                 >
                                     Deliver to Selected
                                 </button>
@@ -178,8 +178,8 @@ export default function Checkout() {
                                     <InputField label="ZIP Code" value={formData.postalCode} onChange={e => setFormData({ ...formData, postalCode: e.target.value })} />
                                 </div>
                                 <div className="flex flex-col sm:flex-row gap-3">
-                                    <button onClick={() => setIsAddingNewAddress(false)} className="flex-1 border border-[var(--gb)] py-4 rounded-xl font-bold hover:bg-[var(--glass)] transition-colors text-xs uppercase tracking-widest">Cancel</button>
-                                    <button onClick={handleSaveAddressAndContinue} disabled={isAddingAddress} className="flex-1 bg-[var(--a)] text-white py-4 rounded-xl font-bold shadow-lg shadow-[var(--a)]/30 hover:scale-[1.01] transition-all text-xs uppercase tracking-widest">
+                                    <button onClick={() => setIsAddingNewAddress(false)} className="flex-1 border border-gb py-4 rounded-xl font-bold hover:bg-glass transition-colors text-xs uppercase tracking-widest">Cancel</button>
+                                    <button onClick={handleSaveAddressAndContinue} disabled={isAddingAddress} className="flex-1 bg-a text-white py-4 rounded-xl font-bold shadow-lg shadow-(--a)/30 hover:scale-[1.01] transition-all text-xs uppercase tracking-widest">
                                         {isAddingAddress ? "Saving..." : "Save Address"}
                                     </button>
                                 </div>
@@ -197,13 +197,13 @@ export default function Checkout() {
                         isCompleted={step > 2}
                         onEdit={() => setStep(2)}
                         summary={step > 2 ? (
-                            <div className="flex items-center gap-4 bg-[var(--card)] p-4 rounded-2xl border border-[var(--gb)] capitalize">
-                                <div className="w-10 h-10 rounded-full bg-[var(--a)]/10 text-[var(--a)] flex items-center justify-center shrink-0">
+                            <div className="flex items-center gap-4 bg-card p-4 rounded-2xl border border-gb capitalize">
+                                <div className="w-10 h-10 rounded-full bg-a/10 text-a flex items-center justify-center shrink-0">
                                     <CreditCard size={20} />
                                 </div>
                                 <div>
-                                    <span className="font-bold text-[var(--text)] block">{paymentMethod.replace('-', ' ')}</span>
-                                    <span className="text-xs text-[var(--text2)]">Secure Checkout</span>
+                                    <span className="font-bold text-text block">{paymentMethod.replace('-', ' ')}</span>
+                                    <span className="text-xs text-text2">Secure Checkout</span>
                                 </div>
                             </div>
                         ) : null}
@@ -218,21 +218,21 @@ export default function Checkout() {
                                     key={option.id}
                                     onClick={() => option.active && setPaymentMethod(option.id)}
                                     className={`flex items-center justify-between p-5 border rounded-2xl transition-all duration-300
-                                        ${paymentMethod === option.id ? "border-[var(--a)] bg-[var(--a)]/5 ring-1 ring-[var(--a)]" : option.active ? "border-[var(--gb)] bg-[var(--card)] cursor-pointer hover:border-[var(--a)]/30" : "border-[var(--gb)]/50 opacity-40 cursor-not-allowed"}`}
+                                        ${paymentMethod === option.id ? "border-a bg-a/5 ring-1 ring-a" : option.active ? "border-gb bg-card cursor-pointer hover:border-a/30" : "border-gb/50 opacity-40 cursor-not-allowed"}`}
                                 >
                                     <div>
-                                        <p className={`font-bold ${paymentMethod === option.id ? 'text-[var(--a)]' : 'text-[var(--text)]'}`}>{option.label}</p>
-                                        <p className="text-xs text-[var(--text2)] mt-1">{option.desc}</p>
+                                        <p className={`font-bold ${paymentMethod === option.id ? 'text-a' : 'text-text'}`}>{option.label}</p>
+                                        <p className="text-xs text-text2 mt-1">{option.desc}</p>
                                     </div>
-                                    <div className={`w-5 h-5 rounded-full border-2 flex items-center justify-center transition-colors ${paymentMethod === option.id ? 'border-[var(--a)] bg-[var(--a)]' : 'border-[var(--gb)]'}`}>
+                                    <div className={`w-5 h-5 rounded-full border-2 flex items-center justify-center transition-colors ${paymentMethod === option.id ? 'border-a bg-a' : 'border-gb'}`}>
                                         {paymentMethod === option.id && <div className="w-2 h-1.5 rounded-full bg-white" />}
                                     </div>
                                 </div>
                             ))}
                         </div>
                         <div className="flex flex-col sm:flex-row gap-3 mt-6">
-                            <button onClick={() => setStep(1)} className="py-4 px-8 border border-[var(--gb)] rounded-xl font-bold bg-[var(--card)] hover:bg-[var(--gb)] transition-colors text-xs uppercase tracking-widest text-[var(--text)]">Back</button>
-                            <button onClick={() => setStep(3)} className="flex-1 bg-[var(--a)] text-white py-4 rounded-xl font-bold shadow-lg shadow-[var(--a)]/30 hover:scale-[1.01] transition-all text-xs uppercase tracking-widest">Review Order</button>
+                            <button onClick={() => setStep(1)} className="py-4 px-8 border border-gb rounded-xl font-bold bg-card hover:bg-gb transition-colors text-xs uppercase tracking-widest text-text">Back</button>
+                            <button onClick={() => setStep(3)} className="flex-1 bg-a text-white py-4 rounded-xl font-bold shadow-lg shadow-(--a)/30 hover:scale-[1.01] transition-all text-xs uppercase tracking-widest">Review Order</button>
                         </div>
                     </Section>
 
@@ -246,33 +246,33 @@ export default function Checkout() {
                         isCompleted={step > 3}
                         onEdit={() => setStep(3)}
                         summary={step > 3 ? (
-                            <div className="flex items-center gap-3 text-xs font-bold text-[var(--text2)] opacity-70">
+                            <div className="flex items-center gap-3 text-xs font-bold text-text2 opacity-70">
                                 <ShoppingBag size={14} />
                                 <span>{cart.cartItems.length} Items Reviewed</span>
                             </div>
                         ) : null}
                     >
                         <div className="space-y-6">
-                            <div className="bg-[var(--card)] shadow-inner border border-[var(--gb)] rounded-2xl overflow-hidden divide-y divide-[var(--gb)] max-h-[300px] overflow-y-auto custom-scrollbar">
+                            <div className="bg-card shadow-inner border border-gb rounded-2xl overflow-hidden divide-y divide-gb max-h-[300px] overflow-y-auto custom-scrollbar">
                                 {cart.cartItems.map((item: any, idx: number) => (
-                                    <div key={idx} className="flex gap-4 p-4 items-center bg-[var(--glass)] hover:bg-[var(--ag)] transition-colors">
-                                        <div className="w-12 h-12 bg-white rounded-xl border border-[var(--gb)] p-1 flex shrink-0 items-center justify-center">
+                                    <div key={idx} className="flex gap-4 p-4 items-center bg-glass hover:bg-ag transition-colors">
+                                        <div className="w-12 h-12 bg-white rounded-xl border border-gb p-1 flex shrink-0 items-center justify-center">
                                             <img src={item.image} alt={item.name} className="max-w-full max-h-full object-contain" />
                                         </div>
                                         <div className="flex-1 min-w-0 pr-2">
-                                            <p className="font-bold text-[var(--text)] text-sm truncate">{item.name}</p>
-                                            <p className="text-[9px] text-[var(--text2)] uppercase font-mono tracking-widest mt-0.5 opacity-70">Qty: {item.qty}</p>
+                                            <p className="font-bold text-text text-sm truncate">{item.name}</p>
+                                            <p className="text-[9px] text-text2 uppercase font-mono tracking-widest mt-0.5 opacity-70">Qty: {item.qty}</p>
                                         </div>
                                         <div className="text-right shrink-0">
-                                            <p className="font-black text-[var(--a)] text-sm">${item.price}</p>
+                                            <p className="font-black text-a text-sm">${item.price}</p>
                                         </div>
                                     </div>
                                 ))}
                             </div>
 
                             <div className="flex flex-col sm:flex-row gap-3">
-                                <button onClick={() => setStep(2)} className="py-4 px-8 border border-[var(--gb)] rounded-xl font-bold bg-[var(--card)] hover:bg-[var(--gb)] transition-colors text-xs uppercase tracking-widest text-[var(--text)]">Back</button>
-                                <button onClick={() => setStep(4)} className="flex-1 bg-[var(--text)] text-[var(--bg)] py-4 rounded-xl font-black text-xs uppercase tracking-widest transition-all shadow-lg hover:scale-[1.01]">Continue to Payment</button>
+                                <button onClick={() => setStep(2)} className="py-4 px-8 border border-gb rounded-xl font-bold bg-card hover:bg-gb transition-colors text-xs uppercase tracking-widest text-text">Back</button>
+                                <button onClick={() => setStep(4)} className="flex-1 bg-text text-bg py-4 rounded-xl font-black text-xs uppercase tracking-widest transition-all shadow-lg hover:scale-[1.01]">Continue to Payment</button>
                             </div>
                         </div>
                     </Section>
@@ -286,7 +286,7 @@ export default function Checkout() {
                         isActive={step === 4}
                         isCompleted={false}
                     >
-                        <div className="absolute right-6 top-6 text-[var(--a)] opacity-10 pointer-events-none">
+                        <div className="absolute right-6 top-6 text-a opacity-10 pointer-events-none">
                             <CreditCard className="w-24 h-24" />
                         </div>
 
@@ -300,12 +300,12 @@ export default function Checkout() {
                             />
 
                             <div className="flex flex-col sm:flex-row gap-3">
-                                <button onClick={() => setStep(3)} className="py-5 px-8 border border-[var(--gb)] rounded-2xl font-bold bg-[var(--card)] hover:bg-[var(--gb)] transition-colors text-xs uppercase tracking-widest text-[var(--text)]">Back</button>
+                                <button onClick={() => setStep(3)} className="py-5 px-8 border border-gb rounded-2xl font-bold bg-card hover:bg-gb transition-colors text-xs uppercase tracking-widest text-text">Back</button>
                                 {paymentMethod === 'cod' && (
                                     <button
                                         onClick={handlePlaceOrder}
                                         disabled={isCreatingOrder}
-                                        className="flex-1 flex items-center justify-center gap-3 bg-[var(--a)] text-white py-5 rounded-2xl font-black text-sm uppercase tracking-widest transition-all shadow-[0_4px_24px_rgba(0,128,255,0.3)] hover:-translate-y-0.5 hover:shadow-[0_8px_40px_rgba(0,128,255,0.4)] disabled:opacity-50"
+                                        className="flex-1 flex items-center justify-center gap-3 bg-a text-white py-5 rounded-2xl font-black text-sm uppercase tracking-widest transition-all shadow-[0_4px_24px_rgba(0,128,255,0.3)] hover:-translate-y-0.5 hover:shadow-[0_8px_40px_rgba(0,128,255,0.4)] disabled:opacity-50"
                                     >
                                         <ShoppingBag size={18} />
                                         {isCreatingOrder ? "Placing Order..." : "Place Order"}

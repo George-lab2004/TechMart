@@ -1,4 +1,4 @@
-import { ADD_ADDRESS_URL, PROFILE_URL } from "@/constants"
+import { ADD_ADDRESS_URL, PROFILE_URL, GET_ALL_USERS_URL, DELETE_USER_URL, UPDATE_USER_ADMIN_URL } from "@/constants"
 import { apiSlice } from "./apiSlice"
 
 export interface user {
@@ -69,7 +69,42 @@ export const profileApiSlice = apiSlice.injectEndpoints({
             invalidatesTags: ['User'],
         }),
 
+        // ADMIN ENDPOINTS
+        getUsers: builder.query<user[], void>({
+            query: () => ({
+                url: GET_ALL_USERS_URL,
+            }),
+            providesTags: ['User'],
+            keepUnusedDataFor: 5,
+        }),
+
+        deleteUser: builder.mutation<void, string>({
+            query: (userId) => ({
+                url: DELETE_USER_URL(userId),
+                method: 'DELETE',
+            }),
+            invalidatesTags: ['User'],
+        }),
+
+        updateUser: builder.mutation<user, Partial<user>>({
+            query: (data) => ({
+                url: UPDATE_USER_ADMIN_URL(data._id!),
+                method: 'PUT',
+                body: data,
+            }),
+            invalidatesTags: ['User'],
+        }),
+
     }),
 });
 
-export const { useGetProfileQuery, useUpdateProfileMutation, useAddAddressMutation, useUpdateAddressMutation, useDeleteAddressMutation } = profileApiSlice;
+export const { 
+    useGetProfileQuery, 
+    useUpdateProfileMutation, 
+    useAddAddressMutation, 
+    useUpdateAddressMutation, 
+    useDeleteAddressMutation,
+    useGetUsersQuery,
+    useDeleteUserMutation,
+    useUpdateUserMutation
+} = profileApiSlice;

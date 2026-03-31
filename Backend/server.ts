@@ -12,6 +12,7 @@ import { userRouter } from './routes/user.routes.js'
 import { CategoriesRouter } from "./routes/categories.routes.js";
 import { orderRouter } from "./routes/order.routes.js";
 import { CartRouter } from "./routes/cart.routes.js";
+
 const port = process.env.PORT || 8000
 connectDB()
 const app = express()

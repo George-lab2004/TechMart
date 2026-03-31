@@ -2,7 +2,11 @@ import { ORDERS_URL } from "@/constants"
 import { apiSlice } from "./apiSlice"
 export interface IOrder {
     _id: string
-    user: string
+    user: {
+        _id: string
+        name: string
+        email: string
+    }
     orderNumber: string
     shippingAddress: {
         streetNumber?: string
@@ -33,6 +37,7 @@ export interface IOrder {
     }
     isPaid: boolean
     paidAt?: Date
+    deliveredAt?: Date
     itemsPrice: number
     taxPrice: number
     shippingPrice: number
@@ -62,11 +67,36 @@ export const ordersApiSlice = apiSlice.injectEndpoints({
             }),
             providesTags: ['Order'],
         }),
+        getOrders: builder.query<IOrder[], void>({
+            query: () => ({
+                url: ORDERS_URL,
+            }),
+            providesTags: ['Order'],
+            keepUnusedDataFor: 5,
+        }),
+        deliverOrder: builder.mutation<IOrder, string>({
+            query: (orderId) => ({
+                url: `${ORDERS_URL}/${orderId}/deliver`,
+                method: 'PUT',
+            }),
+            invalidatesTags: ['Order'],
+        }),
+        payOrder: builder.mutation<IOrder, { orderId: string; details: any }>({
+            query: ({ orderId, details }) => ({
+                url: `${ORDERS_URL}/${orderId}/pay`,
+                method: 'PUT',
+                body: details,
+            }),
+            invalidatesTags: ['Order'],
+        }),
     }),
 });
 
 export const {
     useCreateOrderMutation,
     useGetMyOrdersQuery,
-    useGetOrderDetailsQuery
+    useGetOrderDetailsQuery,
+    useGetOrdersQuery,
+    useDeliverOrderMutation,
+    usePayOrderMutation
 } = ordersApiSlice;
