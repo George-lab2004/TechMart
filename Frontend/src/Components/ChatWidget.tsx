@@ -8,7 +8,7 @@ interface ChatWidgetProps {
 
 export default function ChatWidget({ userId }: ChatWidgetProps) {
     const [open, setOpen] = useState(false);
-
+    console.log(userId);
     return (
         <div className="fixed bottom-4 right-4 z-50 flex flex-col items-end">
             {/* Chat window */}
