@@ -1,31 +1,31 @@
-import { motion } from "framer-motion"
-import {
-    AreaChart, Area, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer,
-    BarChart, Bar, PieChart, Pie, Cell, LineChart, Line
-} from 'recharts'
-import {
-    TrendingUp, Users,
-    ShoppingBag, Loader2, AlertCircle,
-    Calendar, Download
-} from 'lucide-react'
+// import { motion } from "framer-motion"
+// import {
+//     AreaChart, Area, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer,
+//     BarChart, Bar, PieChart, Pie, Cell, LineChart, Line
+// } from 'recharts'
+// import {
+//     TrendingUp, Users,
+//     ShoppingBag, Loader2, AlertCircle,
+//     Calendar, Download
+// } from 'lucide-react'
 
-const MONTHS = ["", "Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"]
+// const MONTHS = ["", "Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"]
 
-const COLORS = ['#6366f1', '#10b981', '#f59e0b', '#ef4444', '#8b5cf6']
+// const COLORS = ['#6366f1', '#10b981', '#f59e0b', '#ef4444', '#8b5cf6']
 
-const CustomTooltip = ({ active, payload, label, prefix = "" }: any) => {
-    if (active && payload && payload.length) {
-        return (
-            <div className="bg-bg/90 backdrop-blur-xl border border-gb p-4 rounded-2xl shadow-2xl">
-                <p className="text-[10px] font-black uppercase tracking-widest text-text2 mb-1">{label}</p>
-                <p className="text-sm font-black text-a">
-                    {prefix}{payload[0].value.toLocaleString()}
-                </p>
-            </div>
-        )
-    }
-    return null
-}
+// const CustomTooltip = ({ active, payload, label, prefix = "" }: any) => {
+//     if (active && payload && payload.length) {
+//         return (
+//             <div className="bg-bg/90 backdrop-blur-xl border border-gb p-4 rounded-2xl shadow-2xl">
+//                 <p className="text-[10px] font-black uppercase tracking-widest text-text2 mb-1">{label}</p>
+//                 <p className="text-sm font-black text-a">
+//                     {prefix}{payload[0].value.toLocaleString()}
+//                 </p>
+//             </div>
+//         )
+//     }
+//     return null
+// }
 
 export default function Analytics() {
     // const { data: analytics, isLoading, error } = useGetAnalyticsQuery({})
