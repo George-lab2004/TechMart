@@ -8,7 +8,6 @@ import { PowerGlitch } from "powerglitch";
 import { Minus, Plus, ShoppingBag } from "lucide-react";
 import { useDispatch, useSelector } from "react-redux"
 import { addToCart } from "@/slices/cartSlice"
-import { useNavigate } from "react-router-dom"
 import type { RootState } from "@/store/store"
 import { useAddToCartMutation } from "@/slices/cartApiSlice"
 import toast from "react-hot-toast";
