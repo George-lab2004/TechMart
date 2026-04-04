@@ -29,7 +29,6 @@ export default function ProductDetails() {
     });
   }
   const dispatch = useDispatch()
-  const navigate = useNavigate()
   const { userInfo } = useSelector((state: RootState) => state.auth);
   const [addToCartApi] = useAddToCartMutation();
 
@@ -97,13 +96,13 @@ export default function ProductDetails() {
       countInStock: product.countInStock,
       product: product._id
     };
-    
+
     if (userInfo) {
-       await addToCartApi(cartItem).unwrap();
+      await addToCartApi(cartItem).unwrap();
     } else {
-       dispatch(addToCart(cartItem));
+      dispatch(addToCart(cartItem));
     }
-    
+
     toast.success(`${product.name} added to cart`);
   }
   useEffect(() => {

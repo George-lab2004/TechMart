@@ -6,7 +6,6 @@ import { useDispatch, useSelector } from "react-redux";
 import type { RootState } from "@/store/store";
 import { addToCart } from "@/slices/cartSlice";
 import { useAddToCartMutation } from "@/slices/cartApiSlice";
-import { apiSlice } from "@/slices/apiSlice";
 import toast from "react-hot-toast";
 
 export interface Product {
@@ -52,17 +51,17 @@ export interface Product {
 function badgeStyle(badge?: string) {
   if (!badge) return "";
   const b = badge.toLowerCase();
-  if (b.includes("new"))    return "bg-[rgba(79,142,255,0.2)]  text-[#4f8eff] border border-[rgba(79,142,255,0.3)]";
-  if (b.includes("hot"))    return "bg-[rgba(255,79,142,0.2)]  text-[#ff4f8e] border border-[rgba(255,79,142,0.3)]";
+  if (b.includes("new")) return "bg-[rgba(79,142,255,0.2)]  text-[#4f8eff] border border-[rgba(79,142,255,0.3)]";
+  if (b.includes("hot")) return "bg-[rgba(255,79,142,0.2)]  text-[#ff4f8e] border border-[rgba(255,79,142,0.3)]";
   if (b.includes("sale") || b.includes("%")) return "bg-[rgba(79,255,176,0.2)] text-[#4fffb0] border border-[rgba(79,255,176,0.3)]";
   return "bg-[rgba(255,200,79,0.2)] text-[#ffc84f] border border-[rgba(255,200,79,0.3)]";
 }
 
 export default function ProductCard({ p, isListView }: { p: Product; isListView: boolean }) {
   const [wished, setWished] = useState(false);
-  const [added,  setAdded]  = useState(false);
+  const [added, setAdded] = useState(false);
   const cardRef = useRef<HTMLDivElement>(null);
-  
+
   const dispatch = useDispatch();
   const { userInfo } = useSelector((state: RootState) => state.auth);
   const [addToCartApi] = useAddToCartMutation();
@@ -70,12 +69,12 @@ export default function ProductCard({ p, isListView }: { p: Product; isListView:
   const handleMouseMove = (e: React.MouseEvent<HTMLDivElement>) => {
     const el = cardRef.current;
     if (!el) return;
-    const r  = el.getBoundingClientRect();
-    const cx = (e.clientX - r.left) / r.width  - 0.5;
-    const cy = (e.clientY - r.top)  / r.height - 0.5;
+    const r = el.getBoundingClientRect();
+    const cx = (e.clientX - r.left) / r.width - 0.5;
+    const cy = (e.clientY - r.top) / r.height - 0.5;
     el.style.transform = `perspective(900px) rotateY(${cx * 7}deg) rotateX(${-cy * 7}deg) translateY(-5px)`;
-    el.style.setProperty("--sx", `${((e.clientX - r.left) / r.width)  * 100}%`);
-    el.style.setProperty("--sy", `${((e.clientY - r.top)  / r.height) * 100}%`);
+    el.style.setProperty("--sx", `${((e.clientX - r.left) / r.width) * 100}%`);
+    el.style.setProperty("--sy", `${((e.clientY - r.top) / r.height) * 100}%`);
   };
 
   const handleLeave = () => {
@@ -86,7 +85,7 @@ export default function ProductCard({ p, isListView }: { p: Product; isListView:
 
   const handleAdd = async (e: React.MouseEvent) => {
     e.stopPropagation();
-    
+
     const cartItem = {
       _id: p._id,
       name: p.name,
@@ -100,11 +99,11 @@ export default function ProductCard({ p, isListView }: { p: Product; isListView:
     };
 
     if (userInfo) {
-       await addToCartApi(cartItem).unwrap();
+      await addToCartApi(cartItem).unwrap();
     } else {
-       dispatch(addToCart(cartItem));
+      dispatch(addToCart(cartItem));
     }
-    
+
     toast.success(`${p.name} added to cart`);
     setAdded(true);
     setTimeout(() => setAdded(false), 1800);
@@ -121,13 +120,13 @@ export default function ProductCard({ p, isListView }: { p: Product; isListView:
                    hover:border-white/10 transition-all duration-300 hover:shadow-xl"
       >
         <div className="w-44 shrink-0 relative overflow-hidden bg-surf2 flex items-center justify-center"
-             style={p.cardBgColor ? { background: p.cardBgColor } : undefined}>
+          style={p.cardBgColor ? { background: p.cardBgColor } : undefined}>
           {p.cardGlowColor && (
             <div className="absolute inset-0" style={{ background: `radial-gradient(circle at 50% 100%, ${p.cardGlowColor}, transparent 60%)` }} />
           )}
           {primaryImg
             ? <img src={primaryImg.url} alt={primaryImg.alt}
-                   className="relative z-10 w-full h-full object-contain p-4 transition-transform duration-300 group-hover:scale-105" />
+              className="relative z-10 w-full h-full object-contain p-4 transition-transform duration-300 group-hover:scale-105" />
             : <span className="text-4xl">📦</span>
           }
           {p.badge && (
@@ -177,10 +176,10 @@ export default function ProductCard({ p, isListView }: { p: Product; isListView:
                  hover:border-white/10 hover:shadow-xl"
     >
       <div className="absolute inset-0 pointer-events-none z-2 rounded-[22px] opacity-0 group-hover:opacity-100 transition-opacity duration-300"
-           style={{ background: "radial-gradient(circle at var(--sx,50%) var(--sy,50%), rgba(255,255,255,0.05), transparent 50%)" }} />
+        style={{ background: "radial-gradient(circle at var(--sx,50%) var(--sy,50%), rgba(255,255,255,0.05), transparent 50%)" }} />
 
       <div className="relative w-full h-50 flex items-center justify-center overflow-hidden bg-surf2"
-           style={p.cardBgColor ? { background: p.cardBgColor } : undefined}>
+        style={p.cardBgColor ? { background: p.cardBgColor } : undefined}>
         {p.cardGlowColor && (
           <div className="absolute inset-0" style={{ background: `radial-gradient(circle at 50% 100%, ${p.cardGlowColor}, transparent 60%)` }} />
         )}
@@ -194,7 +193,7 @@ export default function ProductCard({ p, isListView }: { p: Product; isListView:
         </button>
         {primaryImg
           ? <img src={primaryImg.url} alt={primaryImg.alt}
-                 className="relative z-10 w-full h-full object-contain p-4 transition-transform duration-300 group-hover:scale-110 group-hover:-translate-y-1" />
+            className="relative z-10 w-full h-full object-contain p-4 transition-transform duration-300 group-hover:scale-110 group-hover:-translate-y-1" />
           : <span className="relative z-10 text-[64px]">📦</span>
         }
         <div className="absolute inset-0 z-30 flex items-center justify-center gap-2 bg-bg/70 backdrop-blur-xs opacity-0 group-hover:opacity-100 transition-opacity duration-200">
