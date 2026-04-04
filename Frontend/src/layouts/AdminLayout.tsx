@@ -4,6 +4,7 @@ import { ChevronRight, User } from 'lucide-react'
 import { useSelector } from 'react-redux'
 import type { RootState } from '@/store/store'
 import Sidebar from '@/Components/Sidebar'
+import AdminChatWidget from '@/Components/AdminChatWidget'
 
 export default function AdminLayout() {
     const { pathname } = useLocation()
@@ -59,6 +60,7 @@ export default function AdminLayout() {
                     <Outlet />
                 </motion.div>
             </main>
+            <AdminChatWidget />
         </div>
     )
 }

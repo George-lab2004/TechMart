@@ -37,23 +37,6 @@ function SkeletonCard({ isListView }: { isListView: boolean }) {
   );
 }
 
-const brands = [
-  { brand: "Apple",   count: 48 },
-  { brand: "Samsung", count: 35 },
-  { brand: "Sony",    count: 27 },
-  { brand: "Dell",    count: 22 },
-  { brand: "LG",      count: 18 },
-  { brand: "Bose",    count: 14 },
-];
-
-const ratings = [
-  { stars: 5, count: 84 },
-  { stars: 4, count: 63 },
-  { stars: 3, count: 41 },
-  { stars: 2, count: 18 },
-  { stars: 1, count: 9 },
-];
-
 const SORT_OPTIONS = [
   { label: "Featured",          key: "featured"   },
   { label: "Price: Low \u2192 High", key: "price-asc"  },
@@ -65,6 +48,9 @@ const ITEMS_PER_PAGE = 6;
 
 interface ProductsGridProps {
   sorted: Product[];
+  brands: { brand: string, count: number }[];
+  ratings: { stars: number, count: number }[];
+  maxPrice: number;
   isFiltering: boolean;
   isListView: boolean;
   setIsListView: (v: boolean) => void;
@@ -100,11 +86,13 @@ function FilterPanels({
   priceRange, setPriceRange, priceActive, setPriceActive,
   selectedBrands, toggleBrand, setSelectedBrands,
   selectedRatings, toggleRating, setSelectedRatings,
+  brands, ratings, maxPrice,
   bg = "bg-surf",
 }: Pick<ProductsGridProps,
   "priceRange" | "setPriceRange" | "priceActive" | "setPriceActive" |
   "selectedBrands" | "toggleBrand" | "setSelectedBrands" |
-  "selectedRatings" | "toggleRating" | "setSelectedRatings"
+  "selectedRatings" | "toggleRating" | "setSelectedRatings" |
+  "brands" | "ratings" | "maxPrice"
 > & { bg?: string }) {
   return (
     <>
@@ -124,18 +112,22 @@ function FilterPanels({
           </span>
           <div className="flex flex-col items-end">
             <span className="text-[10px] text-muted mb-0.5">Max</span>
-            <span className="text-sm font-semibold font-mono text-text2">$3,000</span>
+            <span className="text-sm font-semibold font-mono text-text2">${maxPrice.toLocaleString()}</span>
           </div>
         </div>
         <div className="relative w-full">
           <div className="absolute top-1/2 -translate-y-1/2 h-1 rounded-full bg-a pointer-events-none"
-               style={{ width: `${(priceRange / 3000) * 100}%` }} />
-          <input type="range" min="0" max="3000" step="50" value={priceRange}
+               style={{ width: `${maxPrice > 0 ? (priceRange / maxPrice) * 100 : 0}%` }} />
+          <input type="range" min="0" max={maxPrice} step={Math.max(1, Math.floor(maxPrice / 60))} value={priceRange}
             onChange={(e) => { setPriceActive(true); setPriceRange(Number(e.target.value)); }}
             className="relative w-full h-1 rounded-full appearance-none bg-gb accent-blue-500 cursor-pointer" />
         </div>
         <div className="flex justify-between text-[10px] font-mono text-muted">
-          <span>$0</span><span>$750</span><span>$1500</span><span>$2250</span><span>$3000</span>
+          <span>$0</span>
+          <span>${Math.round(maxPrice * 0.25)}</span>
+          <span>${Math.round(maxPrice * 0.5)}</span>
+          <span>${Math.round(maxPrice * 0.75)}</span>
+          <span>${maxPrice}</span>
         </div>
       </div>
 
@@ -212,6 +204,7 @@ export default function ProductsGrid({
   searchQuery, setSearchQuery,
   sortKey, setSortKey,
   filterDrawerOpen, setFilterDrawerOpen,
+  brands, ratings, maxPrice,
   clearAll,
 }: ProductsGridProps) {
   const [sortOpen, setSortOpen] = useState(false);
@@ -239,6 +232,7 @@ export default function ProductsGrid({
             priceActive={priceActive} setPriceActive={setPriceActive}
             selectedBrands={selectedBrands} toggleBrand={toggleBrand} setSelectedBrands={setSelectedBrands}
             selectedRatings={selectedRatings} toggleRating={toggleRating} setSelectedRatings={setSelectedRatings}
+            brands={brands} ratings={ratings} maxPrice={maxPrice}
           />
         </div>
 
@@ -430,6 +424,7 @@ export default function ProductsGrid({
                 priceActive={priceActive} setPriceActive={setPriceActive}
                 selectedBrands={selectedBrands} toggleBrand={toggleBrand} setSelectedBrands={setSelectedBrands}
                 selectedRatings={selectedRatings} toggleRating={toggleRating} setSelectedRatings={setSelectedRatings}
+                brands={brands} ratings={ratings} maxPrice={maxPrice}
               />
 
               <div className="flex gap-3 mt-auto pt-2">

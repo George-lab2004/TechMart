@@ -38,7 +38,7 @@ function Categories() {
             {/* Hero Hub */}
             <div className="mb-20">
                 <HeroHeadline
-                    line1="Shop by" line2="Category" line3="Catalog" size="text-8xl"
+                    line1="Browse" line2="By" line3="Category" size="text-8xl"
                 />
 
                 <div className="flex flex-col lg:flex-row lg:justify-between lg:items-start gap-8 mt-12">
@@ -122,7 +122,7 @@ function Categories() {
                 ) : (
                     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
                         {categories.map((cat: category, i: number) => (
-                            <Link to={`/products?category=${cat.name}`} key={cat._id}>
+                            <Link to={`/products?category=${cat.slug || cat.name.toLowerCase()}`} key={cat._id}>
                                 <motion.div
                                     initial={{ opacity: 0, y: 30 }}
                                     whileInView={{ opacity: 1, y: 0 }}

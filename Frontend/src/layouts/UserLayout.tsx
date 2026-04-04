@@ -1,6 +1,7 @@
 import { Outlet, useLocation } from 'react-router-dom'
 import Header from '@/Components/Header'
 import Footer from '@/Components/Footer'
+import ChatWidget from '@/Components/ChatWidget'
 
 export default function UserLayout() {
   const { pathname } = useLocation()
@@ -14,6 +15,7 @@ export default function UserLayout() {
         <Outlet />
       </main>
       <Footer />
+      <ChatWidget userId="user" />
     </div>
   )
 }

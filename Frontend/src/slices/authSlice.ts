@@ -5,6 +5,7 @@ interface UserInfo {
     name: string;
     email: string;
     isAdmin: boolean;
+    expiresAt?: number;
     delivery?: {
         title: string;
         address: {
@@ -26,10 +27,21 @@ interface AuthState {
     userInfo: UserInfo | null;
 }
 
+const getInitialUserInfo = (): UserInfo | null => {
+    const userInfoString = localStorage.getItem('userInfo');
+    if (userInfoString) {
+        const userInfo: UserInfo = JSON.parse(userInfoString);
+        if (userInfo.expiresAt && Date.now() > userInfo.expiresAt) {
+            localStorage.removeItem('userInfo');
+            return null;
+        }
+        return userInfo;
+    }
+    return null;
+};
+
 const initialState: AuthState = {
-    userInfo: localStorage.getItem('userInfo')
-        ? JSON.parse(localStorage.getItem('userInfo')!)
-        : null,
+    userInfo: getInitialUserInfo(),
 };
 
 const authSlice = createSlice({

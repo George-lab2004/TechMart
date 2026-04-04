@@ -32,7 +32,7 @@ export const sendEmail = async (email: string, name: string) => {
             subject: "Confirm your email - TechMart",
 
             // ✅ Fallback for email clients that don't support HTML
-            text: `Hi ${name}, please confirm your email: ${process.env.BACKEND_URL}/verify/${email}`,
+            text: `Hi ${name}, please confirm your email: ${process.env.FRONTEND_URL}/verify-email/${email}`,
 
             html: htmlCode(email, name),
         };

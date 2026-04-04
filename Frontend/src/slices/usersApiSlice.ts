@@ -1,4 +1,4 @@
-import { ADD_ADDRESS_URL, PROFILE_URL, GET_ALL_USERS_URL, DELETE_USER_URL, UPDATE_USER_ADMIN_URL } from "@/constants"
+import { ADD_ADDRESS_URL, PROFILE_URL, GET_ALL_USERS_URL, DELETE_USER_URL, UPDATE_USER_ADMIN_URL, VERIFY_EMAIL_URL } from "@/constants"
 import { apiSlice } from "./apiSlice"
 
 export interface user {
@@ -95,6 +95,13 @@ export const profileApiSlice = apiSlice.injectEndpoints({
             invalidatesTags: ['User'],
         }),
 
+        verifyEmail: builder.mutation<{ message: string }, string>({
+            query: (email) => ({
+                url: VERIFY_EMAIL_URL(email),
+                method: 'GET',
+            }),
+        }),
+
     }),
 });
 
@@ -106,5 +113,6 @@ export const {
     useDeleteAddressMutation,
     useGetUsersQuery,
     useDeleteUserMutation,
-    useUpdateUserMutation
+    useUpdateUserMutation,
+    useVerifyEmailMutation
 } = profileApiSlice;

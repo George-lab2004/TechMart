@@ -8,6 +8,7 @@ import type { Product } from "./components/ProductCard";
 import ProductsGrid from "./components/ProductsGrid";
 import Loader from "@/Components/Loader";
 import { useGetProductsQuery } from "@/slices/productApiSlice";
+import { useSearchParams } from "react-router-dom";
 
 const stats = [
   { value: 12, suffix: "K", label: "Users" },
@@ -23,15 +24,6 @@ const floatingIcons: { icon: React.ElementType; style: CSSProperties; delay: num
   { icon: Tv2,        style: { top: "44%", right: "2%"  },                  delay: 1.2, size: 26 },
   { icon: Watch,      style: { top: "74%", left: "12%"  },                  delay: 0.6, size: 26 },
   { icon: Camera,     style: { top: "74%", right: "8%"  },                  delay: 1.0, size: 26 },
-];
-
-const filterData = [
-  { icon: <Zap size={16} />, label: "All Products", count: 200, cat: "all"         },
-  { icon: <Zap size={16} />, label: "Laptops",      count: 120, cat: "laptops"     },
-  { icon: <Zap size={16} />, label: "Mobiles",      count: 80,  cat: "mobiles"     },
-  { icon: <Zap size={16} />, label: "Accessories",  count: 65,  cat: "accessories" },
-  { icon: <Zap size={16} />, label: "Gaming",       count: 45,  cat: "gaming"      },
-  { icon: <Zap size={16} />, label: "Audio",        count: 32,  cat: "audio"       },
 ];
 
 // ─── Pure helpers (outside component, no re-creation on every render) ───────
@@ -50,7 +42,7 @@ function filterProducts(
   selectedRatings: number[],
 ): Product[] {
   return products.filter(p => {
-    const matchCat    = activeCategory === "all" || p.category?.slug === activeCategory;
+    const matchCat    = activeCategory === "all" || p.category?.slug?.toLowerCase() === activeCategory || p.category?.name?.toLowerCase() === activeCategory;
     const matchSearch = p.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
                         p.brand.toLowerCase().includes(searchQuery.toLowerCase());
     const matchPrice  = !priceActive || p.price <= priceRange;
@@ -77,11 +69,14 @@ function sortProducts(products: Product[], sortKey: string): Product[] {
 // ─── Component ───────────────────────────────────────────────────────────────
 
 export default function Products() {
+  const [searchParams] = useSearchParams();
+  const initialCategory = (searchParams.get("category") || "all").toLowerCase();
+
   const [priceRange, setPriceRange]             = useState(3000);
   const [priceActive, setPriceActive]           = useState(false);
   const [selectedBrands, setSelectedBrands]     = useState<string[]>([]);
   const [selectedRatings, setSelectedRatings]   = useState<number[]>([]);
-  const [activeCategory, setActiveCategory]     = useState("all");
+  const [activeCategory, setActiveCategory]     = useState(initialCategory);
   const [searchQuery, setSearchQuery]           = useState("");
   const [sortKey, setSortKey]                   = useState("featured");
   const [isListView, setIsListView]             = useState(false);
@@ -105,6 +100,28 @@ export default function Products() {
     setPriceRange(3000);   setPriceActive(false);   setActiveCategory("all");
     setSearchQuery("");    setSortKey("featured");
   };
+
+  const maxPrice = products.length > 0 ? Math.max(...products.map(p => p.price)) : 3000;
+
+  const brands = Array.from(new Set(products.map(p => p.brand).filter(Boolean))).map(brand => ({
+    brand,
+    count: products.filter(p => p.brand === brand).length
+  })).sort((a, b) => b.count - a.count);
+
+  const ratings = [5, 4, 3, 2, 1].map(stars => ({
+    stars,
+    count: products.filter(p => Math.floor(p.rating) >= stars).length
+  }));
+
+  const filterData = [
+    { icon: <Zap size={16} />, label: "All Products", count: products.length, cat: "all" },
+    ...Array.from(new Set(products.map(p => p.category?.name).filter(Boolean))).map(catName => ({
+      icon: <Zap size={16} />,
+      label: catName,
+      count: products.filter(p => p.category?.name === catName).length,
+      cat: catName.toLowerCase()
+    }))
+  ];
 
   const sorted = sortProducts(
     filterProducts(products, activeCategory, searchQuery, priceRange, priceActive, selectedBrands, selectedRatings),
@@ -231,6 +248,9 @@ export default function Products() {
         setSortKey={setSortKey}
         filterDrawerOpen={filterDrawerOpen}
         setFilterDrawerOpen={setFilterDrawerOpen}
+        brands={brands}
+        ratings={ratings}
+        maxPrice={maxPrice}
         clearAll={clearAll}
       />
     </>

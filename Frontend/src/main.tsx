@@ -7,10 +7,15 @@ import store from './store/store.ts'
 import { PayPalScriptProvider } from "@paypal/react-paypal-js"
 import { loadStripe } from "@stripe/stripe-js";
 import { Elements } from "@stripe/react-stripe-js";
-import ChatWidget from './Components/ChatWidget.tsx'
 
 const stripePromise = loadStripe(import.meta.env.VITE_STRIPE_PUBLISHABLE_KEY || "");
-const currentUserId = "your-user-id"; // dynamically get logged-in user
+
+// Apply theme on load to prevent flickering before React mounts
+if (localStorage.getItem("theme") === "dark") {
+  document.documentElement.classList.add("dark");
+} else if (localStorage.getItem("theme") === "light") {
+  document.documentElement.classList.remove("dark");
+}
 
 createRoot(document.getElementById('root')!).render(
   <StrictMode>
@@ -21,7 +26,6 @@ createRoot(document.getElementById('root')!).render(
       }}>
         <Elements stripe={stripePromise}>
           <App />
-          <ChatWidget userId={currentUserId} />
         </Elements>
       </PayPalScriptProvider>
     </Provider>

@@ -8,8 +8,15 @@ export const aiApiSlice = apiSlice.injectEndpoints({
                 method: "POST",
                 body
             })
+        }),
+        sendAdminMessage: builder.mutation({
+            query: (body) => ({
+                url: "/api/admin-ai/chat",
+                method: "POST",
+                body
+            })
         })
     })
 });
 
-export const { useSendMessageMutation } = aiApiSlice;
+export const { useSendMessageMutation, useSendAdminMessageMutation } = aiApiSlice;

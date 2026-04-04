@@ -7,14 +7,16 @@ import { Toaster } from 'react-hot-toast'
 import PrivateRoutes from './Components/security/PrivateRoutes'
 import AdminRoutes from './Components/security/AdminRoutes'
 import AdminLayout from './layouts/AdminLayout'
+import Cart from './pages/Cart/Cart'
+import PageLoader from './Components/PageLoader'
 
 // Lazy-loaded pages
 const Home = lazy(() => import('./pages/Home/Home'))
 const Products = lazy(() => import('./pages/Products/Products'))
 const ProductDetails = lazy(() => import('./pages/ProductDetails/productDetails'))
-const Cart = lazy(() => import('./pages/Cart/Cart'))
 const Login = lazy(() => import('./pages/authentication/Login'))
 const ForgetPassword = lazy(() => import('./pages/authentication/ForgetPassword'))
+const VerifyEmail = lazy(() => import('./pages/authentication/VerifyEmail'))
 const Profile = lazy(() => import('./pages/Profile/Profile'))
 const Checkout = lazy(() => import('./pages/checkout/Checkout'))
 const Orders = lazy(() => import('./pages/orders/Orders'))
@@ -35,7 +37,7 @@ const router = createBrowserRouter([
       {
         index: true,
         element: (
-          <Suspense fallback={null}>
+          <Suspense fallback={<PageLoader />}>
             <Home />
           </Suspense>
         ),
@@ -43,7 +45,7 @@ const router = createBrowserRouter([
       {
         path: "products",
         element: (
-          <Suspense fallback={null}>
+          <Suspense fallback={<PageLoader />}>
             <Products />
           </Suspense>
         )
@@ -51,7 +53,7 @@ const router = createBrowserRouter([
       {
         path: "products/:id",
         element: (
-          <Suspense fallback={null}>
+          <Suspense fallback={<PageLoader />}>
             <ProductDetails />
           </Suspense>
         )
@@ -59,15 +61,14 @@ const router = createBrowserRouter([
       {
         path: "cart",
         element: (
-          <Suspense fallback={null}>
-            <Cart />
-          </Suspense>
+          <Cart />
+
         )
       },
       {
         path: "login",
         element: (
-          <Suspense fallback={null}>
+          <Suspense fallback={<PageLoader />}>
             <Login />
           </Suspense>
         )
@@ -75,15 +76,23 @@ const router = createBrowserRouter([
       {
         path: "forget-password",
         element: (
-          <Suspense fallback={null}>
+          <Suspense fallback={<PageLoader />}>
             <ForgetPassword />
+          </Suspense>
+        )
+      },
+      {
+        path: "verify-email/:email",
+        element: (
+          <Suspense fallback={<PageLoader />}>
+            <VerifyEmail />
           </Suspense>
         )
       },
       {
         path: "categories",
         element: (
-          <Suspense fallback={null}>
+          <Suspense fallback={<PageLoader />}>
             <Categories />
           </Suspense>
         )
@@ -96,7 +105,7 @@ const router = createBrowserRouter([
           {
             path: 'profile',
             element: (
-              <Suspense fallback={null}>
+              <Suspense fallback={<PageLoader />}>
                 <Profile />
               </Suspense>
             )
@@ -104,7 +113,7 @@ const router = createBrowserRouter([
           {
             path: "checkout",
             element: (
-              <Suspense fallback={null}>
+              <Suspense fallback={<PageLoader />}>
                 <Checkout />
               </Suspense>
             )
@@ -129,11 +138,31 @@ const router = createBrowserRouter([
         element: <AdminLayout />, // 👈 create this
         children: [
           { index: true, element: <Navigate to="dashboard" replace /> },
-          { path: "dashboard", element: <Suspense fallback={null}><Dashboard /></Suspense> },
-          { path: "products", element: <Suspense fallback={null}><AdminProducts /></Suspense> },
-          { path: "orders", element: <Suspense fallback={null}><AdminOrders /></Suspense> },
-          { path: "categories", element: <Suspense fallback={null}><AdminCategories /></Suspense> },
-          { path: "users", element: <Suspense fallback={null}><Users /></Suspense> },
+          {
+            path: "dashboard", element: <Suspense fallback={<PageLoader />}>
+              <Dashboard />
+            </Suspense>
+          },
+          {
+            path: "products", element: <Suspense fallback={<PageLoader />}>
+              <AdminProducts />
+            </Suspense>
+          },
+          {
+            path: "orders", element: <Suspense fallback={<PageLoader />}>
+              <AdminOrders />
+            </Suspense>
+          },
+          {
+            path: "categories", element: <Suspense fallback={<PageLoader />}>
+              <AdminCategories />
+            </Suspense>
+          },
+          {
+            path: "users", element: <Suspense fallback={<PageLoader />}>
+              <Users />
+            </Suspense>
+          },
         ]
       }
     ]

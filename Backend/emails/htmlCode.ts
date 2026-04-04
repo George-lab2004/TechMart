@@ -1,5 +1,5 @@
 export const htmlCode = (email: string, name: string) => {
-    const verifyUrl = `${process.env.BACKEND_URL}/verify/${email}`;
+    const verifyUrl = `${process.env.FRONTEND_URL}/verify-email/${email}`;
 
     return `
   <table width="100%" cellpadding="0" cellspacing="0" style="background:#f4f4f4;padding:20px 0;font-family:Arial,sans-serif">

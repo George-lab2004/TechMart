@@ -13,6 +13,7 @@ import { CategoriesRouter } from "./routes/categories.routes.js";
 import { orderRouter } from "./routes/order.routes.js";
 import { CartRouter } from "./routes/cart.routes.js";
 import AIrouter from "./ai/ai.route.js";
+import adminAiRouter from "./adminAi/admin.ai.route.js";
 
 const port = process.env.PORT || 8000
 connectDB()
@@ -59,6 +60,7 @@ app.use("/api/orders", orderRouter)
 app.use("/api/cart", CartRouter)
 
 app.use("/api/ai", AIrouter);
+app.use("/api/admin-ai", adminAiRouter);
 app.use(notFound)
 app.use(errorHandler)
 // app.get('/api/product/:id',async(req,res,next)=>{

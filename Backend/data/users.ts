@@ -23,6 +23,7 @@ const users = [
     isAdmin:        true,
     delivery: [
       {
+        title: "Work Address",
         phone: "+1-800-000-0000",
         address: [
           {
@@ -51,6 +52,7 @@ const users = [
     isAdmin:        false,
     delivery: [
       {
+        title: "Home",
         phone: "+971-50-123-4567",
         address: [
           {
@@ -89,6 +91,7 @@ const users = [
     isAdmin:        false,
     delivery: [
       {
+        title: "Apartment",
         phone: "+1-415-555-0192",
         address: [
           {
@@ -117,6 +120,7 @@ const users = [
     isAdmin:        false,
     delivery: [
       {
+        title: "Office",
         phone: "+81-90-1234-5678",
         address: [
           {
@@ -144,6 +148,7 @@ const users = [
     isAdmin:        false,
     delivery: [
       {
+        title: "Brazil Residence",
         phone: "+55-11-91234-5678",
         address: [
           {

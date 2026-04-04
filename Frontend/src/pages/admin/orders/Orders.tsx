@@ -1,13 +1,14 @@
-import { useDeliverOrderMutation, useGetOrdersQuery, type IOrder } from "@/slices/ordersApiSlice"
+import { useGetOrdersQuery, useUpdateOrderStatusMutation, type IOrder } from "@/slices/ordersApiSlice"
 import { useState } from "react"
 import AdminHeader from "../components/AdminHeader"
 import AdminStatCard from "../components/AdminStatCard"
 import AdminTable from "../components/AdminTable"
+import toast from "react-hot-toast"
 
 
 function Orders() {
     const { data, isLoading, error } = useGetOrdersQuery()
-    const [deliverOrder] = useDeliverOrderMutation()
+    const [updateStatus] = useUpdateOrderStatusMutation()
 
     // ── UI State ─────────────────────────
     const [searchTerm, setSearchTerm] = useState("")
@@ -53,13 +54,13 @@ function Orders() {
             return new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()
         })
 
-    const handleDeliver = async (id: string) => {
-        if (window.confirm("Mark this order as delivered? 🚚")) {
-            try {
-                await deliverOrder(id).unwrap()
-            } catch (err) {
-                console.error("Failed to deliver:", err)
-            }
+    const handleUpdateStatus = async (id: string, status: string) => {
+        try {
+            await updateStatus({ orderId: id, status }).unwrap()
+            toast.success(`Order status updated to ${status}`)
+        } catch (err: any) {
+            toast.error(err?.data?.message || err.error || "Failed to update status")
+            console.error("Failed to update status:", err)
         }
     }
 
@@ -198,15 +199,18 @@ function Orders() {
 
                         {/* Actions */}
                         <td className="px-6 py-4">
-                            <div className="flex items-center justify-center gap-3">
-                                {order.status !== "delivered" && (
-                                    <button
-                                        onClick={() => handleDeliver(order._id)}
-                                        className="text-green-600 hover:text-green-800 font-bold uppercase text-[10px] tracking-widest"
-                                    >
-                                        Deliver
-                                    </button>
-                                )}
+                            <div className="flex items-center justify-center">
+                                <select
+                                    value={order.status}
+                                    onChange={(e) => handleUpdateStatus(order._id, e.target.value)}
+                                    className="bg-surf border border-gb rounded-lg px-2 py-1 text-[10px] font-bold uppercase tracking-widest text-text outline-none focus:border-a transition-all"
+                                >
+                                    <option value="pending">Pending</option>
+                                    <option value="processing">Processing</option>
+                                    <option value="shipped">Shipped</option>
+                                    <option value="delivered">Delivered</option>
+                                    <option value="cancelled">Cancelled</option>
+                                </select>
                             </div>
                         </td>
                     </tr>

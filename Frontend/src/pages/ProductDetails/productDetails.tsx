@@ -11,6 +11,7 @@ import { addToCart } from "@/slices/cartSlice"
 import { useNavigate } from "react-router-dom"
 import type { RootState } from "@/store/store"
 import { useAddToCartMutation } from "@/slices/cartApiSlice"
+import toast from "react-hot-toast";
 export default function ProductDetails() {
   const { id } = useParams<{ id: string }>();
   const { data, isLoading, isError } = useGetSingleProductQuery(id!);
@@ -103,7 +104,7 @@ export default function ProductDetails() {
        dispatch(addToCart(cartItem));
     }
     
-    navigate('/cart');
+    toast.success(`${product.name} added to cart`);
   }
   useEffect(() => {
     setActiveImage(images[0]);

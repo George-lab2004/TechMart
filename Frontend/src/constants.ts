@@ -10,6 +10,7 @@ export const PRODUCTS_URL = '/api/products'
 export const SIGNIN_URL = '/api/signIn'
 export const SIGNUP_URL = '/api/signUp'
 export const LOG_OUT = '/api/logout'
+export const VERIFY_EMAIL_URL = (email: string) => `/api/verify-email/${email}`
 
 // PROFILE
 export const PROFILE_URL = '/api/profile'

@@ -119,11 +119,40 @@ const updateOrderToPaid = asyncHandler(async (req: CustomRequest, res: Response)
     }
 });
 
+// @desc    Update order status
+// @route   PUT /api/orders/:id/status
+// @access  Private/Admin
+const updateOrderStatus = asyncHandler(async (req: Request, res: Response) => {
+    const order = await Order.findById(req.params.id);
+
+    if (order) {
+        const { status } = req.body;
+        const validStatuses = ["pending", "processing", "shipped", "delivered", "cancelled"];
+        
+        if (!validStatuses.includes(status)) {
+            res.status(400);
+            throw new Error("Invalid status");
+        }
+
+        order.status = status;
+        if (status === "delivered") {
+            order.deliveredAt = new Date();
+        }
+
+        const updatedOrder = await order.save();
+        res.status(200).json(updatedOrder);
+    } else {
+        res.status(404);
+        throw new Error("Order not found");
+    }
+});
+
 export { 
     addOrderItems, 
     getMyOrders, 
     getOrderById, 
     getOrders, 
     updateOrderToDelivered, 
-    updateOrderToPaid 
+    updateOrderToPaid,
+    updateOrderStatus
 };

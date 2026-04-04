@@ -97,7 +97,7 @@ export default function Header() {
         <div className="flex items-center gap-2 md:gap-3">
 
           {/* Search */}
-          <div className="hidden md:flex items-center gap-2 bg-glass border border-gb rounded-[12px] px-3.5 py-2 transition-colors focus-within:border-a">
+          {/* <div className="hidden md:flex items-center gap-2 bg-glass border border-gb rounded-[12px] px-3.5 py-2 transition-colors focus-within:border-a">
             <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" className="opacity-40 shrink-0">
               <circle cx="11" cy="11" r="8" />
               <path d="m21 21-4.35-4.35" />
@@ -106,7 +106,7 @@ export default function Header() {
               placeholder="Search…"
               className="bg-transparent border-none outline-none font-body text-[13px] text-text w-[110px] lg:w-[145px] placeholder:text-muted"
             />
-          </div>
+          </div> */}
 
           <ThemeToggle />
 

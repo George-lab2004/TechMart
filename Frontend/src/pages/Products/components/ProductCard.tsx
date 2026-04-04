@@ -6,6 +6,8 @@ import { useDispatch, useSelector } from "react-redux";
 import type { RootState } from "@/store/store";
 import { addToCart } from "@/slices/cartSlice";
 import { useAddToCartMutation } from "@/slices/cartApiSlice";
+import { apiSlice } from "@/slices/apiSlice";
+import toast from "react-hot-toast";
 
 export interface Product {
   _id: string;
@@ -103,6 +105,7 @@ export default function ProductCard({ p, isListView }: { p: Product; isListView:
        dispatch(addToCart(cartItem));
     }
     
+    toast.success(`${p.name} added to cart`);
     setAdded(true);
     setTimeout(() => setAdded(false), 1800);
   };

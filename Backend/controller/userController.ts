@@ -60,11 +60,13 @@ const signIn = async (req: Request, res: Response) => {
     })
 
     // 6. send response — one single res.json, not two
+    const expiresIn24h = Date.now() + 1 * 24 * 60 * 60 * 1000;
     return res.status(200).json({
         _id: user._id,
         name: user.name,
         email: user.email,
-        isAdmin: user.isAdmin
+        isAdmin: user.isAdmin,
+        expiresAt: expiresIn24h,
     })
 }
 
@@ -298,6 +300,21 @@ const resetPassword = asyncHandler(async (req, res) => {
     res.status(200).json({ message: "Password reset successful" })
 })
 
+const verifyEmail = asyncHandler(async (req: Request, res: Response) => {
+    const { email } = req.params
+
+    const user = await User.findOne({ email })
+
+    if (user) {
+        user.confirmedEmail = true
+        await user.save()
+        res.status(200).json({ message: "Email confirmed successfully" })
+    } else {
+        res.status(404)
+        throw new Error("User not found")
+    }
+})
+
 export {
     signUp,
     signIn,
@@ -312,6 +329,7 @@ export {
     deleteUserAddress,
     forgetPassword,
     verifyOTP,
-    resetPassword
+    resetPassword,
+    verifyEmail
 }
 

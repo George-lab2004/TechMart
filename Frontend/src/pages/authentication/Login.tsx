@@ -15,11 +15,12 @@ import { useDispatch, useSelector } from "react-redux";
 import { useLoginMutation, useRegisterMutation } from "@/slices/authApiSlice";
 import { setCredentials } from "@/slices/authSlice";
 import type { RootState } from "@/store/store";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { useSyncCartMutation } from "@/slices/cartApiSlice";
 import { clearCart } from "@/slices/cartSlice";
+import EveBot from "@/Components/mascot/Eve";
 
-export default function login() {
+export default function Login() {
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const [login, { isLoading: isLoginLoading }] = useLoginMutation();
@@ -27,6 +28,7 @@ export default function login() {
   const { userInfo } = useSelector((state: RootState) => state.auth);
   const [syncCart] = useSyncCartMutation();
   const { cartItems } = useSelector((state: RootState) => state.cart);
+  const [mode, setMode] = useState<"idle" | "email" | "password">("idle");
   useEffect(() => {
     if (userInfo) {
       navigate("/");
@@ -153,8 +155,11 @@ export default function login() {
             </div>
           </section>
 
-          <section className="flex items-center justify-center w-full min-h-screen bg-surf border-l border-gb px-8">
-            <div className="w-full max-w-md flex flex-col gap-6">
+          <section className="flex flex-col items-center justify-center w-full min-h-screen bg-surf border-l border-gb px-8 overflow-y-auto pt-10 pb-10">
+            <div className="w-full max-w-md flex flex-col gap-4">
+              <div className="flex justify-center -mb-8">
+                <EveBot mode={mode} className="w-32 h-32 sm:w-40 sm:h-40" />
+              </div>
 
               {/* Header */}
               <div className="flex flex-col gap-1">
@@ -209,6 +214,8 @@ export default function login() {
                                   message: "Invalid email address",
                                 },
                               })}
+                              onFocus={() => setMode("email")}
+                              onBlur={() => setMode("idle")}
                               className={`pl-9 bg-glass border-gb text-text placeholder:text-muted
                                 focus:border-a focus:ring-2 focus:ring-ag
                                 transition-all duration-200 font-body ${errorsSignIn.email ? "border-red-500" : ""
@@ -247,8 +254,8 @@ export default function login() {
                                   value: 6,
                                   message: "Password too short",
                                 },
-                              })}
-                              className={`pl-9 bg-glass border-gb text-text placeholder:text-muted
+                              })} onFocus={() => setMode("password")}
+                              onBlur={() => setMode("idle")} className={`pl-9 bg-glass border-gb text-text placeholder:text-muted
                                 focus:border-a focus:ring-2 focus:ring-ag
                                 transition-all duration-200 font-body ${errorsSignIn.password ? "border-red-500" : ""
                                 }`}
@@ -348,6 +355,8 @@ export default function login() {
                               {...registerSignUp("name", {
                                 required: "Full name is required",
                               })}
+                              onFocus={() => setMode("email")}
+                              onBlur={() => setMode("idle")}
                               className={`pl-9 bg-glass border-gb text-text placeholder:text-muted
                              focus:border-a focus:ring-2 focus:ring-ag
                              transition-all duration-200 font-body ${errorsSignUp.name ? "border-red-500" : ""
@@ -385,6 +394,8 @@ export default function login() {
                                   message: "Invalid email address",
                                 },
                               })}
+                              onFocus={() => setMode("email")}
+                              onBlur={() => setMode("idle")}
                               className={`pl-9 bg-glass border-gb text-text placeholder:text-muted
                              focus:border-a focus:ring-2 focus:ring-ag
                              transition-all duration-200 font-body ${errorsSignUp.email ? "border-red-500" : ""
@@ -421,6 +432,8 @@ export default function login() {
                                   message: "Minimum 8 characters",
                                 },
                               })}
+                              onFocus={() => setMode("password")}
+                              onBlur={() => setMode("idle")}
                               className={`pl-9 bg-glass border-gb text-text placeholder:text-muted
                              focus:border-a focus:ring-2 focus:ring-ag
                              transition-all duration-200 font-body ${errorsSignUp.password ? "border-red-500" : ""
@@ -460,7 +473,7 @@ export default function login() {
                         </div>
 
                         {/* Social */}
-                        <div className="flex gap-3">
+                        {/* <div className="flex gap-3">
                           <button
                             type="button"
                             className="flex-1 h-11 flex items-center justify-center gap-2
@@ -481,7 +494,7 @@ export default function login() {
                           >
                             🍎 Apple
                           </button>
-                        </div>
+                        </div> */}
 
                         {/* Terms */}
                         <p className="text-center text-xs text-muted leading-relaxed">
