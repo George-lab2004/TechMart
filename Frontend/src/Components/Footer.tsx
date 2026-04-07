@@ -16,8 +16,8 @@ const Footer = () => {
                 {/* Brand Section */}
                 <div className="flex flex-col gap-6 col-span-1 md:col-span-1">
                     <div className="flex items-center gap-2">
-                        <span className="flex ">
-                            <AnimatedDot color="gray-700" size="lg" />
+                        <span className="flex  ">
+                            <AnimatedDot color="dot-gray" size="lg" />
 
                         </span>
                         <h1 className="text-2xl font-black uppercase tracking-tighter leading-none bg-linear-to-r from-gray-600 to-blue-900 bg-clip-text text-transparent">

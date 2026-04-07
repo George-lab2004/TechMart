@@ -1,6 +1,6 @@
 import { useState, useRef, useEffect } from "react"
 import { useSendAdminMessageMutation } from "@/slices/aiApiSlice"
-import { BarChart, Bar, XAxis, YAxis, Tooltip, ResponsiveContainer, CartesianGrid, PieChart, Pie, Cell, LineChart, Line } from 'recharts';
+import { BarChart, Bar, XAxis, YAxis, Tooltip, ResponsiveContainer, CartesianGrid, PieChart, Pie, Cell, LineChart, Line, Legend } from 'recharts';
 
 interface AIMessage {
     role: "user" | "model"
@@ -11,10 +11,36 @@ interface DisplayMessage {
     from: "user" | "ai"
     text: string
     data?: any
-    fn?: string 
+    fn?: string
 }
 
 const COLORS = ['#4f46e5', '#10b981', '#f59e0b', '#ec4899', '#8b5cf6'];
+
+const formatAiText = (text: string) => {
+    if (!text) return "";
+    let safe = text.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
+
+    // Markdown Table Parser
+    safe = safe.replace(/(?:^|\n)\|(.+)\|\n\|(?:[-:]+[-| :]*)\|\n((?:\|.*\|\n?)*)/g, (match, header, body) => {
+        const ths = header.split('|').filter(Boolean).map((h: string) => 
+            `<th class="px-3 py-2 border border-gray-700 bg-[#151522] text-left text-xs font-bold text-gray-200 tracking-wider">${h.trim()}</th>`
+        ).join('');
+        
+        const trs = body.trim().split('\n').filter(Boolean).map((row: string) => {
+            const tds = row.split('|').filter(Boolean).map((d: string) => 
+                `<td class="px-3 py-2 border border-gray-800 text-gray-300 text-xs">${d.trim()}</td>`
+            ).join('');
+            return `<tr class="hover:bg-[#1a1a24] transition-colors">${tds}</tr>`;
+        }).join('');
+        
+        return `<div class="overflow-x-auto my-4 rounded-xl border border-gray-800 shadow-xl"><table class="w-full border-collapse"><thead><tr>${ths}</tr></thead><tbody>${trs}</tbody></table></div>`;
+    });
+
+    return safe
+        .replace(/\*\*(.*?)\*\*/g, '<strong class="text-white">$1</strong>')
+        .replace(/(?:^|\n)[\*\-]\s+(.*)/g, '\n<li class="ml-4 list-disc marker:text-indigo-500">$1</li>')
+        .replace(/(?:^|\n)(\d+\.)\s+(.*)/g, '\n<li class="ml-4 list-decimal marker:text-indigo-500"><span class="font-bold text-gray-400 mr-1">$1</span>$2</li>');
+};
 
 export default function AdminAiChat() {
     const [messages, setMessages] = useState<DisplayMessage[]>([
@@ -44,7 +70,7 @@ export default function AdminAiChat() {
         try {
             const res = await sendMessage({
                 message: text,
-                history: history 
+                history: history
             }).unwrap()
 
             setMessages(prev => [...prev, {
@@ -59,14 +85,14 @@ export default function AdminAiChat() {
                 ...newHistory,
                 { role: "model", parts: [{ text: res.message + contextData }] }
             ];
-            
+
             setHistory(finalHistory)
 
             // Auto multi-step resolution for charts!
             if (res.functionCalled && res.functionCalled !== "renderChart") {
                 const autoRes = await sendMessage({
                     message: "Analyze the fetched data. If I originally requested a chart, call the 'renderChart' tool right now with the data. If not, just give me a text recommendation.",
-                    history: finalHistory 
+                    history: finalHistory
                 }).unwrap()
 
                 setMessages(prev => [...prev, {
@@ -93,9 +119,19 @@ export default function AdminAiChat() {
     }
 
     const renderChartNode = (chartData: any) => {
-        if (!chartData || !chartData.data || !Array.isArray(chartData.data)) return null;
-        
-        const { title, type, data } = chartData;
+        if (!chartData || !chartData.data) return null;
+
+        let normalizedData = chartData.data;
+        if (!Array.isArray(normalizedData)) {
+            if (typeof normalizedData === "object") {
+                normalizedData = Object.entries(normalizedData).map(([name, value]) => ({ name, value }));
+            } else {
+                return null;
+            }
+        }
+
+        const { title, type } = chartData;
+        const data = normalizedData;
 
         // Dark theme tooltip
         const CustomTooltip = ({ active, payload, label }: any) => {
@@ -123,21 +159,22 @@ export default function AdminAiChat() {
                                     ))}
                                 </Pie>
                                 <Tooltip content={<CustomTooltip />} />
+                                <Legend wrapperStyle={{ fontSize: '10px', color: '#9ca3af' }} />
                             </PieChart>
                         ) : type === 'line' ? (
                             <LineChart data={data} margin={{ left: -20, right: 10 }}>
                                 <CartesianGrid strokeDasharray="3 3" stroke="#222" vertical={false} />
-                                <XAxis dataKey="name" stroke="#666" tick={{fontSize: 10}} />
-                                <YAxis stroke="#666" tick={{fontSize: 10}} />
+                                <XAxis dataKey="name" stroke="#666" tick={{ fontSize: 10 }} />
+                                <YAxis stroke="#666" tick={{ fontSize: 10 }} />
                                 <Tooltip content={<CustomTooltip />} />
-                                <Line type="monotone" dataKey="value" stroke="#10b981" strokeWidth={3} dot={{r: 4, fill: '#10b981', strokeWidth: 0}} />
+                                <Line type="monotone" dataKey="value" stroke="#10b981" strokeWidth={3} dot={{ r: 4, fill: '#10b981', strokeWidth: 0 }} />
                             </LineChart>
                         ) : (
                             // Default to bar chart
                             <BarChart data={data} margin={{ left: -20, right: 10 }}>
                                 <CartesianGrid strokeDasharray="3 3" stroke="#222" vertical={false} />
-                                <XAxis dataKey="name" stroke="#666" tick={{fontSize: 10}} />
-                                <YAxis stroke="#666" tick={{fontSize: 10}} />
+                                <XAxis dataKey="name" stroke="#666" tick={{ fontSize: 10 }} />
+                                <YAxis stroke="#666" tick={{ fontSize: 10 }} />
                                 <Tooltip content={<CustomTooltip />} />
                                 <Bar dataKey="value" fill="#4f46e5" radius={[4, 4, 0, 0]} />
                             </BarChart>
@@ -193,9 +230,9 @@ export default function AdminAiChat() {
                         <tbody>
                             {orders.map((o: any, idx: number) => (
                                 <tr key={o._id || idx} className="border-b border-gray-800/50 hover:bg-[#1a1a24] transition-colors last:border-0">
-                                    <td className="px-3 py-2 truncate max-w-[80px]">{o.orderNumber || o._id?.substring(0,8)}</td>
+                                    <td className="px-3 py-2 truncate max-w-[80px]">{o.orderNumber || o._id?.substring(0, 8)}</td>
                                     <td className="px-3 py-2">{o.user?.name || "Guest"}</td>
-                                    <td className="px-3 py-2 text-indigo-400 text-right font-bold">${o.totalPrice?.toLocaleString(undefined, {minimumFractionDigits: 2})}</td>
+                                    <td className="px-3 py-2 text-indigo-400 text-right font-bold">${o.totalPrice?.toLocaleString(undefined, { minimumFractionDigits: 2 })}</td>
                                     <td className="px-3 py-2 text-right">
                                         <span className={`px-1.5 py-0.5 rounded text-[8px] uppercase tracking-wider ${o.isDelivered ? 'bg-green-500/10 text-green-400 border border-green-500/20' : 'bg-yellow-500/10 text-yellow-400 border border-yellow-500/20'}`}>
                                             {o.isDelivered ? "Delivered" : "Pending"}
@@ -214,45 +251,49 @@ export default function AdminAiChat() {
         if (!stats) return null;
         return (
             <div className="mt-3 grid grid-cols-2 gap-2 w-full font-mono text-center">
-                 {stats.totalRevenue !== undefined && (
-                     <div className="p-3 bg-gradient-to-br from-indigo-900/30 to-purple-900/30 border border-indigo-500/30 rounded-lg col-span-2 shadow-inner">
-                         <div className="text-[10px] text-indigo-300 uppercase tracking-widest mb-1">Total Revenue</div>
-                         <div className="text-2xl text-white font-bold">${stats.totalRevenue.toLocaleString(undefined, {minimumFractionDigits: 2})}</div>
-                     </div>
-                 )}
-                 {stats.totalOrders !== undefined && (
-                     <div className="p-3 bg-[#0d0d14] border border-gray-800 rounded-lg hover:border-gray-700 transition-colors">
-                         <div className="text-[9px] text-gray-500 uppercase tracking-widest">Total Orders</div>
-                         <div className="text-sm text-gray-200 mt-1 font-bold">{stats.totalOrders}</div>
-                     </div>
-                 )}
-                 {stats.avgOrderValue !== undefined && (
-                     <div className="p-3 bg-[#0d0d14] border border-gray-800 rounded-lg hover:border-gray-700 transition-colors">
-                         <div className="text-[9px] text-gray-500 uppercase tracking-widest">Avg Order Value</div>
-                         <div className="text-sm text-green-400 mt-1 font-bold">${stats.avgOrderValue.toLocaleString(undefined, {minimumFractionDigits: 2})}</div>
-                     </div>
-                 )}
+                {stats.totalRevenue !== undefined && (
+                    <div className="p-3 bg-gradient-to-br from-indigo-900/30 to-purple-900/30 border border-indigo-500/30 rounded-lg col-span-2 shadow-inner">
+                        <div className="text-[10px] text-indigo-300 uppercase tracking-widest mb-1">Total Revenue</div>
+                        <div className="text-2xl text-white font-bold">${stats.totalRevenue.toLocaleString(undefined, { minimumFractionDigits: 2 })}</div>
+                    </div>
+                )}
+                {stats.totalOrders !== undefined && (
+                    <div className="p-3 bg-[#0d0d14] border border-gray-800 rounded-lg hover:border-gray-700 transition-colors">
+                        <div className="text-[9px] text-gray-500 uppercase tracking-widest">Total Orders</div>
+                        <div className="text-sm text-gray-200 mt-1 font-bold">{stats.totalOrders}</div>
+                    </div>
+                )}
+                {stats.avgOrderValue !== undefined && (
+                    <div className="p-3 bg-[#0d0d14] border border-gray-800 rounded-lg hover:border-gray-700 transition-colors">
+                        <div className="text-[9px] text-gray-500 uppercase tracking-widest">Avg Order Value</div>
+                        <div className="text-sm text-green-400 mt-1 font-bold">${stats.avgOrderValue.toLocaleString(undefined, { minimumFractionDigits: 2 })}</div>
+                    </div>
+                )}
             </div>
         );
     };
 
     const renderData = (fn: string, data: any) => {
         if (!fn || !data) return null;
-        
+
         if (fn === "renderChart" && data.chartData) {
-            return renderChartNode(data.chartData);
+            const chartNode = renderChartNode(data.chartData);
+            if (chartNode) return chartNode;
         }
 
         if (data.products && Array.isArray(data.products)) {
-            return renderProductsGrid(data.products);
+            const node = renderProductsGrid(data.products);
+            if (node) return node;
         }
 
         if (data.orders && Array.isArray(data.orders)) {
-            return renderOrdersTable(data.orders);
+            const node = renderOrdersTable(data.orders);
+            if (node) return node;
         }
 
         if (data.stats) {
-            return renderStatsCard(data.stats);
+            const node = renderStatsCard(data.stats);
+            if (node) return node;
         }
 
         // Fallback for any unknown data models
@@ -301,7 +342,11 @@ export default function AdminAiChat() {
                                         ? "bg-indigo-600 text-white rounded-br-sm shadow-xl shadow-indigo-900/20"
                                         : "bg-[#0d0d14] border border-gray-800 text-gray-300 rounded-bl-sm"
                                     }`}>
-                                    {m.text}
+                                    {m.from === "user" ? (
+                                        m.text
+                                    ) : (
+                                        <div dangerouslySetInnerHTML={{ __html: formatAiText(m.text) }} />
+                                    )}
                                 </div>
                             )}
 

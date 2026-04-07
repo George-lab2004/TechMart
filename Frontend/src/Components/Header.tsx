@@ -29,6 +29,7 @@ export interface CartItem {
   brand: string
   category: string
 }
+export const calculateTotalQty = (items: any[]) => (items || []).reduce((acc: number, item: any) => acc + item.qty, 0);
 
 export default function Header() {
   const [menuOpen, setMenuOpen] = useState(false)
@@ -40,7 +41,8 @@ export default function Header() {
   const { userInfo } = useSelector((state: RootState) => state.auth);
   const { data: cartData } = useGetCartQuery(undefined, { skip: !userInfo });
   const activeCartItems = userInfo && cartData ? cartData.cartItems : cartItems;
-  const totalQty = (activeCartItems || []).reduce((acc: number, item: any) => acc + item.qty, 0)
+  const currentTotalQty = calculateTotalQty(activeCartItems);
+
   const logoutHandler = async () => {
     try {
       await logoutApiCall({}).unwrap()
@@ -143,7 +145,7 @@ export default function Header() {
             >
               🛒 <span className="hidden sm:inline px-1">Cart</span>
               <Badge className="bg-white text-a border-transparent text-[9px] md:text-[10px] font-bold min-w-[17px] md:min-w-[19px] h-[17px] md:h-[19px] p-0 rounded-full flex items-center justify-center">
-                {totalQty}
+                {currentTotalQty}
               </Badge>
             </Button>
           </Link>
@@ -234,7 +236,7 @@ export default function Header() {
           >
             Cart
             <Badge className="bg-a text-white border-transparent text-[10px] font-bold min-w-[20px] h-[20px] p-0 rounded-full flex items-center justify-center">
-              {totalQty}
+              {currentTotalQty}
             </Badge>
           </Link>
 
@@ -268,4 +270,5 @@ export default function Header() {
       )}
     </>
   )
+
 }

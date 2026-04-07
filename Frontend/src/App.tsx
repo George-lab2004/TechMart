@@ -26,6 +26,7 @@ const Users = lazy(() => import('./pages/admin/Users/Users'))
 const AdminProducts = lazy(() => import('./pages/admin/Products/Products'))
 const AdminOrders = lazy(() => import('./pages/admin/orders/Orders'))
 const AdminCategories = lazy(() => import('./pages/admin/Categories/Categories'))
+const NotFound = lazy(() => import('./pages/NotFound'))
 
 // Router defined outside the component
 const router = createBrowserRouter([
@@ -135,7 +136,7 @@ const router = createBrowserRouter([
     element: <AdminRoutes />, // handles auth + role
     children: [
       {
-        element: <AdminLayout />, // 👈 create this
+        element: <AdminLayout />, 
         children: [
           { index: true, element: <Navigate to="dashboard" replace /> },
           {
@@ -166,7 +167,15 @@ const router = createBrowserRouter([
         ]
       }
     ]
-  }
+  },
+  {
+    path: '*',
+    element: (
+      <Suspense fallback={<PageLoader />}>
+        <NotFound />
+      </Suspense>
+    ),
+  },
 ])
 
 export default function App() {

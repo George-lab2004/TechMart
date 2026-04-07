@@ -42,6 +42,7 @@ export const chatWithAdminAI = async (req: Request, res: Response): Promise<void
                         parts: [{ text: "Here is your chart." }],
                         functionCalled: call.name,
                         data: fnResult,
+                        message: "Here is your chart.",
                     });
                     return;
                 }
@@ -52,6 +53,7 @@ export const chatWithAdminAI = async (req: Request, res: Response): Promise<void
                     parts: [{ text: "Analyzed data." }], 
                     functionCalled: call.name,
                     data: fnResult,
+                    message: "Analyzed data.",
                 });
                 return;
             } else {
@@ -64,10 +66,19 @@ export const chatWithAdminAI = async (req: Request, res: Response): Promise<void
         res.json({
             role: "model",
             parts: [{ text: response.text() }],
+            message: response.text(),
         });
 
     } catch (error: any) {
         console.error("Admin AI Error:", error);
+        
+        // Handle Gemini 15 RPM Rate Limiting elegantly
+        const errMsg = error.message?.toLowerCase() || "";
+        if (errMsg.includes("429") || errMsg.includes("quota") || errMsg.includes("retry") || error.status === 429) {
+            res.status(429).json({ error: "Google AI is taking a breather! Free tier has a 15 messages per minute limit. Please wait 30 seconds before asking the next question." });
+            return;
+        }
+
         res.status(500).json({ error: error.message || "Failed to communicate with Admin AI." });
     }
 };

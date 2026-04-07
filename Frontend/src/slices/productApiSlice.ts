@@ -47,6 +47,18 @@ export const productApiSlice = apiSlice.injectEndpoints({
       }),
       invalidatesTags: ["Product"],
     }),
+    createReview: builder.mutation<{ message: string }, { productId: string; title: string; rating: number; comment: string }>({
+      query: ({ productId, ...body }) => ({
+        url: `${PRODUCTS_URL}/${productId}/reviews`,
+        method: "POST",
+        body,
+      }),
+      invalidatesTags: (_result, _error, { productId }) => [{ type: "Product", id: productId }],
+    }),
+    getProductReviews: builder.query<any, string>({
+      query: (id) => ({ url: `${PRODUCTS_URL}/${id}/reviews` }),
+      providesTags: (_result, _error, id) => [{ type: "Product", id }],
+    }),
   }),
 })
 
@@ -56,4 +68,6 @@ export const {
   useCreateProductMutation,
   useUpdateProductMutation,
   useDeleteProductMutation,
+  useCreateReviewMutation,
+  useGetProductReviewsQuery,
 } = productApiSlice;

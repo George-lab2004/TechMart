@@ -4,6 +4,11 @@ import { useGetProfileQuery, useAddAddressMutation } from "@/slices/usersApiSlic
 import { useCreateOrderMutation } from "@/slices/ordersApiSlice"
 import { useNavigate } from "react-router-dom"
 import toast from "react-hot-toast"
+import { PayPalScriptProvider } from "@paypal/react-paypal-js"
+import { loadStripe } from "@stripe/stripe-js"
+import { Elements } from "@stripe/react-stripe-js"
+
+const stripePromise = loadStripe(import.meta.env.VITE_STRIPE_PUBLISHABLE_KEY || "");
 
 import Section from "@/pages/checkout/components/Section"
 import InputField from "@/Components/InputField"
@@ -90,6 +95,8 @@ export default function Checkout() {
     }
 
     return (
+        <PayPalScriptProvider options={{ clientId: import.meta.env.VITE_PAYPAL_CLIENT_ID || "sb", currency: "USD" }}>
+        <Elements stripe={stripePromise}>
         <div className="container mx-auto py-8 md:py-12 px-4 max-w-7xl font-body">
 
             {/* STEP INDICATOR */}
@@ -324,5 +331,7 @@ export default function Checkout() {
 
             </div>
         </div>
+        </Elements>
+        </PayPalScriptProvider>
     )
 }

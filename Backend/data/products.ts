@@ -32,8 +32,8 @@ const products = [
     description: "High-performance gaming laptop powered by Intel Core i9 and NVIDIA RTX graphics for modern AAA gaming.",
 
     images: [
-      { url: "https://images.unsplash.com/photo-1593642702749-b7d2a804fbcf?w=900&q=80", alt: "ROG laptop front", isPrimary: true },
-      { url: "https://images.unsplash.com/photo-1517336714731-489689fd1ca8?w=900&q=80", alt: "ROG keyboard", isPrimary: false },
+      { url: "https://images.unsplash.com/photo-1593642702749-b7d2a804fbcf?w=480&q=80", alt: "ROG laptop front", isPrimary: true },
+      { url: "https://images.unsplash.com/photo-1517336714731-489689fd1ca8?w=480&q=80", alt: "ROG keyboard", isPrimary: false },
     ],
 
     price: 1899,
@@ -114,8 +114,8 @@ const products = [
     description: "Apple MacBook Pro powered by the new M3 chip delivering exceptional performance and incredible battery life.",
 
     images: [
-      { url: "https://images.unsplash.com/photo-1517336714731-489689fd1ca8?w=900&q=80", alt: "MacBook Pro open", isPrimary: true },
-      { url: "https://images.unsplash.com/photo-1496181133206-80ce9b88a853?w=900&q=80", alt: "MacBook keyboard", isPrimary: false },
+      { url: "https://images.unsplash.com/photo-1517336714731-489689fd1ca8?w=480&q=80", alt: "MacBook Pro open", isPrimary: true },
+      { url: "https://images.unsplash.com/photo-1496181133206-80ce9b88a853?w=480&q=80", alt: "MacBook keyboard", isPrimary: false },
     ],
 
     price: 2199,
@@ -192,7 +192,7 @@ const products = [
     description: "Samsung flagship smartphone with 200MP camera, Snapdragon 8 Gen 3 processor and AI photography.",
 
     images: [
-      { url: "https://images.unsplash.com/photo-1610945415295-d9bbf067e59c?w=900&q=80", alt: "Galaxy phone", isPrimary: true },
+      { url: "https://images.unsplash.com/photo-1610945415295-d9bbf067e59c?w=480&q=80", alt: "Galaxy phone", isPrimary: true },
     ],
 
     price: 1199,
@@ -270,8 +270,8 @@ const products = [
     description: "Industry-leading noise cancelling wireless headphones with up to 30-hour battery life and exceptional sound quality.",
 
     images: [
-      { url: "https://images.unsplash.com/photo-1505740420928-5e560c06d30e?w=900&q=80", alt: "Sony WH-1000XM5 headphones", isPrimary: true },
-      { url: "https://images.unsplash.com/photo-1484704849700-f032a568e944?w=900&q=80", alt: "Headphones side view", isPrimary: false },
+      { url: "https://images.unsplash.com/photo-1505740420928-5e560c06d30e?w=480&q=80", alt: "Sony WH-1000XM5 headphones", isPrimary: true },
+      { url: "https://images.unsplash.com/photo-1484704849700-f032a568e944?w=480&q=80", alt: "Headphones side view", isPrimary: false },
     ],
 
     price: 349,
@@ -348,8 +348,8 @@ const products = [
     description: "The ultimate iPad experience with the powerful M2 chip, Liquid Retina XDR display, and support for Apple Pencil Pro.",
 
     images: [
-      { url: "https://images.unsplash.com/photo-1544244015-0df4b3ffc6b0?w=900&q=80", alt: "iPad Pro front", isPrimary: true },
-      { url: "https://images.unsplash.com/photo-1561154464-82e9adf32764?w=900&q=80", alt: "iPad Pro with Pencil", isPrimary: false },
+      { url: "https://images.unsplash.com/photo-1544244015-0df4b3ffc6b0?w=480&q=80", alt: "iPad Pro front", isPrimary: true },
+      { url: "https://images.unsplash.com/photo-1561154464-82e9adf32764?w=480&q=80", alt: "iPad Pro with Pencil", isPrimary: false },
     ],
 
     price: 1099,
@@ -434,8 +434,8 @@ const products = [
     description: "Dell's premium thin-and-light powerhouse with a stunning 15.6\" 3.5K OLED display and Intel Core i7 performance.",
 
     images: [
-      { url: "https://images.unsplash.com/photo-1588872657578-7efd1f1555ed?w=900&q=80", alt: "Dell XPS 15 open", isPrimary: true },
-      { url: "https://images.unsplash.com/photo-1611078489935-0cb964de46d6?w=900&q=80", alt: "Dell XPS keyboard closeup", isPrimary: false },
+      { url: "https://images.unsplash.com/photo-1588872657578-7efd1f1555ed?w=480&q=80", alt: "Dell XPS 15 open", isPrimary: true },
+      { url: "https://images.unsplash.com/photo-1611078489935-0cb964de46d6?w=480&q=80", alt: "Dell XPS keyboard closeup", isPrimary: false },
     ],
 
     price: 1749,
@@ -517,8 +517,8 @@ const products = [
     description: "Apple iPhone 15 Pro featuring the A17 Pro chip, titanium design, and a pro camera system with 48MP main sensor.",
 
     images: [
-      { url: "https://images.unsplash.com/photo-1695048133142-1a20484d2569?w=900&q=80", alt: "iPhone 15 Pro front", isPrimary: true },
-      { url: "https://images.unsplash.com/photo-1592750475338-74b7b21085ab?w=900&q=80", alt: "iPhone 15 Pro camera", isPrimary: false },
+      { url: "https://images.unsplash.com/photo-1695048133142-1a20484d2569?w=480&q=80", alt: "iPhone 15 Pro front", isPrimary: true },
+      { url: "https://images.unsplash.com/photo-1592750475338-74b7b21085ab?w=480&q=80", alt: "iPhone 15 Pro camera", isPrimary: false },
     ],
 
     price: 999,
@@ -598,8 +598,8 @@ const products = [
     description: "Immersive 49\" Dual QHD curved gaming monitor with 240Hz refresh rate and QLED colour technology.",
 
     images: [
-      { url: "https://images.unsplash.com/photo-1527443224154-c4a3942d3acf?w=900&q=80", alt: "Samsung Odyssey G9 monitor", isPrimary: true },
-      { url: "https://images.unsplash.com/photo-1593640408182-31c228c5a8cf?w=900&q=80", alt: "Ultrawide gaming setup", isPrimary: false },
+      { url: "https://images.unsplash.com/photo-1527443224154-c4a3942d3acf?w=480&q=80", alt: "Samsung Odyssey G9 monitor", isPrimary: true },
+      { url: "https://images.unsplash.com/photo-1593640408182-31c228c5a8cf?w=480&q=80", alt: "Ultrawide gaming setup", isPrimary: false },
     ],
 
     price: 1299,
@@ -675,8 +675,8 @@ const products = [
     description: "Apple Watch Series 9 with the new S9 chip, Double Tap gesture, and Always-On Retina display in 45mm aluminium.",
 
     images: [
-      { url: "https://images.unsplash.com/photo-1546868871-7041f2a55e12?w=900&q=80", alt: "Apple Watch Series 9 front", isPrimary: true },
-      { url: "https://images.unsplash.com/photo-1579586337278-3befd40fd17a?w=900&q=80", alt: "Apple Watch on wrist", isPrimary: false },
+      { url: "https://images.unsplash.com/photo-1546868871-7041f2a55e12?w=480&q=80", alt: "Apple Watch Series 9 front", isPrimary: true },
+      { url: "https://images.unsplash.com/photo-1579586337278-3befd40fd17a?w=480&q=80", alt: "Apple Watch on wrist", isPrimary: false },
     ],
 
     price: 399,
@@ -762,8 +762,8 @@ const products = [
     description: "Razer's most powerful laptop ever — the Blade 18 Studio Edition combines Intel i9 + RTX 4090 in an ultra-premium CNC aluminium chassis.",
 
     images: [
-      { url: "https://images.unsplash.com/photo-1598550476439-6847785fcea6?w=900&q=80", alt: "Razer Blade 18 front", isPrimary: true },
-      { url: "https://images.unsplash.com/photo-1603302576837-37561b2e2302?w=900&q=80", alt: "Razer gaming laptop open", isPrimary: false },
+      { url: "https://images.unsplash.com/photo-1598550476439-6847785fcea6?w=480&q=80", alt: "Razer Blade 18 front", isPrimary: true },
+      { url: "https://images.unsplash.com/photo-1603302576837-37561b2e2302?w=480&q=80", alt: "Razer gaming laptop open", isPrimary: false },
     ],
 
     price: 3499,

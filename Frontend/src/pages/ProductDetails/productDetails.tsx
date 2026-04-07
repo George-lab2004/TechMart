@@ -11,6 +11,7 @@ import { addToCart } from "@/slices/cartSlice"
 import type { RootState } from "@/store/store"
 import { useAddToCartMutation } from "@/slices/cartApiSlice"
 import toast from "react-hot-toast";
+import RatingSection from "@/pages/ProductDetails/RatingSection";
 export default function ProductDetails() {
   const { id } = useParams<{ id: string }>();
   const { data, isLoading, isError } = useGetSingleProductQuery(id!);
@@ -80,7 +81,6 @@ export default function ProductDetails() {
   const [activeImage, setActiveImage] = useState(images[0]);
   const [selectedVariants, setSelectedVariants] = useState<Record<string, string>>({});
   const [selectedColor, setSelectedColor] = useState<string | null>(null);
-  const [showReviewDetails, setShowReviewDetails] = useState(false);
   const [activeTechTab, setActiveTechTab] = useState<"specs" | "box">("specs");
   const addToCartHandler = async () => {
     if (!product) return;
@@ -159,13 +159,6 @@ export default function ProductDetails() {
   const savedAmount = displayOriginalPrice ? displayOriginalPrice - displayPrice : 0;
   const savedPct = displayOriginalPrice ? Math.round((savedAmount / displayOriginalPrice) * 100) : 0;
 
-  const ratingRows = [
-    { label: "5★", value: product.ratingBreakdown?.five ?? 0 },
-    { label: "4★", value: product.ratingBreakdown?.four ?? 0 },
-    { label: "3★", value: product.ratingBreakdown?.three ?? 0 },
-    { label: "2★", value: product.ratingBreakdown?.two ?? 0 },
-    { label: "1★", value: product.ratingBreakdown?.one ?? 0 },
-  ];
 
   return (
     <div className="space-y-6 px-3 sm:px-5 lg:px-8 pb-8">
@@ -474,48 +467,12 @@ export default function ProductDetails() {
         </section>
       )}
 
-      <section className="rounded-xl border border-gb bg-surf p-4 space-y-3">
-        <div className="flex items-center justify-between gap-3">
-          <p className="text-xs font-mono text-muted uppercase">Rating Breakdown</p>
-          <button
-            type="button"
-            onClick={() => setShowReviewDetails((v) => !v)}
-            className="text-xs font-mono text-a border border-a/30 bg-a/10 rounded-lg px-2.5 py-1 hover:bg-a/15"
-          >
-            {showReviewDetails ? "Hide review details" : "See review details"}
-          </button>
-        </div>
-
-        <div className="grid grid-cols-1 gap-2">
-          {ratingRows.map((row) => (
-            <div key={row.label} className="flex items-center gap-2">
-              <span className="w-8 text-xs text-text2 font-mono">{row.label}</span>
-              <div className="flex-1 h-2 rounded-full bg-gb overflow-hidden">
-                <div className="h-full bg-a3" style={{ width: `${Math.max(0, Math.min(100, row.value))}%` }} />
-              </div>
-              <span className="w-10 text-right text-xs text-muted font-mono">{row.value}%</span>
-            </div>
-          ))}
-        </div>
-
-        {showReviewDetails && (
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-2 pt-1">
-            {ratingRows.map((row) => {
-              const count = Math.round((row.value / 100) * product.numReviews);
-              return (
-                <div key={`${row.label}-detail`} className="rounded-lg border border-gb bg-card px-3 py-2">
-                  <p className="text-xs text-muted font-mono">{row.label} Reviews</p>
-                  <p className="text-sm text-text font-semibold mt-1">{count.toLocaleString()} users</p>
-                </div>
-              );
-            })}
-            <div className="rounded-lg border border-gb bg-card px-3 py-2 sm:col-span-2 lg:col-span-3">
-              <p className="text-xs text-muted font-mono">Total Reviews</p>
-              <p className="text-sm text-text font-semibold mt-1">{product.numReviews.toLocaleString()}</p>
-            </div>
-          </div>
-        )}
-      </section>
+      <RatingSection
+        productId={product._id}
+        rating={product.rating}
+        numReviews={product.numReviews}
+        ratingBreakdown={product.ratingBreakdown ?? { five: 0, four: 0, three: 0, two: 0, one: 0 }}
+      />
 
       {!!relatedCards.length && (
         <section className="space-y-4 pt-6">

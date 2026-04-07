@@ -4,6 +4,9 @@
 @import "tailwindcss";
 @import "tw-animate-css";
 
+/* Safelist: classes built dynamically that Tailwind can't detect */
+@source inline("bg-dot-gray");
+
 @custom-variant dark (&:is(.dark *));
 
 /* -- Custom fonts -------------------------------------------- */
@@ -96,6 +99,8 @@
   /* Navbar background */
   --grid-line: rgba(0, 0, 0, 0.1);
   /* Grid background lines */
+  --dot-gray: #1e3a8a;
+  /* Footer dot (blue-900) */
 
   /* -- shadcn/ui tokens -- */
   --radius: 0.625rem;
@@ -147,6 +152,8 @@
   /* Secondary text */
   --muted: #44445a;
   /* Placeholder, labels */
+  --dot-gray: #1e3a8a;
+  /* Footer dot (blue-900) */
   --a: #4f8eff;
   /* Primary accent (blue) */
   --ag: rgba(159, 193, 218, 0.22);
@@ -227,12 +234,15 @@
   /* bg-a3    � text-a3    � border-a3    */
   --color-glass: var(--glass);
   /* bg-glass � text-glass � border-glass */
+  /* bg-glass  text-glass  border-glass */
   --color-gb: var(--gb);
-  /* bg-gb    � text-gb    � border-gb    */
+  /* bg-gb     text-gb     border-gb    */
   --color-card: var(--card);
-  /* bg-card  � text-card  � border-card  */
+  /* bg-card   text-card   border-card  */
   --color-nav: var(--nav);
-  /* bg-nav   � text-nav   � border-nav   */
+  /* bg-nav    text-nav    border-nav   */
+  --color-dot-gray: var(--dot-gray);
+  /* bg-dot-gray  text-dot-gray           */
 
   /* -- shadcn/ui token utilities -- */
   --color-background: var(--background);
