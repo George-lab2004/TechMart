@@ -13,9 +13,11 @@ export default function InputField({
     value,
     onChange,
 }: Props) {
+    const id = label.toLowerCase().replace(/\s+/g, '-') + "-input";
+
     return (
         <div className="flex flex-col gap-1">
-            <label className="text-xs text-[var(--muted)] uppercase tracking-widest">
+            <label htmlFor={id} className="text-xs text-[var(--muted)] uppercase tracking-widest">
                 {label}
             </label>
 
@@ -25,6 +27,7 @@ export default function InputField({
                 </div>
 
                 <input
+                    id={id}
                     value={value}
                     onChange={onChange}
                     placeholder={placeholder}

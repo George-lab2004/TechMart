@@ -396,6 +396,7 @@ export default function AdminAiChat() {
                     />
                     <button
                         onClick={handleSend}
+                        aria-label="Send database query"
                         disabled={isLoading || !input.trim()}
                         className="w-10 h-10 rounded-lg bg-indigo-600 text-white flex items-center justify-center
                        disabled:opacity-40 disabled:cursor-not-allowed hover:bg-indigo-500

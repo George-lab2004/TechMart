@@ -15,6 +15,7 @@ export default function AdminChatWidget() {
 
             <button
                 onClick={() => setOpen(!open)}
+                aria-label={open ? "Close admin chat" : "Open admin chat"}
                 className="w-16 h-16 rounded-2xl bg-indigo-600 text-white flex items-center justify-center shadow-2xl hover:bg-indigo-500 transition-all active:scale-95 border-2 border-indigo-400/30"
             >
                 {open ? (

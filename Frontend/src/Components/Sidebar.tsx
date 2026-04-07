@@ -44,6 +44,7 @@ export default function Sidebar() {
                 <Button
                     variant="ghost"
                     size="icon"
+                    aria-label="Toggle admin sidebar"
                     className="
                         bg-glass border border-gb rounded-2xl w-12 h-12
                         shadow-lg shadow-black/5 backdrop-blur-xl

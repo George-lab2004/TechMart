@@ -22,7 +22,7 @@ const addOrderItems = asyncHandler(async (req: CustomRequest, res: Response) => 
         totalPrice,
     } = req.body;
 
-    if (orderItems && orderItems.length === 0) {
+    if (!orderItems || orderItems.length === 0) {
         res.status(400);
         throw new Error("No order items");
     } else {

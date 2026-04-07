@@ -403,6 +403,7 @@ export default function AiChat() {
                     />
                     <button
                         onClick={handleSend}
+                        aria-label="Send message"
                         disabled={isLoading || !input.trim()}
                         className="w-8 h-8 rounded-lg bg-a text-white flex items-center justify-center
                        disabled:opacity-40 disabled:cursor-not-allowed hover:bg-a/90

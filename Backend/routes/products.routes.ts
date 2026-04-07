@@ -1,10 +1,11 @@
 import express from "express"
-import { getProduct, getSingleProduct, addProduct, updateProduct, deleteProduct, createProductReview, getProductReviews } from "../controller/products.js"
+import { getProduct, getTopSellingProducts, getSingleProduct, addProduct, updateProduct, deleteProduct, createProductReview, getProductReviews } from "../controller/products.js"
 import { protect, admin } from "../Middleware/authMiddleware.js"
 
 export const ProductsRouter = express.Router()
 
 ProductsRouter.get("/products", getProduct)
+ProductsRouter.get("/products/top", getTopSellingProducts)
 ProductsRouter.get("/products/:id", getSingleProduct)
 ProductsRouter.post("/products", protect, admin, addProduct)
 ProductsRouter.put("/products/:id", protect, admin, updateProduct)

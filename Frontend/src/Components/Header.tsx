@@ -139,8 +139,9 @@ export default function Header() {
             </Link>
           )}
 
-          <Link to="/cart">
+          <Link to="/cart" aria-label="View shopping cart">
             <Button
+              aria-label="Shopping Cart"
               className="bg-a text-white rounded-[12px] px-3 md:px-5 h-[34px] md:h-[38px] text-[13px] md:text-[14px] font-semibold font-body shadow-[0_4px_16px_var(--ag)] hover:bg-a hover:-translate-y-0.5 hover:shadow-[0_8px_28px_var(--ag)] shrink-0 transition-all"
             >
               🛒 <span className="hidden sm:inline px-1">Cart</span>
@@ -155,6 +156,7 @@ export default function Header() {
             variant="ghost"
             size="icon"
             onClick={() => setMenuOpen(!menuOpen)}
+            aria-label={menuOpen ? "Close menu" : "Open menu"}
             className="lg:hidden bg-glass border border-gb rounded-[10px] hover:bg-gb shrink-0 flex flex-col justify-center items-center gap-[5px]"
           >
             <span className={`block w-4 h-[2px] bg-text rounded-full transition-all duration-300 ${menuOpen ? 'rotate-45 translate-y-[7px]' : ''}`} />

@@ -5,75 +5,65 @@ import {
   CarouselContent,
   CarouselItem,
 } from '@/Components/ui/carousel'
-import { Zap, Shield, Cpu, Wifi, Battery } from 'lucide-react'
+import { Zap, Shield, Cpu, Wifi, Battery, Smartphone, Watch, Headphones, Monitor, Speaker, Mouse, Laptop } from 'lucide-react'
+import { useGetTopSellingProductsQuery } from '@/slices/productApiSlice'
 
-const SLIDES = [
-  {
-    id: 1,
-    name: 'ProBook Ultra X1',
-    category: 'Laptop',
-    price: '$1,299',
-    bg: 'from-blue-500/10 to-a/5',
-    icon: '💻',
-    badge: 'Best Seller',
-    badgeColor: 'bg-a/10 text-a',
-    features: [
-      { icon: Cpu,     label: 'M3 Pro Chip' },
-      { icon: Battery, label: '22hr Battery' },
-      { icon: Zap,     label: '140W Charge' },
-    ],
-  },
-  {
-    id: 2,
-    name: 'NovaBuds Pro',
-    category: 'Audio',
-    price: '$249',
-    bg: 'from-a2/10 to-a2/5',
-    icon: '🎧',
-    badge: 'New',
-    badgeColor: 'bg-a3/10 text-a3',
-    features: [
-      { icon: Shield, label: 'ANC Pro'      },
-      { icon: Wifi,   label: 'Lossless Audio' },
-      { icon: Battery, label: '36hr Playback' },
-    ],
-  },
-  {
-    id: 3,
-    name: 'VisionWatch S2',
-    category: 'Wearable',
-    price: '$399',
-    bg: 'from-a3/10 to-a3/5',
-    icon: '⌚',
-    badge: 'Limited',
-    badgeColor: 'bg-a2/10 text-a2',
-    features: [
-      { icon: Zap,     label: 'Always-On Display' },
-      { icon: Shield,  label: 'Health Sensors'    },
-      { icon: Battery, label: '7-Day Battery'     },
-    ],
-  },
-  {
-    id: 4,
-    name: 'PixelFrame 4K',
-    category: 'Monitor',
-    price: '$799',
-    bg: 'from-yellow-400/10 to-yellow-400/5',
-    icon: '🖥️',
-    badge: 'Top Rated',
-    badgeColor: 'bg-a/10 text-a',
-    features: [
-      { icon: Zap,  label: '4K 144Hz'    },
-      { icon: Cpu,  label: 'HDR 1000'    },
-      { icon: Wifi, label: 'USB-C 140W'  },
-    ],
-  },
-]
+// Map categories to icons
+const CAT_ICONS: Record<string, any> = {
+    Laptop: Laptop,
+    Audio: Headphones,
+    Wearable: Watch,
+    Monitor: Monitor,
+    Accessories: Mouse,
+    Smartphone: Smartphone,
+    Speaker: Speaker,
+}
 
-export function Carousel() {
+// Map tech specs to Lucide icons
+const SPEC_ICONS: Record<string, any> = {
+    Chip: Cpu,
+    Battery: Battery,
+    Charge: Zap,
+    Security: Shield,
+    Wifi: Wifi,
+    Wireless: Wifi,
+    ANC: Shield,
+    Refresh: Zap,
+}
+
+const getSpecIcon = (label: string) => {
+    const key = Object.keys(SPEC_ICONS).find(k => label.includes(k))
+    return key ? SPEC_ICONS[key] : Zap
+}
+
+
+
+export function Carousel({ onActiveChange }: { onActiveChange?: (index: number) => void }) {
   const [api, setApi]         = useState<CarouselApi>()
   const [current, setCurrent] = useState(0)
   const [count, setCount]     = useState(0)
+
+  const { data: topData, isLoading } = useGetTopSellingProductsQuery()
+  const products = topData?.result || []
+
+  const slides = products.map((p: any) => ({
+    id: p._id,
+    name: p.name,
+    category: p.category?.name || 'Tech',
+    price: `$${p.price.toLocaleString()}`,
+    bg: p.cardGlowColor ? `from-[${p.cardGlowColor}]/20 to-transparent` : p.category?.glowColor ? `from-[${p.category.glowColor}]/20 to-transparent` : 'from-a/10 to-transparent',
+    icon: p.images?.[0]?.url || p.quickSpecs?.[0]?.icon || CAT_ICONS[p.category?.name] || '📦',
+    badge: p.badge || 'Trending',
+    badgeColor: 'bg-a/10 text-a',
+    features: (p.quickSpecs || []).slice(0, 3).map((s: any) => ({
+        icon: getSpecIcon(s.label),
+        label: s.value
+    }))
+  }))
+
+  useEffect(() => {
+    onActiveChange?.(current)
+  }, [current, onActiveChange])
 
   useEffect(() => {
     if (!api) return
@@ -87,18 +77,27 @@ export function Carousel() {
     return () => { api.off('select', onSelect); api.off('reInit', onSelect) }
   }, [api])
 
+  if (isLoading) return <div className="h-[400px] w-full bg-surf animate-pulse rounded-3xl border border-gb" />
+  if (!slides.length) return null
+
   return (
     <div className="w-full flex flex-col items-center gap-5">
 
       <CarouselRoot setApi={setApi} opts={{ loop: true }} className="w-full">
         <CarouselContent>
-          {SLIDES.map((slide) => (
+          {slides.map((slide) => (
             <CarouselItem key={slide.id}>
               <div className="bg-surf border border-gb rounded-3xl overflow-hidden shadow-[0_8px_40px_rgba(0,0,0,0.1)] dark:shadow-[0_8px_40px_rgba(0,0,0,0.5)] transition-colors">
 
                 {/* Top — image area */}
                 <div className={`bg-linear-to-br ${slide.bg} flex items-center justify-center h-72 relative`}>
-                  <span className="text-[90px] leading-none select-none drop-shadow-lg">{slide.icon}</span>
+                  {typeof slide.icon === 'string' && slide.icon.startsWith('http') ? (
+                    <img src={slide.icon} alt={slide.name} className="h-56 w-auto object-contain drop-shadow-2xl select-none" />
+                  ) : typeof slide.icon === 'string' ? (
+                    <span className="text-[90px] leading-none select-none drop-shadow-lg">{slide.icon}</span>
+                  ) : (
+                    <slide.icon size={90} className="text-white drop-shadow-lg" />
+                  )}
                   <span className={`absolute top-4 right-4 text-[10px] font-mono font-semibold uppercase tracking-widest px-3 py-1 rounded-full ${slide.badgeColor} border border-current/20`}>
                     {slide.badge}
                   </span>
@@ -119,7 +118,7 @@ export function Carousel() {
 
                   {/* Feature pills */}
                   <div className="flex flex-wrap gap-2 mt-4">
-                    {slide.features.map(({ icon: Icon, label }) => (
+                    {slide.features.map(({ icon: Icon, label }: { icon: any; label: string }) => (
                       <span key={label} className="flex items-center gap-1.5 bg-bg border border-gb rounded-xl px-3 py-1.5 text-[12px] font-body text-text2">
                         <Icon size={12} className="text-a shrink-0" />
                         {label}
@@ -141,6 +140,7 @@ export function Carousel() {
             key={i}
             type="button"
             onClick={() => api?.scrollTo(i, false)}
+            aria-label={`Go to slide ${i + 1}`}
             className={`rounded-full transition-all duration-300 cursor-pointer ${
               i === current
                 ? 'w-6 h-2 bg-a'

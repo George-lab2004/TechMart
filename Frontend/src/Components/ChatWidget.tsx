@@ -21,6 +21,7 @@ export default function ChatWidget({ userId }: ChatWidgetProps) {
             {/* Floating toggle button */}
             <button
                 onClick={() => setOpen(!open)}
+                aria-label={open ? "Close AI chat" : "Open AI chat"}
                 className="w-14 h-14 rounded-full bg-a text-white flex items-center justify-center shadow-lg hover:bg-a/90 transition-all active:scale-95"
             >
                 {open ? "✖" : "💬"}

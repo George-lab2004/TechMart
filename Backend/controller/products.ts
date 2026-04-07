@@ -96,12 +96,22 @@ const createProductReview = asyncHandler(async (req: any, res: Response) => {
 })
 
 const getProductReviews = asyncHandler(async (req: Request, res: Response) => {
-  const product = await Product.findById(req.params.id).select("reviews rating numReviews ratingBreakdown")
-  if (!product) {
-    res.status(404).json({ message: "Product not found" })
-    return
-  }
-  res.status(200).json({ message: "SUCCESS", result: product })
+    const product = await Product.findById(req.params.id).select("reviews rating numReviews ratingBreakdown")
+    if (!product) {
+      res.status(404).json({ message: "Product not found" })
+      return
+    }
+    res.status(200).json({ message: "SUCCESS", result: product })
 })
 
-export { getProduct, getSingleProduct, getProductByCategory, addProduct, updateProduct, deleteProduct, createProductReview, getProductReviews }
+const getTopSellingProducts = asyncHandler(async (req: Request, res: Response) => {
+    // We sort by soldCount (which we identified in the model) and limit to 5
+    const result = await Product.find()
+        .sort({ soldCount: -1 })
+        .limit(5)
+        .populate("category", "name slug color glowColor");
+    
+    res.status(200).json({ message: "SUCCESS", result });
+})
+
+export { getProduct, getTopSellingProducts, getSingleProduct, getProductByCategory, addProduct, updateProduct, deleteProduct, createProductReview, getProductReviews }

@@ -22,6 +22,7 @@ export interface HeroSectionProps {
   primaryBtnLabel: string;
   secondaryBtnLabel: string;
   floatingCards: FloatingCard[];
+  onActiveChange?: (index: number) => void;
 }
 
 export default function HeroSection({
@@ -31,6 +32,7 @@ export default function HeroSection({
   primaryBtnLabel,
   secondaryBtnLabel,
   floatingCards,
+  onActiveChange,
 }: HeroSectionProps) {
 
   const constraintsRef = useRef<HTMLDivElement>(null);
@@ -73,7 +75,7 @@ export default function HeroSection({
 
       {/* Right: carousel + floating cards — hidden on mobile */}
       <div ref={constraintsRef} className="hidden md:block md:max-w-[30%] max-w-75 shrink-0 self-center me-30 mt-15 relative">
-        <Carousel />
+        <Carousel onActiveChange={onActiveChange} />
 
         {floatingCards.map((card, i) => (
           <motion.div

@@ -28,8 +28,18 @@ const Footer = () => {
                         Premium tech gadgets for those who demand the best. Curated, tested, and delivered with care.
                     </p>
                     <div className="flex gap-4">
-                        {[Facebook, Twitter, Instagram, Youtube].map((Icon, i) => (
-                            <span key={i} className="flex items-center justify-center w-10 h-10 rounded-2xl bg-linear-to-r from-gray-600 to-blue-900 text-white shadow-lg  hover:scale-110 transition-all cursor-pointer group">
+                        {[
+                            { Icon: Facebook, label: "Facebook" },
+                            { Icon: Twitter, label: "Twitter" },
+                            { Icon: Instagram, label: "Instagram" },
+                            { Icon: Youtube, label: "Youtube" }
+                        ].map(({ Icon, label }, i) => (
+                            <span 
+                                key={i} 
+                                role="button"
+                                aria-label={`Visit our ${label} page`}
+                                className="flex items-center justify-center w-10 h-10 rounded-2xl bg-linear-to-r from-gray-600 to-blue-900 text-white shadow-lg  hover:scale-110 transition-all cursor-pointer group"
+                            >
                                 <Icon size={18} className="text-white" />
                             </span>
                         ))}
