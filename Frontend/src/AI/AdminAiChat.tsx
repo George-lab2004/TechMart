@@ -21,18 +21,18 @@ const formatAiText = (text: string) => {
     let safe = text.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
 
     // Markdown Table Parser
-    safe = safe.replace(/(?:^|\n)\|(.+)\|\n\|(?:[-:]+[-| :]*)\|\n((?:\|.*\|\n?)*)/g, (match, header, body) => {
-        const ths = header.split('|').filter(Boolean).map((h: string) => 
+    safe = safe.replace(/(?:^|\n)\|(.+)\|\n\|(?:[-:]+[-| :]*)\|\n((?:\|.*\|\n?)*)/g, (header, body) => {
+        const ths = header.split('|').filter(Boolean).map((h: string) =>
             `<th class="px-3 py-2 border border-gray-700 bg-[#151522] text-left text-xs font-bold text-gray-200 tracking-wider">${h.trim()}</th>`
         ).join('');
-        
+
         const trs = body.trim().split('\n').filter(Boolean).map((row: string) => {
-            const tds = row.split('|').filter(Boolean).map((d: string) => 
+            const tds = row.split('|').filter(Boolean).map((d: string) =>
                 `<td class="px-3 py-2 border border-gray-800 text-gray-300 text-xs">${d.trim()}</td>`
             ).join('');
             return `<tr class="hover:bg-[#1a1a24] transition-colors">${tds}</tr>`;
         }).join('');
-        
+
         return `<div class="overflow-x-auto my-4 rounded-xl border border-gray-800 shadow-xl"><table class="w-full border-collapse"><thead><tr>${ths}</tr></thead><tbody>${trs}</tbody></table></div>`;
     });
 
