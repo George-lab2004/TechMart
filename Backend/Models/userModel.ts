@@ -9,7 +9,7 @@ const AddressSchema = new Schema({
   country:          { type: String },
   landmark:         { type: String },
   notes:            { type: String },
-  postalCode : {type:Number}
+  postalCode : {type:String}
 })
 
 const DeliverySchema = new Schema({
@@ -56,7 +56,7 @@ export interface IUser extends Document {
       country?:         string
       landmark?:        string
       notes?:           string
-      postalCode?: number
+      postalCode?: string
     }[]
     phone?: string
   }[]

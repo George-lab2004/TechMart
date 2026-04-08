@@ -10,6 +10,7 @@ export interface category {
     description?: string
     color?: string
     glowColor?: string
+    productCount?: number
 }
 interface CategroyResponse {
     message: string,

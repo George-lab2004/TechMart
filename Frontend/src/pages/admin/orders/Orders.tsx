@@ -4,6 +4,7 @@ import AdminHeader from "../components/AdminHeader"
 import AdminStatCard from "../components/AdminStatCard"
 import AdminTable from "../components/AdminTable"
 import toast from "react-hot-toast"
+import OrderDetailsModal from "./OrderDetailsModal"
 
 
 function Orders() {
@@ -14,6 +15,7 @@ function Orders() {
     const [searchTerm, setSearchTerm] = useState("")
     const [statusFilter, setStatusFilter] = useState("")
     const [sortBy, setSortBy] = useState("newest")
+    const [selectedOrder, setSelectedOrder] = useState<IOrder | null>(null)
 
     if (isLoading)
         return (
@@ -123,7 +125,8 @@ function Orders() {
                 renderRow={(order, index) => (
                     <tr
                         key={order._id}
-                        className="hover:bg-a/5 border-t border-gb transition-all"
+                        onClick={() => setSelectedOrder(order)}
+                        className="hover:bg-a/5 border-t border-gb transition-all cursor-pointer group/row"
                     >
                         {/* Index */}
                         <td className="px-6 py-4 font-mono text-[10px]">
@@ -202,8 +205,9 @@ function Orders() {
                             <div className="flex items-center justify-center">
                                 <select
                                     value={order.status}
+                                    onClick={(e) => e.stopPropagation()} // Prevent modal from opening
                                     onChange={(e) => handleUpdateStatus(order._id, e.target.value)}
-                                    className="bg-surf border border-gb rounded-lg px-2 py-1 text-[10px] font-bold uppercase tracking-widest text-text outline-none focus:border-a transition-all"
+                                    className="bg-surf border border-gb rounded-lg px-2 py-1 text-[10px] font-bold uppercase tracking-widest text-text outline-none focus:border-a transition-all relative z-10"
                                 >
                                     <option value="pending">Pending</option>
                                     <option value="processing">Processing</option>
@@ -216,6 +220,14 @@ function Orders() {
                     </tr>
                 )}
             />
+
+            {/* ── Details Modal ──────────────── */}
+            {selectedOrder && (
+                <OrderDetailsModal 
+                    order={selectedOrder} 
+                    onClose={() => setSelectedOrder(null)} 
+                />
+            )}
         </>
     )
 }

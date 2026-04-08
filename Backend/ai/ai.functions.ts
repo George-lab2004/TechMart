@@ -48,12 +48,28 @@ export const aiFunctionExecutors = {
         const query: any = {};
 
         if (keywords) {
-            query.$or = [
-                { name: { $regex: keywords, $options: "i" } },
-                { brand: { $regex: keywords, $options: "i" } },
-                { description: { $regex: keywords, $options: "i" } },
-                { tags: { $in: [new RegExp(keywords, "i")] } },
-            ];
+            const cleanKeywords = keywords.trim();
+            const words = cleanKeywords.split(/\s+/).filter(Boolean);
+
+            if (words.length > 0) {
+                const wordQueries = words.map((word) => ({
+                    $or: [
+                        { name: { $regex: word, $options: "i" } },
+                        { brand: { $regex: word, $options: "i" } },
+                        { description: { $regex: word, $options: "i" } },
+                        { tags: { $in: [new RegExp(word, "i")] } },
+                    ],
+                }));
+
+                // If query.$or already exists (e.g. from processor), move it to $and
+                if (query.$or) {
+                    const existingOr = query.$or;
+                    delete query.$or;
+                    query.$and = [{ $or: existingOr }, ...wordQueries];
+                } else {
+                    query.$and = wordQueries;
+                }
+            }
         }
 
         if (brand) {
@@ -111,14 +127,24 @@ export const aiFunctionExecutors = {
 
         const results = await Promise.all(
             queries.map(async (keyword: string) => {
-                const products = await Product.find({
-                    $or: [
-                        { name: { $regex: keyword, $options: "i" } },
-                        { brand: { $regex: keyword, $options: "i" } },
-                        { description: { $regex: keyword, $options: "i" } },
-                        { tags: { $in: [new RegExp(keyword, "i")] } },
-                    ],
-                })
+                const cleanKeyword = keyword.trim();
+                const words = cleanKeyword.split(/\s+/).filter(Boolean);
+                
+                let productQuery: any = {};
+                if (words.length > 0) {
+                    productQuery.$and = words.map((word) => ({
+                        $or: [
+                            { name: { $regex: word, $options: "i" } },
+                            { brand: { $regex: word, $options: "i" } },
+                            { description: { $regex: word, $options: "i" } },
+                            { tags: { $in: [new RegExp(word, "i")] } },
+                        ],
+                    }));
+                } else {
+                    return { query: keyword, found: false };
+                }
+
+                const products = await Product.find(productQuery)
                     .limit(1)
                     .populate("category", "name");
 

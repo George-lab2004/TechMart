@@ -10,6 +10,7 @@ function CategroiesSection() {
     if (isLoading) return <Loader />
     if (isError) return <p className="text-center py-20 text-muted">Failed to load categories.</p>;
 
+
     return (
         <div className="py-12">
             <h2 className="text-4xl font-display uppercase tracking-widest mb-8 px-4 text-text">Top Categories</h2>
@@ -31,7 +32,7 @@ function CategroiesSection() {
             </div>
             <div className="flex gap-8 overflow-x-auto pb-10 pt-4 no-scrollbar scroll-smooth px-4">
 
-                {categories.map((cat) => (
+                {categories?.map((cat) => (
                     <Link to={`/products?category=${cat.slug || cat.name.toLowerCase()}`} key={cat._id}>
                         <Card
                             className="flex-none w-80 h-64 cursor-pointer hover:scale-105 transition-all duration-500 relative overflow-hidden border-none group shadow-lg dark:shadow-2xl [--card-bg:white] dark:[--card-bg:var(--dynamic-bg,var(--surf))]"

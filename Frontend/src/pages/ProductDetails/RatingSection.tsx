@@ -237,14 +237,26 @@ export default function RatingSection({ productId, rating, numReviews, ratingBre
 
   const reviews: Review[] = reviewsData?.result?.reviews ?? []
 
-  const total = Object.values(ratingBreakdown).reduce((a, b) => a + b, 0)
-  const breakdown: Record<number, number> = {
-    5: ratingBreakdown.five,
-    4: ratingBreakdown.four,
-    3: ratingBreakdown.three,
-    2: ratingBreakdown.two,
-    1: ratingBreakdown.one,
-  }
+  const { total, breakdown } = useMemo(() => {
+    const b = ratingBreakdown || { five: 0, four: 0, three: 0, two: 0, one: 0 }
+    let t = (b.five || 0) + (b.four || 0) + (b.three || 0) + (b.two || 0) + (b.one || 0)
+
+    // Fallback: If breakdown is empty but we have reviews, calculate from reviews array
+    if (t === 0 && reviews.length > 0) {
+      const calcB: Record<number, number> = { 5: 0, 4: 0, 3: 0, 2: 0, 1: 0 }
+      reviews.forEach(r => {
+        const star = Math.round(r.rating)
+        if (star >= 1 && star <= 5) calcB[star]++
+      })
+      return { total: reviews.length, breakdown: calcB }
+    }
+
+    const numericBreakdown: Record<number, number> = {
+      5: b.five, 4: b.four, 3: b.three, 2: b.two, 1: b.one
+    }
+
+    return { total: t, breakdown: numericBreakdown }
+  }, [ratingBreakdown, reviews])
 
   const filtered = useMemo(() => {
     let r = [...reviews]

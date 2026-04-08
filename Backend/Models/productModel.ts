@@ -135,6 +135,22 @@ const productSchema = new Schema<IProduct>(
   }
 )
 
+// Add text index for AI search
+productSchema.index({ 
+  name: "text", 
+  brand: "text", 
+  description: "text", 
+  tags: "text" 
+}, {
+  weights: {
+    name: 10,
+    brand: 5,
+    tags: 3,
+    description: 1
+  },
+  name: "ProductTextIndex"
+});
+
 // ─── INTERFACE ────────────────────────────────────────────
 
 export interface IProduct extends Document {

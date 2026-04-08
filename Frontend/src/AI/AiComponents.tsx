@@ -111,10 +111,21 @@ export default function AiChat() {
             ])
 
         } catch (err: any) {
+            const errorData = err?.data;
+            let finalMsg = "Something went wrong. Please try again.";
+
+            if (errorData?.error === "QUOTA_EXHAUSTED" || err?.status === 429) {
+                finalMsg = "TechMart AI is out of daily messages right now. Try again tomorrow!";
+            } else if (errorData?.error === "MODEL_OVERLOADED" || err?.status === 503) {
+                finalMsg = "The TechMart AI is currently seeing extra high volume. Please give it a minute to catch its breath and try your request again!";
+            } else if (errorData?.message) {
+                finalMsg = errorData.message;
+            }
+
             setMessages(prev => [...prev, {
                 from: "ai",
-                text: `Something went wrong: ${err?.data?.message || err.message || "Unknown error"}`
-            }])
+                text: finalMsg
+            }]);
         }
     }
 
@@ -133,7 +144,7 @@ export default function AiChat() {
                             <img
                                 src={p.image}
                                 alt={p.name}
-                                className="w-12 h-12 rounded-lg object-cover flex-shrink-0 border border-gb"
+                                className="w-12 h-12 rounded-lg object-cover shrink-0 border border-gb"
                             />
                         )}
                         <div className="flex-1 min-w-0">
@@ -148,7 +159,7 @@ export default function AiChat() {
                                 </span>
                             )}
                         </div>
-                        <div className="font-display text-lg text-a3 flex-shrink-0">
+                        <div className="font-display text-lg text-a3 shrink-0">
                             {typeof p.price === "number" ? `$${p.price.toLocaleString()}` : "-"}
                         </div>
                     </div>
@@ -194,7 +205,7 @@ export default function AiChat() {
                     </div>
                     <div className="rounded-lg border border-gb bg-card/40 p-2 flex justify-between">
                         <span className="text-muted font-mono">Rating</span>
-                        <span className="text-text font-medium text-yellow-400">★ {typeof product.rating === "number" ? product.rating.toFixed(1) : "-"}</span>
+                        <span className="font-medium text-yellow-400">★ {typeof product.rating === "number" ? product.rating.toFixed(1) : "-"}</span>
                     </div>
                     <div className="rounded-lg border border-gb bg-card/40 p-2 flex justify-between">
                         <span className="text-muted font-mono">Reviews</span>
@@ -313,7 +324,7 @@ export default function AiChat() {
             {/* Header */}
             <div className="flex items-center gap-3 px-5 py-4 border-b border-gb bg-surf2">
                 <div className="relative">
-                    <div className="w-9 h-9 rounded-xl bg-gradient-to-br from-a to-a2
+                    <div className="w-9 h-9 rounded-xl bg-linear-to-br from-a to-a2
                           flex items-center justify-center text-white font-bold text-sm">AI</div>
                     <div className="absolute -bottom-0.5 -right-0.5 w-3 h-3 rounded-full
                           bg-a3 border-2 border-surf2 animate-pulse"/>
@@ -382,7 +393,7 @@ export default function AiChat() {
                         onClick={() => { setInput(p); }}
                         className="font-mono text-[9px] tracking-wider uppercase whitespace-nowrap
                        px-3 py-1.5 rounded-full border border-gb bg-glass text-muted
-                       hover:border-a hover:text-a transition-all flex-shrink-0">
+                       hover:border-a hover:text-a transition-all shrink-0">
                         {p}
                     </button>
                 ))}
@@ -407,7 +418,7 @@ export default function AiChat() {
                         disabled={isLoading || !input.trim()}
                         className="w-8 h-8 rounded-lg bg-a text-white flex items-center justify-center
                        disabled:opacity-40 disabled:cursor-not-allowed hover:bg-a/90
-                       transition-all active:scale-95 flex-shrink-0 font-bold text-sm"
+                       transition-all active:scale-95 shrink-0 font-bold text-sm"
                     >
                         {isLoading ? "…" : "↑"}
                     </button>

@@ -17,7 +17,7 @@ export default function InputField({
 
     return (
         <div className="flex flex-col gap-1">
-            <label htmlFor={id} className="text-xs text-[var(--muted)] uppercase tracking-widest">
+            <label htmlFor={id} className="text-xs text-muted uppercase tracking-widest">
                 {label}
             </label>
 
@@ -31,7 +31,7 @@ export default function InputField({
                     value={value}
                     onChange={onChange}
                     placeholder={placeholder}
-                    className="w-full pl-10 pr-3 py-3 rounded-lg bg-[var(--glass)] border border-[var(--gb)] focus:border-[var(--a)] outline-none"
+                    className="w-full pl-10 pr-3 py-3 rounded-lg bg-glass border border-gb focus:border-a outline-none"
                 />
             </div>
         </div>

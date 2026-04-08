@@ -23,23 +23,23 @@ const formatAiText = (text: string) => {
     // Markdown Table Parser
     safe = safe.replace(/(?:^|\n)\|(.+)\|\n\|(?:[-:]+[-| :]*)\|\n((?:\|.*\|\n?)*)/g, (header, body) => {
         const ths = header.split('|').filter(Boolean).map((h: string) =>
-            `<th class="px-3 py-2 border border-gray-700 bg-[#151522] text-left text-xs font-bold text-gray-200 tracking-wider">${h.trim()}</th>`
+            `<th class="px-3 py-2 border border-gb bg-surf text-left text-xs font-bold text-text2 tracking-wider">${h.trim()}</th>`
         ).join('');
 
         const trs = body.trim().split('\n').filter(Boolean).map((row: string) => {
             const tds = row.split('|').filter(Boolean).map((d: string) =>
-                `<td class="px-3 py-2 border border-gray-800 text-gray-300 text-xs">${d.trim()}</td>`
+                `<td class="px-3 py-2 border border-gb text-text text-xs">${d.trim()}</td>`
             ).join('');
-            return `<tr class="hover:bg-[#1a1a24] transition-colors">${tds}</tr>`;
+            return `<tr class="hover:bg-surf2/50 transition-colors">${tds}</tr>`;
         }).join('');
 
-        return `<div class="overflow-x-auto my-4 rounded-xl border border-gray-800 shadow-xl"><table class="w-full border-collapse"><thead><tr>${ths}</tr></thead><tbody>${trs}</tbody></table></div>`;
+        return `<div class="overflow-x-auto my-4 rounded-xl border border-gb shadow-xl"><table class="w-full border-collapse"><thead><tr>${ths}</tr></thead><tbody>${trs}</tbody></table></div>`;
     });
 
     return safe
-        .replace(/\*\*(.*?)\*\*/g, '<strong class="text-white">$1</strong>')
-        .replace(/(?:^|\n)[\*\-]\s+(.*)/g, '\n<li class="ml-4 list-disc marker:text-indigo-500">$1</li>')
-        .replace(/(?:^|\n)(\d+\.)\s+(.*)/g, '\n<li class="ml-4 list-decimal marker:text-indigo-500"><span class="font-bold text-gray-400 mr-1">$1</span>$2</li>');
+        .replace(/\*\*(.*?)\*\*/g, '<strong class="text-text font-bold">$1</strong>')
+        .replace(/(?:^|\n)[\*\-]\s+(.*)/g, '\n<li class="ml-4 list-disc marker:text-a">$1</li>')
+        .replace(/(?:^|\n)(\d+\.)\s+(.*)/g, '\n<li class="ml-4 list-decimal marker:text-a"><span class="font-bold text-text2 mr-1">$1</span>$2</li>');
 };
 
 export default function AdminAiChat() {
@@ -111,9 +111,20 @@ export default function AdminAiChat() {
             }
 
         } catch (err: any) {
+            const errorData = err?.data;
+            let finalMsg = "System Error. Please try again.";
+
+            if (errorData?.error === "QUOTA_EXHAUSTED" || err?.status === 429) {
+                finalMsg = "TechMart AI is out of daily messages right now. Try again tomorrow!";
+            } else if (errorData?.error === "MODEL_OVERLOADED" || err?.status === 503) {
+                finalMsg = "The TechMart AI is currently seeing extra high volume. Please give it a minute to catch its breath and try your request again!";
+            } else if (errorData?.message) {
+                finalMsg = errorData.message;
+            }
+
             setMessages(prev => [...prev, {
                 from: "ai",
-                text: `System Error: ${err?.data?.message || err.message || "Unknown error"}`
+                text: finalMsg
             }])
         }
     }
@@ -133,13 +144,13 @@ export default function AdminAiChat() {
         const { title, type } = chartData;
         const data = normalizedData;
 
-        // Dark theme tooltip
+        // Theme aware tooltip
         const CustomTooltip = ({ active, payload, label }: any) => {
             if (active && payload && payload.length) {
                 return (
-                    <div className="bg-[#0f0f15] border border-gray-800 p-3 rounded-lg shadow-xl">
-                        <p className="text-gray-400 text-xs mb-1 font-mono">{label}</p>
-                        <p className="text-white font-bold">{payload[0].value.toLocaleString()}</p>
+                    <div className="bg-surf border border-gb p-3 rounded-lg shadow-xl backdrop-blur-md">
+                        <p className="text-muted text-xs mb-1 font-mono">{label}</p>
+                        <p className="text-text font-bold">{payload[0].value.toLocaleString()}</p>
                     </div>
                 );
             }
@@ -147,8 +158,8 @@ export default function AdminAiChat() {
         };
 
         return (
-            <div className="mt-4 w-full bg-[#0d0d14] rounded-xl border border-gray-800 p-4 shadow-2xl">
-                <div className="text-sm font-bold text-gray-200 mb-4 font-mono uppercase tracking-widest">{title}</div>
+            <div className="mt-4 w-full bg-surf2 rounded-xl border border-gb p-4 shadow-inner-sm">
+                <div className="text-sm font-bold text-text mb-4 font-mono uppercase tracking-widest">{title}</div>
                 <div className="h-64 w-full text-xs">
                     <ResponsiveContainer width="100%" height="100%">
                         {type === 'pie' ? (
@@ -159,24 +170,24 @@ export default function AdminAiChat() {
                                     ))}
                                 </Pie>
                                 <Tooltip content={<CustomTooltip />} />
-                                <Legend wrapperStyle={{ fontSize: '10px', color: '#9ca3af' }} />
+                                <Legend wrapperStyle={{ fontSize: '10px', color: 'var(--text2)' }} />
                             </PieChart>
                         ) : type === 'line' ? (
                             <LineChart data={data} margin={{ left: -20, right: 10 }}>
-                                <CartesianGrid strokeDasharray="3 3" stroke="#222" vertical={false} />
-                                <XAxis dataKey="name" stroke="#666" tick={{ fontSize: 10 }} />
-                                <YAxis stroke="#666" tick={{ fontSize: 10 }} />
+                                <CartesianGrid strokeDasharray="3 3" stroke="var(--gb)" vertical={false} />
+                                <XAxis dataKey="name" stroke="var(--muted)" tick={{ fontSize: 10 }} />
+                                <YAxis stroke="var(--muted)" tick={{ fontSize: 10 }} />
                                 <Tooltip content={<CustomTooltip />} />
-                                <Line type="monotone" dataKey="value" stroke="#10b981" strokeWidth={3} dot={{ r: 4, fill: '#10b981', strokeWidth: 0 }} />
+                                <Line type="monotone" dataKey="value" stroke="var(--a)" strokeWidth={3} dot={{ r: 4, fill: 'var(--a)', strokeWidth: 0 }} />
                             </LineChart>
                         ) : (
                             // Default to bar chart
                             <BarChart data={data} margin={{ left: -20, right: 10 }}>
-                                <CartesianGrid strokeDasharray="3 3" stroke="#222" vertical={false} />
-                                <XAxis dataKey="name" stroke="#666" tick={{ fontSize: 10 }} />
-                                <YAxis stroke="#666" tick={{ fontSize: 10 }} />
+                                <CartesianGrid strokeDasharray="3 3" stroke="var(--gb)" vertical={false} />
+                                <XAxis dataKey="name" stroke="var(--muted)" tick={{ fontSize: 10 }} />
+                                <YAxis stroke="var(--muted)" tick={{ fontSize: 10 }} />
                                 <Tooltip content={<CustomTooltip />} />
-                                <Bar dataKey="value" fill="#4f46e5" radius={[4, 4, 0, 0]} />
+                                <Bar dataKey="value" fill="var(--a)" radius={[4, 4, 0, 0]} />
                             </BarChart>
                         )}
                     </ResponsiveContainer>
@@ -190,21 +201,21 @@ export default function AdminAiChat() {
         return (
             <div className="mt-3 grid grid-cols-1 gap-2 w-full">
                 {products.map((p: any, idx: number) => (
-                    <div key={p.id || idx} className="flex items-center gap-3 p-3 rounded-lg border border-gray-800 bg-[#0d0d14] hover:border-indigo-500/50 transition-colors">
+                    <div key={p.id || idx} className="flex items-center gap-3 p-3 rounded-lg border border-gb bg-surf2 hover:border-a/50 transition-colors">
                         {p.image ? (
                             <img src={p.image} alt={p.name} className="w-10 h-10 rounded object-contain shrink-0 bg-white p-0.5" />
                         ) : (
-                            <div className="w-10 h-10 rounded bg-gray-800 shrink-0" />
+                            <div className="w-10 h-10 rounded bg-bg2 shrink-0" />
                         )}
                         <div className="flex-1 min-w-0">
-                            <div className="text-gray-200 text-xs font-bold truncate">{p.name}</div>
-                            <div className="text-gray-500 text-[10px] font-mono mt-0.5 tracking-tight flex items-center gap-2">
-                                <span>Stock: <span className={p.countInStock <= 5 ? "text-red-400 font-bold" : "text-green-400"}>{p.countInStock}</span></span>
-                                <span className="text-gray-700">|</span>
+                            <div className="text-text text-xs font-bold truncate">{p.name}</div>
+                            <div className="text-text2 text-[10px] font-mono mt-0.5 tracking-tight flex items-center gap-2">
+                                <span>Stock: <span className={p.countInStock <= 5 ? "text-a2 font-bold" : "text-a3"}>{p.countInStock}</span></span>
+                                <span className="text-gb">|</span>
                                 <span>Sold: {p.soldCount}</span>
                             </div>
                         </div>
-                        <div className="text-indigo-400 text-xs font-mono font-bold shrink-0">
+                        <div className="text-a text-xs font-mono font-bold shrink-0">
                             ${p.price?.toLocaleString()}
                         </div>
                     </div>
@@ -216,10 +227,10 @@ export default function AdminAiChat() {
     const renderOrdersTable = (orders: any[]) => {
         if (!orders || orders.length === 0) return null;
         return (
-            <div className="mt-3 w-full rounded-lg border border-gray-800 bg-[#0d0d14] overflow-hidden shadow-lg">
+            <div className="mt-3 w-full rounded-lg border border-gb bg-surf2 overflow-hidden shadow-lg">
                 <div className="overflow-x-auto scrollbar-thin">
-                    <table className="w-full text-left text-[10px] text-gray-400 font-mono whitespace-nowrap">
-                        <thead className="bg-[#12121a] text-gray-300 uppercase tracking-widest border-b border-gray-800">
+                    <table className="w-full text-left text-[10px] text-text2 font-mono whitespace-nowrap">
+                        <thead className="bg-bg2 text-text uppercase tracking-widest border-b border-gb">
                             <tr>
                                 <th className="px-3 py-2 font-medium">Order #</th>
                                 <th className="px-3 py-2 font-medium">Customer</th>
@@ -229,12 +240,12 @@ export default function AdminAiChat() {
                         </thead>
                         <tbody>
                             {orders.map((o: any, idx: number) => (
-                                <tr key={o._id || idx} className="border-b border-gray-800/50 hover:bg-[#1a1a24] transition-colors last:border-0">
+                                <tr key={o._id || idx} className="border-b border-gb/50 hover:bg-surf2/80 transition-colors last:border-0">
                                     <td className="px-3 py-2 truncate max-w-[80px]">{o.orderNumber || o._id?.substring(0, 8)}</td>
                                     <td className="px-3 py-2">{o.user?.name || "Guest"}</td>
-                                    <td className="px-3 py-2 text-indigo-400 text-right font-bold">${o.totalPrice?.toLocaleString(undefined, { minimumFractionDigits: 2 })}</td>
+                                    <td className="px-3 py-2 text-a text-right font-bold">${o.totalPrice?.toLocaleString(undefined, { minimumFractionDigits: 2 })}</td>
                                     <td className="px-3 py-2 text-right">
-                                        <span className={`px-1.5 py-0.5 rounded text-[8px] uppercase tracking-wider ${o.isDelivered ? 'bg-green-500/10 text-green-400 border border-green-500/20' : 'bg-yellow-500/10 text-yellow-400 border border-yellow-500/20'}`}>
+                                        <span className={`px-1.5 py-0.5 rounded text-[8px] uppercase tracking-wider ${o.isDelivered ? 'bg-a3/10 text-a3 border border-a3/20' : 'bg-a2/10 text-a2 border border-a2/20'}`}>
                                             {o.isDelivered ? "Delivered" : "Pending"}
                                         </span>
                                     </td>
@@ -252,21 +263,21 @@ export default function AdminAiChat() {
         return (
             <div className="mt-3 grid grid-cols-2 gap-2 w-full font-mono text-center">
                 {stats.totalRevenue !== undefined && (
-                    <div className="p-3 bg-gradient-to-br from-indigo-900/30 to-purple-900/30 border border-indigo-500/30 rounded-lg col-span-2 shadow-inner">
-                        <div className="text-[10px] text-indigo-300 uppercase tracking-widest mb-1">Total Revenue</div>
-                        <div className="text-2xl text-white font-bold">${stats.totalRevenue.toLocaleString(undefined, { minimumFractionDigits: 2 })}</div>
+                    <div className="p-3 bg-a/10 border border-a/30 rounded-lg col-span-2 shadow-inner">
+                        <div className="text-[10px] text-a uppercase tracking-widest mb-1">Total Revenue</div>
+                        <div className="text-2xl text-text font-bold">${stats.totalRevenue.toLocaleString(undefined, { minimumFractionDigits: 2 })}</div>
                     </div>
                 )}
                 {stats.totalOrders !== undefined && (
-                    <div className="p-3 bg-[#0d0d14] border border-gray-800 rounded-lg hover:border-gray-700 transition-colors">
-                        <div className="text-[9px] text-gray-500 uppercase tracking-widest">Total Orders</div>
-                        <div className="text-sm text-gray-200 mt-1 font-bold">{stats.totalOrders}</div>
+                    <div className="p-3 bg-surf2 border border-gb rounded-lg hover:border-text/10 transition-colors">
+                        <div className="text-[9px] text-text2 uppercase tracking-widest">Total Orders</div>
+                        <div className="text-sm text-text mt-1 font-bold">{stats.totalOrders}</div>
                     </div>
                 )}
                 {stats.avgOrderValue !== undefined && (
-                    <div className="p-3 bg-[#0d0d14] border border-gray-800 rounded-lg hover:border-gray-700 transition-colors">
-                        <div className="text-[9px] text-gray-500 uppercase tracking-widest">Avg Order Value</div>
-                        <div className="text-sm text-green-400 mt-1 font-bold">${stats.avgOrderValue.toLocaleString(undefined, { minimumFractionDigits: 2 })}</div>
+                    <div className="p-3 bg-surf2 border border-gb rounded-lg hover:border-text/10 transition-colors">
+                        <div className="text-[9px] text-text2 uppercase tracking-widest">Avg Order Value</div>
+                        <div className="text-sm text-a3 mt-1 font-bold">${stats.avgOrderValue.toLocaleString(undefined, { minimumFractionDigits: 2 })}</div>
                     </div>
                 )}
             </div>
@@ -298,8 +309,8 @@ export default function AdminAiChat() {
 
         // Fallback for any unknown data models
         return (
-            <div className="mt-2 w-full rounded-xl border border-gray-800 bg-[#0a0a0f] p-3 max-h-40 overflow-y-auto scrollbar-thin">
-                <pre className="text-[10px] text-gray-400 font-mono">
+            <div className="mt-2 w-full rounded-xl border border-gb bg-bg p-3 max-h-40 overflow-y-auto scrollbar-thin">
+                <pre className="text-[10px] text-text2 font-mono">
                     {JSON.stringify(data, null, 2)}
                 </pre>
             </div>
@@ -307,31 +318,31 @@ export default function AdminAiChat() {
     }
 
     return (
-        <div className="flex flex-col h-full bg-[#050508] overflow-hidden shadow-2xl">
+        <div className="flex flex-col h-full bg-bg overflow-hidden shadow-2xl">
             {/* Pro Header */}
-            <div className="flex items-center gap-3 px-5 py-4 border-b border-gray-800 bg-[#0a0a0f]">
-                <div className="w-9 h-9 rounded-xl bg-gradient-to-br from-indigo-600 to-purple-800
+            <div className="flex items-center gap-3 px-5 py-4 border-b border-gb bg-surf">
+                <div className="w-9 h-9 rounded-xl bg-linear-to-br from-a to-a/70
                         flex items-center justify-center text-white font-bold text-lg">📈</div>
                 <div>
-                    <div className="font-bold text-sm text-gray-100 uppercase tracking-widest font-mono">Business Analyst</div>
-                    <div className="font-mono text-[9px] text-gray-500 tracking-widest uppercase">Admin Secure Portal</div>
+                    <div className="font-bold text-sm text-text uppercase tracking-widest font-mono">Business Analyst</div>
+                    <div className="font-mono text-[9px] text-text2 tracking-widest uppercase">Admin Secure Portal</div>
                 </div>
                 <button
                     onClick={() => { setMessages([{ from: "ai", text: "Session Reset. Ready for analytics." }]); setHistory([]) }}
-                    className="ml-auto font-mono text-[9px] tracking-widest uppercase text-gray-500
-                     hover:text-red-400 transition-colors cursor-pointer"
+                    className="ml-auto font-mono text-[9px] tracking-widest uppercase text-muted
+                     hover:text-a2 transition-colors cursor-pointer"
                 >
                     PURGE
                 </button>
             </div>
 
             {/* Messages */}
-            <div className="flex-1 overflow-y-auto px-4 py-6 space-y-5 scrollbar-thin scrollbar-thumb-gray-800">
+            <div className="flex-1 overflow-y-auto px-4 py-6 space-y-5 scrollbar-thin scrollbar-thumb-gb">
                 {messages.map((m, i) => (
                     <div key={i} className={`flex ${m.from === "user" ? "justify-end" : "justify-start"}`}>
                         <div className={`max-w-[85%] ${m.from === "user" ? "items-end" : "items-start"} flex flex-col gap-1`}>
                             {m.fn && m.from === "ai" && (
-                                <div className="font-mono text-[9px] text-indigo-400 tracking-widest uppercase pl-1 mb-1">
+                                <div className="font-mono text-[9px] text-a tracking-widest uppercase pl-1 mb-1">
                                     [SYS_EXEC: {m.fn}]
                                 </div>
                             )}
@@ -339,8 +350,8 @@ export default function AdminAiChat() {
                             {m.text && (
                                 <div className={`px-4 py-3 rounded-xl text-sm leading-relaxed whitespace-pre-wrap font-mono
                                     ${m.from === "user"
-                                        ? "bg-indigo-600 text-white rounded-br-sm shadow-xl shadow-indigo-900/20"
-                                        : "bg-[#0d0d14] border border-gray-800 text-gray-300 rounded-bl-sm"
+                                        ? "bg-a text-white rounded-br-sm shadow-xl shadow-a/20"
+                                        : "bg-surf2 border border-gb text-text rounded-bl-sm"
                                     }`}>
                                     {m.from === "user" ? (
                                         m.text
@@ -357,11 +368,11 @@ export default function AdminAiChat() {
 
                 {isLoading && (
                     <div className="flex justify-start">
-                        <div className="px-5 py-4 rounded-xl rounded-bl-sm bg-[#0d0d14] border border-gray-800 flex items-center gap-2">
-                            <div className="w-1.5 h-4 bg-indigo-500 animate-pulse" />
-                            <div className="w-1.5 h-6 bg-purple-500 animate-pulse delay-75" />
-                            <div className="w-1.5 h-3 bg-indigo-500 animate-pulse delay-150" />
-                            <span className="text-[10px] text-gray-500 font-mono uppercase tracking-widest ml-2">Running Aggregation...</span>
+                        <div className="px-5 py-4 rounded-xl rounded-bl-sm bg-surf2 border border-gb flex items-center gap-2">
+                            <div className="w-1.5 h-4 bg-a animate-pulse" />
+                            <div className="w-1.5 h-6 bg-a2 animate-pulse delay-75" />
+                            <div className="w-1.5 h-3 bg-a3 animate-pulse delay-150" />
+                            <span className="text-[10px] text-muted font-mono uppercase tracking-widest ml-2">Running Aggregation...</span>
                         </div>
                     </div>
                 )}
@@ -374,17 +385,17 @@ export default function AdminAiChat() {
                     <button key={p}
                         onClick={() => { setInput(p); }}
                         className="font-mono text-[9px] tracking-wider uppercase whitespace-nowrap
-                       px-3 py-1.5 rounded-md border border-gray-800 bg-[#0a0a0f] text-gray-400
-                       hover:border-indigo-500 hover:text-indigo-400 transition-all flex-shrink-0">
+                       px-3 py-1.5 rounded-md border border-gb bg-surf text-text2
+                       hover:border-a hover:text-a transition-all shrink-0">
                         {p}
                     </button>
                 ))}
             </div>
 
             {/* Input */}
-            <div className="p-4 bg-[#050508]">
-                <div className="flex gap-2 items-center bg-[#0a0a0f] border border-gray-800 rounded-xl
-                        px-4 py-2 focus-within:border-indigo-600 transition-colors shadow-inner">
+            <div className="p-4 bg-bg">
+                <div className="flex gap-2 items-center bg-surf border border-gb rounded-xl
+                        px-4 py-2 focus-within:border-a transition-colors shadow-inner-sm">
                     <input
                         value={input}
                         onChange={e => setInput(e.target.value)}
@@ -392,15 +403,15 @@ export default function AdminAiChat() {
                         placeholder="Query database..."
                         disabled={isLoading}
                         className="flex-1 bg-transparent border-none outline-none font-mono text-sm
-                       text-gray-200 placeholder:text-gray-700 disabled:opacity-50"
+                       text-text placeholder:text-muted disabled:opacity-50"
                     />
                     <button
                         onClick={handleSend}
                         aria-label="Send database query"
                         disabled={isLoading || !input.trim()}
-                        className="w-10 h-10 rounded-lg bg-indigo-600 text-white flex items-center justify-center
-                       disabled:opacity-40 disabled:cursor-not-allowed hover:bg-indigo-500
-                       transition-all active:scale-95 flex-shrink-0 font-mono font-bold"
+                        className="w-10 h-10 rounded-lg bg-a text-white flex items-center justify-center
+                       disabled:opacity-40 disabled:cursor-not-allowed hover:bg-a/90
+                       transition-all active:scale-95 shrink-0 font-mono font-bold"
                     >
                         {isLoading ? "■" : "EXE"}
                     </button>

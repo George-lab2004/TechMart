@@ -72,10 +72,23 @@ export const chatWithAdminAI = async (req: Request, res: Response): Promise<void
     } catch (error: any) {
         console.error("Admin AI Error:", error);
         
-        // Handle Gemini 15 RPM Rate Limiting elegantly
         const errMsg = error.message?.toLowerCase() || "";
-        if (errMsg.includes("429") || errMsg.includes("quota") || errMsg.includes("retry") || error.status === 429) {
-            res.status(429).json({ error: "Google AI is taking a breather! Free tier has a 15 messages per minute limit. Please wait 30 seconds before asking the next question." });
+        const isQuota = errMsg.includes("429") || errMsg.includes("quota") || errMsg.includes("retry") || error.status === 429;
+        const isOverloaded = errMsg.includes("503") || errMsg.includes("overloaded") || error.status === 503;
+
+        if (isQuota) {
+            res.status(429).json({ 
+                error: "QUOTA_EXHAUSTED",
+                message: "TechMart AI is out of daily messages right now. Try again tomorrow!" 
+            });
+            return;
+        }
+
+        if (isOverloaded) {
+            res.status(503).json({ 
+                error: "MODEL_OVERLOADED",
+                message: "The TechMart AI is currently seeing extra high volume. Please give it a minute to catch its breath and try your request again!" 
+            });
             return;
         }
 

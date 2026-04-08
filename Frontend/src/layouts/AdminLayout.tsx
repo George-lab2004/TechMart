@@ -5,6 +5,7 @@ import { useSelector } from 'react-redux'
 import type { RootState } from '@/store/store'
 import Sidebar from '@/Components/Sidebar'
 import AdminChatWidget from '@/Components/AdminChatWidget'
+import ScrollToTop from '@/Components/ScrollToTop'
 
 export default function AdminLayout() {
     const { pathname } = useLocation()
@@ -15,6 +16,7 @@ export default function AdminLayout() {
 
     return (
         <div className="min-h-screen bg-bg font-body text-text flex flex-col">
+            <ScrollToTop />
 
             {/* 🏰 Admin Top Bar */}
             <header className="h-20 border-b border-gb bg-glass backdrop-blur-xl sticky top-0 z-50 px-6 sm:px-10 flex items-center justify-between">

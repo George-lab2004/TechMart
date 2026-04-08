@@ -110,7 +110,12 @@ export default function ProductCard({ p, isListView }: { p: Product; isListView:
   };
 
   const primaryImg = p.images?.find(i => i.isPrimary) ?? p.images?.[0];
-  const stars = Math.round(p.rating);
+  const roundedStars = Math.round(p.rating);
+
+  const formatReviewCount = (count: number) => {
+    if (count >= 1000) return `${(count / 1000).toFixed(1)}k`;
+    return count.toString();
+  };
 
   if (isListView) {
     return (
@@ -138,8 +143,9 @@ export default function ProductCard({ p, isListView }: { p: Product; isListView:
             <p className="font-mono text-[9px] text-muted uppercase tracking-[2px] mb-1">{p.brand}</p>
             <h3 className="text-xl font-semibold text-text mb-2">{p.name}</h3>
             <div className="flex items-center gap-2 mb-3">
-              <span className="text-yellow-400 text-xs">{"★".repeat(stars)}{"☆".repeat(5 - stars)}</span>
-              <span className="font-mono text-[10px] text-muted">({(p.numReviews / 1000).toFixed(1)}k)</span>
+              <span className="text-a3 font-mono text-xs font-bold">{p.rating.toFixed(1)}</span>
+              <span className="text-yellow-400 text-xs">{"★".repeat(roundedStars)}{"☆".repeat(5 - roundedStars)}</span>
+              <span className="font-mono text-[10px] text-muted">({formatReviewCount(p.numReviews)})</span>
             </div>
           </div>
           <div className="flex items-center justify-between mt-4">
@@ -209,9 +215,10 @@ export default function ProductCard({ p, isListView }: { p: Product; isListView:
       <div className="p-4 border-t border-gb">
         <p className="font-mono text-[9px] text-muted uppercase tracking-[2px] mb-1">{p.brand}</p>
         <h3 className="text-[14px] font-semibold text-text mb-2 leading-snug">{p.name}</h3>
-        <div className="flex items-center gap-1.5 mb-3">
-          <span className="text-yellow-400 text-[11px] tracking-[1px]">{"★".repeat(stars)}{"☆".repeat(5 - stars)}</span>
-          <span className="font-mono text-[10px] text-muted">({(p.numReviews / 1000).toFixed(1)}k)</span>
+        <div className="flex items-center gap-2 mb-3">
+          <span className="text-a3 font-mono text-[11px] font-bold">{p.rating.toFixed(1)}</span>
+          <span className="text-yellow-400 text-[11px] tracking-[1px]">{"★".repeat(roundedStars)}{"☆".repeat(5 - roundedStars)}</span>
+          <span className="font-mono text-[10px] text-muted">({formatReviewCount(p.numReviews)})</span>
         </div>
         <div className="flex items-center justify-between">
           <div>
