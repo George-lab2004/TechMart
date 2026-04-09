@@ -2,10 +2,11 @@ import { Request, Response } from "express";
 import { createAdminChatModel } from "./admin.ai.service.js";
 import { adminAiFunctions } from "./admin.ai.functions.js";
 import { AdminAIChatRequest } from "./admin.ai.types.js";
+import User from "../Models/userModel.js";
 
 export const chatWithAdminAI = async (req: Request, res: Response): Promise<void> => {
     try {
-        const { message, history, lastResults } = req.body as AdminAIChatRequest;
+        const { message, history, lastResults, isSystemMessage } = req.body as AdminAIChatRequest;
 
         const model = createAdminChatModel();
         
@@ -25,6 +26,18 @@ export const chatWithAdminAI = async (req: Request, res: Response): Promise<void
         const result = await chat.sendMessage(message);
         const response = await result.response;
         const functionCalls = response.functionCalls();
+
+        // Update User Stats (Shared for all success paths)
+        if (!isSystemMessage) {
+            try {
+                await User.findByIdAndUpdate((req as any).user._id, {
+                    $inc: { aiUsageCount: 1 },
+                    $set: { lastAiMessage: message }
+                });
+            } catch (statError) {
+                console.error("[Admin AI Stats] Failed to update user usage:", statError);
+            }
+        }
 
         // 1) Model requested a function call
         if (functionCalls && functionCalls.length > 0) {

@@ -2,6 +2,7 @@ import { GoogleGenerativeAI } from "@google/generative-ai";
 import { functionDefinitions } from "./ai.definitions.js";
 import { aiFunctionExecutors } from "./ai.functions.js";
 import { Response } from "express";
+import User from "../Models/userModel.js";
 
 const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY!);
 
@@ -95,9 +96,17 @@ export const createChatModel = async (req: any, res: Response) => {
       const response = result.response;
       const part = response.candidates?.[0]?.content?.parts?.[0];
 
+      // ── Determine message text to return ──────────────────────────
+      let finalTextMessage = "";
+      let isFunctionCall = false;
+      let functionData = null;
+      let functionName = "";
+
       // ── Function call branch ──────────────────────────────────────
       if (part?.functionCall) {
+        isFunctionCall = true;
         const { name, args } = part.functionCall;
+        functionName = name;
 
         const executor = aiFunctionExecutors[name as keyof typeof aiFunctionExecutors];
         if (!executor) {
@@ -105,6 +114,7 @@ export const createChatModel = async (req: any, res: Response) => {
         }
 
         const data = await (executor as Function)(args, userId.toString());
+        functionData = data;
 
         const final = await chat.sendMessage([{
           functionResponse: {
@@ -113,37 +123,53 @@ export const createChatModel = async (req: any, res: Response) => {
           },
         }]);
 
+        finalTextMessage = final.response.text();
+      } else {
+        // ── Plain text branch ─────────────────────────────────────────
+        finalTextMessage = response.text();
+      }
+
+      // ── CRITICAL: Update User Stats (Shared for all success paths) ──
+      try {
+        await User.findByIdAndUpdate(userId, {
+          $inc: { aiUsageCount: 1 },
+          $set: { lastAiMessage: message }
+        });
+      } catch (statError) {
+        console.error("[AI Stats] Failed to update user usage:", statError);
+      }
+
+      // ── Return Response ───────────────────────────────────────────
+      if (isFunctionCall) {
         return res.json({
           type: "data",
-          functionCalled: name,
-          data,
-          message: final.response.text(),
+          functionCalled: functionName,
+          data: functionData,
+          message: finalTextMessage,
+          model: currentModel,
+        });
+      } else {
+        return res.json({
+          type: "text",
+          message: finalTextMessage,
           model: currentModel,
         });
       }
-
-      // ── Plain text branch ─────────────────────────────────────────
-      return res.json({
-        type: "text",
-        message: response.text(),
-        model: currentModel,
-      });
 
     } catch (err: any) {
       lastError = err;
 
       const isQuota = err?.status === 429 || err?.message?.includes("429") || err?.message?.toLowerCase().includes("quota");
       const isOverloaded = err?.status === 503 || err?.message?.includes("503") || err?.message?.toLowerCase().includes("overloaded");
-      const isNotFound = err?.status === 404 || err?.message?.toLowerCase().includes("not found");
+      const isNotFound = err?.status === 404 || err?.message?.toLowerCase().includes("overloaded");
 
       if (isQuota || isOverloaded) {
         if (modelIndex < MODELS.length - 1) {
           console.warn(`[AI] ${currentModel} ${isQuota ? 'rate limited' : 'overloaded'} → falling back to ${MODELS[modelIndex + 1]}`);
           modelIndex++;
-          await sleep(500); // Tiny pause before fallback
+          await sleep(500);
           continue;
         }
-        // All models exhausted
         lastError = new Error(isQuota ? "QUOTA_EXHAUSTED" : "MODEL_OVERLOADED");
         break;
       }
@@ -154,7 +180,6 @@ export const createChatModel = async (req: any, res: Response) => {
         continue;
       }
 
-      // Any other error — don't retry
       break;
     }
   }

@@ -9,6 +9,7 @@ export interface AdminAIChatRequest {
     message: string;
     history: AdminAIMessage[];
     lastResults?: any[];
+    isSystemMessage?: boolean;
 }
 
 export interface AdminFunctionCall {

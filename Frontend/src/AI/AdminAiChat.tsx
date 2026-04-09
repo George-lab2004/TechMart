@@ -92,7 +92,8 @@ export default function AdminAiChat() {
             if (res.functionCalled && res.functionCalled !== "renderChart") {
                 const autoRes = await sendMessage({
                     message: "Analyze the fetched data. If I originally requested a chart, call the 'renderChart' tool right now with the data. If not, just give me a text recommendation.",
-                    history: finalHistory
+                    history: finalHistory,
+                    isSystemMessage: true
                 }).unwrap()
 
                 setMessages(prev => [...prev, {

@@ -1,4 +1,5 @@
 import { useState } from "react"
+import toast from "react-hot-toast"
 import type { Product } from "@/pages/Products/components/ProductCard"
 import {
     useGetProductsQuery,
@@ -74,11 +75,14 @@ function Products() {
         try {
             if (selectedProduct) {
                 await updateProduct({ id: selectedProduct._id, data: formData }).unwrap()
+                toast.success("Product updated successfully!")
             } else {
                 await createProduct(formData).unwrap()
+                toast.success("Product added to catalog!")
             }
             handleCloseModal()
-        } catch (err) {
+        } catch (err: any) {
+            toast.error(err?.data?.message || "Failed to save product")
             console.error("Failed to save product:", err)
         }
     }
@@ -87,7 +91,9 @@ function Products() {
         if (window.confirm("Are you sure you want to delete this product? This action is irreversible. 🚨")) {
             try {
                 await deleteProduct(id).unwrap()
-            } catch (err) {
+                toast.success("Product removed from catalog")
+            } catch (err: any) {
+                toast.error(err?.data?.message || "Delete failed")
                 console.error("Failed to delete product:", err)
             }
         }

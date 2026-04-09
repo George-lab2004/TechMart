@@ -1,4 +1,5 @@
 import { useState } from "react"
+import toast from "react-hot-toast"
 import type { category } from "@/slices/categoryApiSlice"
 
 import {
@@ -58,11 +59,14 @@ function Categories() {
         try {
             if (selectedCategory) {
                 await updateCategory({ ...formData, _id: selectedCategory._id }).unwrap()
+                toast.success("Category updated successfully!")
             } else {
                 await createCategory(formData).unwrap()
+                toast.success("Category created successfully!")
             }
             handleCloseModal()
-        } catch (err) {
+        } catch (err: any) {
+            toast.error(err?.data?.message || "Failed to save category")
             console.error(err)
         }
     }
@@ -71,7 +75,9 @@ function Categories() {
         if (window.confirm("Delete this category? ⚠️")) {
             try {
                 await deleteCategory(id).unwrap()
-            } catch (err) {
+                toast.success("Category deleted!")
+            } catch (err: any) {
+                toast.error(err?.data?.message || "Delete failed")
                 console.error(err)
             }
         }

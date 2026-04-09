@@ -10,6 +10,8 @@ export interface user {
     createdAt: string,
     updatedAt: string
     confirmedEmail: boolean,
+    aiUsageCount: number,
+    lastAiMessage: string,
     delivery: {
         title: string
         address: {

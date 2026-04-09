@@ -29,6 +29,8 @@ const UserSchema = new Schema<IUser>(
     isAdmin:        { type: Boolean, default: false, required: true },
     resetPasswordOTP:       { type: String },
     resetPasswordOTPExpiry: { type: Date },
+    aiUsageCount:           { type: Number, default: 0 },
+    lastAiMessage:          { type: String, default: "" },
   },
   {
     timestamps: true,
@@ -43,6 +45,8 @@ export interface IUser extends Document {
   isAdmin:                boolean
   resetPasswordOTP?:      string
   resetPasswordOTPExpiry?: Date
+  aiUsageCount:           number
+  lastAiMessage:          string
   delivery:               {
     _id?: string
     title: string

@@ -1,10 +1,13 @@
 import { useState } from "react"
+import toast from "react-hot-toast"
 
 import AdminHeader from "../components/AdminHeader"
 import AdminStatCard from "../components/AdminStatCard"
 import AdminTable from "../components/AdminTable"
 import { useGetUsersQuery, useDeleteUserMutation, useUpdateUserMutation } from "@/slices/usersApiSlice"
 import type { user } from "@/slices/usersApiSlice"
+import UserInsightsModal from "./components/UserInsightsModal"
+import { BarChart3 } from "lucide-react"
 
 function Users() {
     const { data, isLoading, error } = useGetUsersQuery()
@@ -13,6 +16,9 @@ function Users() {
 
     const [searchTerm, setSearchTerm] = useState("")
     const [roleFilter, setRoleFilter] = useState("")
+
+    const [isInsightsOpen, setIsInsightsOpen] = useState(false)
+    const [selectedUser, setSelectedUser] = useState<user | null>(null)
 
     if (isLoading)
         return (
@@ -57,7 +63,9 @@ function Users() {
         if (window.confirm("Delete this user? ⚠️")) {
             try {
                 await deleteUser(id).unwrap()
-            } catch (err) {
+                toast.success("User deleted successfully")
+            } catch (err: any) {
+                toast.error(err?.data?.message || "Delete failed")
                 console.error(err)
             }
         }
@@ -65,11 +73,13 @@ function Users() {
 
     const toggleAdmin = async (userItem: user) => {
         try {
-            await updateUser({
+            const updated = await updateUser({
                 _id: userItem._id,
                 isAdmin: !userItem.isAdmin
             }).unwrap()
-        } catch (err) {
+            toast.success(`User updated to ${updated.isAdmin ? "Admin" : "Customer"}`)
+        } catch (err: any) {
+            toast.error(err?.data?.message || "Role toggle failed")
             console.error("Failed to update role:", err)
         }
     }
@@ -173,6 +183,18 @@ function Users() {
                         <td className="px-6 py-4">
                             <div className="flex justify-center gap-3">
                                 <button
+                                    onClick={() => {
+                                        setSelectedUser(userItem)
+                                        setIsInsightsOpen(true)
+                                    }}
+                                    className="flex items-center gap-1 text-blue-500 font-bold text-[10px] hover:text-blue-600 transition-colors"
+                                    title="View AI Analytics"
+                                >
+                                    <BarChart3 size={11} />
+                                    Insights
+                                </button>
+
+                                <button
                                     onClick={() => toggleAdmin(userItem)}
                                     className="text-a font-bold text-[10px]"
                                 >
@@ -189,6 +211,11 @@ function Users() {
                         </td>
                     </tr>
                 )}
+            />
+            <UserInsightsModal 
+                isOpen={isInsightsOpen}
+                onClose={() => setIsInsightsOpen(false)}
+                user={selectedUser}
             />
         </>
     )
