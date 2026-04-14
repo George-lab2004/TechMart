@@ -71,7 +71,7 @@ function AdminTable<T>({
                 value={searchTerm}
                 onChange={(e) => onSearchChange(e.target.value)}
                 placeholder={searchPlaceholder}
-                className="w-full bg-white border border-gb rounded-xl pl-12 pr-4 py-2.5 text-xs font-mono tracking-widest focus:outline-none focus:ring-2 focus:ring-a/10 focus:border-a transition-all placeholder:opacity-30"
+                className="w-full bg-surf border border-gb rounded-xl pl-12 pr-4 py-2.5 text-xs font-mono tracking-widest focus:outline-none focus:ring-2 focus:ring-a/10 focus:border-a transition-all placeholder:opacity-30"
               />
             </div>
           )}
@@ -84,7 +84,7 @@ function AdminTable<T>({
                 <select
                   value={filter.value}
                   onChange={(e) => filter.onChange(e.target.value)}
-                  className="w-full appearance-none bg-white border border-gb rounded-xl pl-9 pr-10 py-2.5 text-[10px] font-bold uppercase tracking-widest text-text2 cursor-pointer focus:outline-none focus:border-a/50 transition-all hover:bg-ag/5"
+                  className="w-full appearance-none bg-surf border border-gb rounded-xl pl-9 pr-10 py-2.5 text-[10px] font-bold uppercase tracking-widest text-text2 cursor-pointer focus:outline-none focus:border-a/50 transition-all hover:bg-ag/5"
                 >
                   <option value="">{filter.label}</option>
                   {filter.options.map((opt) => (
@@ -118,7 +118,7 @@ function AdminTable<T>({
       )}
 
       {/* ── TABLE ─────────────────────────────────────────── */}
-      <div className="overflow-hidden rounded-2xl shadow-xl shadow-black/5 dark:shadow-white/5 border border-gb bg-white">
+      <div className="overflow-hidden rounded-2xl shadow-xl shadow-black/5 dark:shadow-white/5 border border-gb bg-surf">
         <div className="overflow-x-auto">
           <table className="w-full text-sm text-left text-gray-500 divide-y divide-gb">
             <thead className="text-[10px] text-text uppercase tracking-widest font-mono bg-surf2 border-b border-gb">

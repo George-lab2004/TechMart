@@ -11,10 +11,10 @@ const OrderDetailsModal = ({ order, onClose }: OrderDetailsModalProps) => {
 
   const getStatusColor = (status: string) => {
     switch (status) {
-      case 'delivered': return 'bg-green-100 text-green-700 border-green-200'
-      case 'pending': return 'bg-orange-100 text-orange-700 border-orange-200'
-      case 'cancelled': return 'bg-red-100 text-red-700 border-red-200'
-      default: return 'bg-blue-100 text-blue-700 border-blue-200'
+      case 'delivered': return 'bg-green-500/10 text-green-600 dark:text-green-400 border-green-500/20'
+      case 'pending': return 'bg-orange-500/10 text-orange-600 dark:text-orange-400 border-orange-500/20'
+      case 'cancelled': return 'bg-red-500/10 text-red-600 dark:text-red-400 border-red-500/20'
+      default: return 'bg-blue-500/10 text-blue-600 dark:text-blue-400 border-blue-500/20'
     }
   }
 
@@ -27,7 +27,7 @@ const OrderDetailsModal = ({ order, onClose }: OrderDetailsModalProps) => {
       />
 
       {/* Modal Container */}
-      <div className="relative w-full max-w-4xl bg-white rounded-3xl shadow-2xl overflow-hidden border border-gb animate-in zoom-in-95 fade-in duration-300">
+      <div className="relative w-full max-w-4xl bg-surf rounded-3xl shadow-2xl overflow-hidden border border-gb animate-in zoom-in-95 fade-in duration-300">
         
         {/* Header */}
         <div className="flex items-center justify-between p-6 border-b border-gb bg-surf2/50 backdrop-blur-md sticky top-0 z-10">
@@ -133,7 +133,7 @@ const OrderDetailsModal = ({ order, onClose }: OrderDetailsModalProps) => {
                   </div>
                   <div className="flex flex-col items-end">
                     <span className="text-[10px] uppercase tracking-widest text-muted font-bold text-right">Status</span>
-                    <span className={`px-3 py-1 rounded-full text-[9px] font-bold uppercase tracking-wider border ${order.isPaid ? 'bg-green-100 text-green-700 border-green-200' : 'bg-red-100 text-red-700 border-red-200'}`}>
+                    <span className={`px-3 py-1 rounded-full text-[9px] font-bold uppercase tracking-wider border ${order.isPaid ? 'bg-green-500/10 text-green-600 dark:text-green-400 border-green-500/20' : 'bg-red-500/10 text-red-600 dark:text-red-400 border-red-500/20'}`}>
                       {order.isPaid ? 'Payment Confirmed' : 'Awaiting Payment'}
                     </span>
                   </div>
@@ -166,7 +166,7 @@ const OrderDetailsModal = ({ order, onClose }: OrderDetailsModalProps) => {
                               <img 
                                 src={item.image} 
                                 alt={item.name}
-                                className="w-10 h-10 rounded-lg object-cover bg-white border border-gb group-hover:scale-105 transition-transform shadow-sm"
+                                className="w-10 h-10 rounded-lg object-cover bg-surf border border-gb group-hover:scale-105 transition-transform shadow-sm"
                               />
                               <div className="flex flex-col">
                                 <span className="text-xs font-bold text-text line-clamp-1">{item.name}</span>
@@ -208,9 +208,9 @@ const OrderDetailsModal = ({ order, onClose }: OrderDetailsModalProps) => {
 
               {/* Internal Metadata */}
               <section className="mt-auto">
-                <div className="p-4 bg-orange-50/50 rounded-xl border border-orange-100 flex items-start gap-3">
+                <div className="p-4 bg-orange-500/10 rounded-xl border border-orange-500/20 flex items-start gap-3">
                   <Info size={16} className="text-orange-500 shrink-0 mt-0.5" />
-                  <p className="text-[10px] text-orange-900 leading-relaxed font-medium">
+                  <p className="text-[10px] text-orange-600 dark:text-orange-400 leading-relaxed font-medium">
                     Transaction snapshots are immutable. Changes to the user profile or product listing 
                     after this timestamp will not affect this historical record.
                   </p>

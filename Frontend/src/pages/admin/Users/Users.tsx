@@ -165,7 +165,7 @@ function Users() {
                                 onClick={() => toggleAdmin(userItem)}
                                 className={`px-3 py-1 rounded-md text-[9px] font-bold uppercase tracking-widest transition-all ${userItem.isAdmin
                                     ? "bg-a text-white hover:bg-a/80"
-                                    : "bg-gray-200 text-gray-700 hover:bg-gray-300"
+                                    : "bg-muted/10 text-text2 hover:bg-muted/20 border border-gb"
                                     }`}
                             >
                                 {userItem.isAdmin ? "Admin" : "User"}
@@ -174,12 +174,11 @@ function Users() {
 
                         {/* Verified */}
                         <td className="px-6 py-4 text-center">
-                            <span
-                                className={`px-2 py-1 rounded-md text-[9px] font-bold ${userItem.confirmedEmail
-                                    ? "bg-green-100 text-green-700"
-                                    : "bg-red-100 text-red-700"
-                                    }`}
-                            >
+                            <span className={`px-2 py-0.5 rounded text-[10px] uppercase font-bold tracking-wider border ${
+                                userItem.confirmedEmail
+                                ? "bg-green-500/10 text-green-600 dark:text-green-400 border-green-500/20"
+                                : "bg-red-500/10 text-red-600 dark:text-red-400 border-red-500/20"
+                            }`}>
                                 {userItem.confirmedEmail ? "Yes" : "No"}
                             </span>
                         </td>

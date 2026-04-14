@@ -59,7 +59,7 @@ export default function CategoryModal({ isOpen, onClose, onSubmit, initialData }
         <div className="fixed inset-0 z-50 flex items-center justify-center">
             <div className="absolute inset-0 bg-black/70 backdrop-blur-sm" onClick={onClose} />
 
-            <div className="relative bg-white rounded-3xl w-full max-w-xl p-8 border border-gb shadow-2xl">
+            <div className="relative bg-surf rounded-3xl w-full max-w-xl p-8 border border-gb shadow-2xl">
                 {/* Header */}
                 <div className="flex justify-between items-center mb-6">
                     <h2 className="text-xl font-bebas tracking-widest">

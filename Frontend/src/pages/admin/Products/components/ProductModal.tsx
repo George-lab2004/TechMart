@@ -118,7 +118,7 @@ export default function ProductModal({ isOpen, onClose, onSubmit, initialData }:
         <div className="fixed inset-0 z-[100] flex items-center justify-center p-4">
             <div className="absolute inset-0 bg-[#0a0a1a]/80 backdrop-blur-md" onClick={onClose} />
 
-            <div className="relative w-full max-w-5xl bg-white rounded-3xl overflow-hidden shadow-2xl border border-gb flex flex-col max-h-[90vh]">
+            <div className="relative w-full max-w-5xl bg-surf rounded-3xl overflow-hidden shadow-2xl border border-gb flex flex-col max-h-[90vh]">
                 {/* Header */}
                 <div className="flex items-center justify-between px-8 py-6 border-b border-gb bg-surf2">
                     <div className="flex flex-col">
@@ -141,7 +141,7 @@ export default function ProductModal({ isOpen, onClose, onSubmit, initialData }:
                             <button
                                 key={tab.id}
                                 onClick={() => setActiveTab(tab.id)}
-                                className={`flex items-center gap-4 px-8 py-4 transition-all relative ${activeTab === tab.id ? 'text-a bg-white ring-1 ring-inset ring-gb' : 'text-muted hover:text-text hover:bg-white/50'
+                                className={`flex items-center gap-4 px-8 py-4 transition-all relative ${activeTab === tab.id ? 'text-a bg-surf ring-1 ring-inset ring-gb' : 'text-muted hover:text-text hover:bg-surf/50'
                                     }`}
                             >
                                 <tab.icon size={18} />
@@ -152,7 +152,7 @@ export default function ProductModal({ isOpen, onClose, onSubmit, initialData }:
                     </div>
 
                     {/* Content Area */}
-                    <form onSubmit={handleSubmit} className="flex-1 flex flex-col bg-white overflow-hidden">
+                    <form onSubmit={handleSubmit} className="flex-1 flex flex-col bg-surf overflow-hidden">
                         <div className="flex-1 overflow-y-auto p-10 font-sans">
                             {activeTab === 'basic' && (
                                 <div className="grid grid-cols-2 gap-8 animate-in fade-in slide-in-from-right-4 duration-300">
@@ -207,11 +207,11 @@ export default function ProductModal({ isOpen, onClose, onSubmit, initialData }:
                                     <div className="grid grid-cols-2 gap-4">
                                         {formData.images.map((img: any, idx: number) => (
                                             <div key={idx} className="p-5 border border-gb rounded-2xl bg-surf2 flex flex-col gap-4 relative group">
-                                                <button type="button" onClick={() => removeRow('images', idx)} className="absolute top-4 right-4 text-a2 bg-white rounded-full p-1.5 shadow-sm opacity-0 group-hover:opacity-100 transition-opacity">
+                                                <button type="button" onClick={() => removeRow('images', idx)} className="absolute top-4 right-4 text-a2 bg-surf rounded-full p-1.5 shadow-sm opacity-0 group-hover:opacity-100 transition-opacity">
                                                     <Trash2 size={12} />
                                                 </button>
-                                                <input value={img.url} onChange={e => updateRow('images', idx, { url: e.target.value })} className="bg-white border border-gb rounded-lg px-3 py-2 text-xs font-mono" placeholder="Image URL" />
-                                                <input value={img.alt} onChange={e => updateRow('images', idx, { alt: e.target.value })} className="bg-white border border-gb rounded-lg px-3 py-2 text-xs" placeholder="Alt Text" />
+                                                <input value={img.url} onChange={e => updateRow('images', idx, { url: e.target.value })} className="bg-surf border border-gb rounded-lg px-3 py-2 text-xs font-mono" placeholder="Image URL" />
+                                                <input value={img.alt} onChange={e => updateRow('images', idx, { alt: e.target.value })} className="bg-surf border border-gb rounded-lg px-3 py-2 text-xs" placeholder="Alt Text" />
                                                 <label className="flex items-center gap-2 text-[10px] font-mono uppercase tracking-widest cursor-pointer">
                                                     <input type="radio" checked={img.isPrimary} onChange={() => {
                                                         const newImgs = formData.images.map((img: any, i: number) => ({ ...img, isPrimary: i === idx }))
@@ -263,9 +263,9 @@ export default function ProductModal({ isOpen, onClose, onSubmit, initialData }:
                                         <div className="grid grid-cols-2 gap-4">
                                             {formData.quickSpecs.map((spec: any, idx: number) => (
                                                 <div key={idx} className="flex gap-2 items-center bg-surf2 p-3 rounded-xl border border-gb">
-                                                    <input value={spec.icon} onChange={e => updateRow('quickSpecs', idx, { icon: e.target.value })} className="w-10 bg-white rounded border border-gb p-2 text-center" />
-                                                    <input value={spec.label} onChange={e => updateRow('quickSpecs', idx, { label: e.target.value })} className="flex-1 bg-white rounded border border-gb p-2 text-[10px] uppercase font-mono" placeholder="Label" />
-                                                    <input value={spec.value} onChange={e => updateRow('quickSpecs', idx, { value: e.target.value })} className="flex-1 bg-white rounded border border-gb p-2 text-[10px] font-bold" placeholder="Value" />
+                                                    <input value={spec.icon} onChange={e => updateRow('quickSpecs', idx, { icon: e.target.value })} className="w-10 bg-surf rounded border border-gb p-2 text-center" />
+                                                    <input value={spec.label} onChange={e => updateRow('quickSpecs', idx, { label: e.target.value })} className="flex-1 bg-surf rounded border border-gb p-2 text-[10px] uppercase font-mono" placeholder="Label" />
+                                                    <input value={spec.value} onChange={e => updateRow('quickSpecs', idx, { value: e.target.value })} className="flex-1 bg-surf rounded border border-gb p-2 text-[10px] font-bold" placeholder="Value" />
                                                     <button type="button" onClick={() => removeRow('quickSpecs', idx)} className="text-a2 p-1"><Trash2 size={12} /></button>
                                                 </div>
                                             ))}
@@ -279,12 +279,12 @@ export default function ProductModal({ isOpen, onClose, onSubmit, initialData }:
                                         </div>
                                         {formData.specs.map((spec: any, idx: number) => (
                                             <div key={idx} className="grid grid-cols-4 gap-2 items-start bg-surf2 p-4 rounded-xl border border-gb relative group">
-                                                <button type="button" onClick={() => removeRow('specs', idx)} className="absolute -top-2 -right-2 bg-white text-a2 rounded-full p-1 opacity-0 group-hover:opacity-100 transition-opacity border border-gb"><Trash2 size={10} /></button>
-                                                <input value={spec.icon} onChange={e => updateRow('specs', idx, { icon: e.target.value })} className="w-full bg-white rounded border border-gb p-2 text-center" />
+                                                <button type="button" onClick={() => removeRow('specs', idx)} className="absolute -top-2 -right-2 bg-surf text-a2 rounded-full p-1 opacity-0 group-hover:opacity-100 transition-opacity border border-gb"><Trash2 size={10} /></button>
+                                                <input value={spec.icon} onChange={e => updateRow('specs', idx, { icon: e.target.value })} className="w-full bg-surf rounded border border-gb p-2 text-center" />
                                                 <div className="col-span-3 grid grid-cols-2 gap-2">
-                                                    <input value={spec.label} onChange={e => updateRow('specs', idx, { label: e.target.value })} className="bg-white rounded border border-gb p-2 text-[10px] uppercase font-mono" placeholder="LABEL" />
-                                                    <input value={spec.value} onChange={e => updateRow('specs', idx, { value: e.target.value })} className="bg-white rounded border border-gb p-2 text-[10px] font-bold" placeholder="DISPLAY VALUE" />
-                                                    <textarea value={spec.description} onChange={e => updateRow('specs', idx, { description: e.target.value })} className="col-span-2 bg-white rounded border border-gb p-2 text-[10px] leading-relaxed" placeholder="Detailed description..." rows={2} />
+                                                    <input value={spec.label} onChange={e => updateRow('specs', idx, { label: e.target.value })} className="bg-surf rounded border border-gb p-2 text-[10px] uppercase font-mono" placeholder="LABEL" />
+                                                    <input value={spec.value} onChange={e => updateRow('specs', idx, { value: e.target.value })} className="bg-surf rounded border border-gb p-2 text-[10px] font-bold" placeholder="DISPLAY VALUE" />
+                                                    <textarea value={spec.description} onChange={e => updateRow('specs', idx, { description: e.target.value })} className="col-span-2 bg-surf rounded border border-gb p-2 text-[10px] leading-relaxed" placeholder="Detailed description..." rows={2} />
                                                 </div>
                                             </div>
                                         ))}
@@ -303,7 +303,7 @@ export default function ProductModal({ isOpen, onClose, onSubmit, initialData }:
                                             {formData.colors.map((color: any, idx: number) => (
                                                 <div key={idx} className="flex gap-2 items-center bg-surf2 p-3 rounded-xl border border-gb">
                                                     <input type="color" value={color.hex} onChange={e => updateRow('colors', idx, { hex: e.target.value })} className="w-8 h-8 rounded-full border-0 bg-transparent cursor-pointer" />
-                                                    <input value={color.name} onChange={e => updateRow('colors', idx, { name: e.target.value })} className="flex-1 bg-white rounded border border-gb px-2 py-1 text-[10px] font-bold" placeholder="Color Name" />
+                                                    <input value={color.name} onChange={e => updateRow('colors', idx, { name: e.target.value })} className="flex-1 bg-surf rounded border border-gb px-2 py-1 text-[10px] font-bold" placeholder="Color Name" />
                                                     <button type="button" onClick={() => removeRow('colors', idx)} className="text-a2"><Trash2 size={12} /></button>
                                                 </div>
                                             ))}
@@ -320,11 +320,11 @@ export default function ProductModal({ isOpen, onClose, onSubmit, initialData }:
                                                 <button type="button" onClick={() => removeRow('variantGroups', idx)} className="absolute top-4 right-4 text-a2"><Trash2 size={14} /></button>
                                                 <div className="flex flex-col gap-1 w-2/3">
                                                     <label className="text-[9px] font-mono uppercase text-muted tracking-widest">Group Label</label>
-                                                    <input value={group.name} onChange={e => updateRow('variantGroups', idx, { name: e.target.value })} className="bg-white border border-gb rounded-lg px-3 py-2 text-xs font-bold" placeholder="e.g. Storage Capacity" />
+                                                    <input value={group.name} onChange={e => updateRow('variantGroups', idx, { name: e.target.value })} className="bg-surf border border-gb rounded-lg px-3 py-2 text-xs font-bold" placeholder="e.g. Storage Capacity" />
                                                 </div>
                                                 <div className="grid grid-cols-1 gap-2">
                                                     {group.options.map((opt: any, oIdx: number) => (
-                                                        <div key={oIdx} className="grid grid-cols-4 gap-2 items-center bg-white p-2 rounded-lg border border-gb">
+                                                        <div key={oIdx} className="grid grid-cols-4 gap-2 items-center bg-surf p-2 rounded-lg border border-gb">
                                                             <input value={opt.label} onChange={e => {
                                                                 const opts = [...group.options]; opts[oIdx].label = e.target.value; updateRow('variantGroups', idx, { options: opts })
                                                             }} className="bg-surf2 rounded px-2 py-1 text-[10px]" placeholder="Label (512GB)" />
@@ -373,9 +373,9 @@ export default function ProductModal({ isOpen, onClose, onSubmit, initialData }:
                                         <div className="grid grid-cols-2 gap-4">
                                             {formData.boxItems.map((item: any, idx: number) => (
                                                 <div key={idx} className="flex gap-2 items-center bg-surf2 p-3 rounded-xl border border-gb relative group">
-                                                    <input value={item.icon} onChange={e => updateRow('boxItems', idx, { icon: e.target.value })} className="w-10 bg-white rounded border border-gb p-2 text-center" />
-                                                    <input value={item.name} onChange={e => updateRow('boxItems', idx, { name: e.target.value })} className="flex-1 bg-white rounded border border-gb px-3 py-2 text-[10px] font-bold" placeholder="Item Name" />
-                                                    <input value={item.quantity} onChange={e => updateRow('boxItems', idx, { quantity: e.target.value })} className="w-14 bg-white rounded border border-gb px-2 py-2 text-[10px] font-mono text-center" placeholder="×1" />
+                                                    <input value={item.icon} onChange={e => updateRow('boxItems', idx, { icon: e.target.value })} className="w-10 bg-surf rounded border border-gb p-2 text-center" />
+                                                    <input value={item.name} onChange={e => updateRow('boxItems', idx, { name: e.target.value })} className="flex-1 bg-surf rounded border border-gb px-3 py-2 text-[10px] font-bold" placeholder="Item Name" />
+                                                    <input value={item.quantity} onChange={e => updateRow('boxItems', idx, { quantity: e.target.value })} className="w-14 bg-surf rounded border border-gb px-2 py-2 text-[10px] font-mono text-center" placeholder="×1" />
                                                     <button type="button" onClick={() => removeRow('boxItems', idx)} className="text-a2 p-1"><Trash2 size={12} /></button>
                                                 </div>
                                             ))}
@@ -394,7 +394,7 @@ export default function ProductModal({ isOpen, onClose, onSubmit, initialData }:
                                 </span>
                             </div>
                             <div className="flex gap-4">
-                                <button type="button" onClick={onClose} className="px-6 py-3 rounded-xl border border-gb text-[11px] font-bold uppercase tracking-widest hover:bg-white transition-all">Cancel</button>
+                                <button type="button" onClick={onClose} className="px-6 py-3 rounded-xl border border-gb text-[11px] font-bold uppercase tracking-widest hover:bg-surf transition-all">Cancel</button>
                                 <button type="submit" className="px-10 py-3 rounded-xl bg-a text-white text-[11px] font-bold uppercase tracking-widest hover:shadow-lg hover:shadow-a/30 hover:-translate-y-0.5 transition-all">
                                     {initialData ? 'Commit Changes' : 'Execute Initializer'}
                                 </button>

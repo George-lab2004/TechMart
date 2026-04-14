@@ -177,9 +177,9 @@ function Orders() {
                         {/* Payment */}
                         <td className="px-6 py-4 text-center">
                             <span
-                                className={`px-2 py-1 rounded-md text-[9px] font-bold uppercase tracking-widest ${order.isPaid
-                                    ? "bg-green-100 text-green-700"
-                                    : "bg-red-100 text-red-700"
+                                className={`px-2 py-1 rounded-md text-[9px] font-bold tracking-widest ${order.isPaid
+                                    ? "bg-green-500/10 text-green-600 dark:text-green-400 border border-green-500/20"
+                                    : "bg-red-500/10 text-red-600 dark:text-red-400 border border-red-500/20"
                                     }`}
                             >
                                 {order.isPaid ? "Paid" : "Unpaid"}
@@ -189,13 +189,13 @@ function Orders() {
                         {/* Status */}
                         <td className="px-6 py-4 text-center">
                             <span
-                                className={`px-2 py-1 rounded-md text-[9px] font-bold uppercase tracking-widest ${order.status === "delivered"
-                                    ? "bg-green-100 text-green-700"
-                                    : order.status === "pending"
-                                        ? "bg-orange-100 text-orange-700"
-                                        : order.status === "cancelled"
-                                            ? "bg-red-100 text-red-700"
-                                            : "bg-blue-100 text-blue-700"
+                                className={`px-2 py-1 rounded-md text-[9px] font-bold tracking-widest ${order.status === 'delivered'
+                                    ? "bg-green-500/10 text-green-600 dark:text-green-400 border border-green-500/20"
+                                    : order.status === 'pending'
+                                        ? "bg-orange-500/10 text-orange-600 dark:text-orange-400 border border-orange-500/20"
+                                        : order.status === 'cancelled'
+                                            ? "bg-red-500/10 text-red-600 dark:text-red-400 border border-red-500/20"
+                                            : "bg-blue-500/10 text-blue-600 dark:text-blue-400 border border-blue-500/20"
                                     }`}
                             >
                                 {order.status}
