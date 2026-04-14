@@ -1,6 +1,7 @@
 import { Router } from "express"
 import { signIn, signUp, logOut, getUserProfile, updateUserProfile, deleteUser, getAllUsers, updateUserByAdmin, addUserAddress, updateUserAddress, deleteUserAddress, forgetPassword, verifyOTP, resetPassword, verifyEmail } from "../controller/userController.js"
 import { protect, admin } from "../Middleware/authMiddleware.js"
+import { demoGuard } from "../Middleware/demoMiddleware.js"
 import { validate } from "../Middleware/validate.js"
 import { registerSchema, loginSchema, updateProfileSchema, forgetPasswordSchema, verifyOtpSchema, resetPasswordSchema } from "../validators/user.schema.js"
 import { authLimiter } from "../Middleware/Limiter.js"
@@ -17,18 +18,18 @@ userRouter.post("/resetPassword", authLimiter, validate(resetPasswordSchema), re
 
 userRouter.route('/profile')
     .get(protect, getUserProfile)
-    .put(protect, validate(updateProfileSchema), updateUserProfile)
+    .put(protect, demoGuard, validate(updateProfileSchema), updateUserProfile)
 
 userRouter.route('/profile/address')
-    .post(protect, addUserAddress)
-    .put(protect, updateUserAddress)
+    .post(protect, demoGuard, addUserAddress)
+    .put(protect, demoGuard, updateUserAddress)
 
 userRouter.route('/profile/address/:addressId')
-    .delete(protect, deleteUserAddress)
+    .delete(protect, demoGuard, deleteUserAddress)
 
 userRouter.route('/allUsers')
     .get(protect, admin, getAllUsers)
 
 userRouter.route('/:id')
-    .put(protect, admin, updateUserByAdmin)
-    .delete(protect, admin, deleteUser)
+    .put(protect, admin, demoGuard, updateUserByAdmin)
+    .delete(protect, admin, demoGuard, deleteUser)

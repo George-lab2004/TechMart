@@ -7,9 +7,12 @@ import AdminTable from "../components/AdminTable"
 import { useGetUsersQuery, useDeleteUserMutation, useUpdateUserMutation } from "@/slices/usersApiSlice"
 import type { user } from "@/slices/usersApiSlice"
 import UserInsightsModal from "./components/UserInsightsModal"
-import { BarChart3 } from "lucide-react"
+import { BarChart3, Lock } from "lucide-react"
+import { useSelector } from "react-redux"
+import type { RootState } from "@/store"
 
 function Users() {
+    const { userInfo } = useSelector((state: RootState) => state.auth)
     const { data, isLoading, error } = useGetUsersQuery()
     const [deleteUser] = useDeleteUserMutation()
     const [updateUser] = useUpdateUserMutation()
@@ -60,6 +63,10 @@ function Users() {
 
     // ── Handlers ─────────────────────────
     const handleDelete = async (id: string) => {
+        if (userInfo?.isDemo) {
+            toast.error("Action restricted in Demo Mode! Database users cannot be deleted.")
+            return
+        }
         if (window.confirm("Delete this user? ⚠️")) {
             try {
                 await deleteUser(id).unwrap()
@@ -72,6 +79,10 @@ function Users() {
     }
 
     const toggleAdmin = async (userItem: user) => {
+        if (userInfo?.isDemo) {
+            toast.error("Action restricted in Demo Mode! User roles cannot be modified.")
+            return
+        }
         try {
             const updated = await updateUser({
                 _id: userItem._id,
@@ -194,19 +205,38 @@ function Users() {
                                     Insights
                                 </button>
 
-                                <button
-                                    onClick={() => toggleAdmin(userItem)}
-                                    className="text-a font-bold text-[10px]"
-                                >
-                                    Toggle Role
-                                </button>
+                                {userInfo?.isDemo ? (
+                                    <>
+                                        <button 
+                                            title="Editing disabled in Demo Mode"
+                                            className="text-muted/40 cursor-not-allowed font-bold uppercase text-[10px] tracking-widest flex items-center gap-1"
+                                        >
+                                            <Lock size={10} /> Toggle
+                                        </button>
+                                        <button 
+                                            title="Deletion disabled in Demo Mode"
+                                            className="text-muted/20 cursor-not-allowed font-bold uppercase text-[10px] tracking-widest"
+                                        >
+                                            Delete
+                                        </button>
+                                    </>
+                                ) : (
+                                    <>
+                                        <button
+                                            onClick={() => toggleAdmin(userItem)}
+                                            className="text-a font-bold text-[10px]"
+                                        >
+                                            Toggle Role
+                                        </button>
 
-                                <button
-                                    onClick={() => handleDelete(userItem._id)}
-                                    className="text-red-500 font-bold text-[10px]"
-                                >
-                                    Delete
-                                </button>
+                                        <button
+                                            onClick={() => handleDelete(userItem._id)}
+                                            className="text-red-500 font-bold text-[10px]"
+                                        >
+                                            Delete
+                                        </button>
+                                    </>
+                                )}
                             </div>
                         </td>
                     </tr>

@@ -13,8 +13,13 @@ import AdminHeader from "../components/AdminHeader"
 import AdminStatCard from "../components/AdminStatCard"
 import AdminTable from "../components/AdminTable"
 import CategoryModal from "./components/CategoryModel"
+import { useSelector } from "react-redux"
+import type { RootState } from "@/store"
+import { Lock } from "lucide-react"
 
 function Categories() {
+    const { userInfo } = useSelector((state: RootState) => state.auth)
+
     const { data, isLoading, error } = useGetCategoriesQuery()
     const [createCategory] = useCreateCategoryMutation()
     const [updateCategory] = useUpdateCategoryMutation()
@@ -56,6 +61,11 @@ function Categories() {
     }
 
     const handleSubmit = async (formData: any) => {
+        if (userInfo?.isDemo) {
+            toast.error("Action restricted in Demo Mode! Database categories cannot be modified.")
+            handleCloseModal()
+            return
+        }
         try {
             if (selectedCategory) {
                 await updateCategory({ ...formData, _id: selectedCategory._id }).unwrap()
@@ -72,6 +82,10 @@ function Categories() {
     }
 
     const handleDelete = async (id: string) => {
+        if (userInfo?.isDemo) {
+            toast.error("Action restricted in Demo Mode! Database categories cannot be deleted.")
+            return
+        }
         if (window.confirm("Delete this category? ⚠️")) {
             try {
                 await deleteCategory(id).unwrap()
@@ -161,18 +175,37 @@ function Categories() {
                         {/* Actions */}
                         <td className="px-6 py-4">
                             <div className="flex justify-center gap-3">
-                                <button
-                                    onClick={() => handleOpenModal(cat)}
-                                    className="text-a font-bold text-[10px]"
-                                >
-                                    Edit
-                                </button>
-                                <button
-                                    onClick={() => handleDelete(cat._id)}
-                                    className="text-red-500 font-bold text-[10px]"
-                                >
-                                    Delete
-                                </button>
+                                {userInfo?.isDemo ? (
+                                    <>
+                                        <button 
+                                            title="Editing disabled in Demo Mode"
+                                            className="text-muted/40 cursor-not-allowed font-bold uppercase text-[10px] tracking-widest flex items-center gap-1"
+                                        >
+                                            <Lock size={10} /> Edit
+                                        </button>
+                                        <button 
+                                            title="Deletion disabled in Demo Mode"
+                                            className="text-muted/20 cursor-not-allowed font-bold uppercase text-[10px] tracking-widest"
+                                        >
+                                            Delete
+                                        </button>
+                                    </>
+                                ) : (
+                                    <>
+                                        <button
+                                            onClick={() => handleOpenModal(cat)}
+                                            className="text-a font-bold text-[10px]"
+                                        >
+                                            Edit
+                                        </button>
+                                        <button
+                                            onClick={() => handleDelete(cat._id)}
+                                            className="text-red-500 font-bold text-[10px]"
+                                        >
+                                            Delete
+                                        </button>
+                                    </>
+                                )}
                             </div>
                         </td>
                     </tr>

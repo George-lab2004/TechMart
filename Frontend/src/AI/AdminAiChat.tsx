@@ -1,5 +1,7 @@
 import { useState, useRef, useEffect } from "react"
 import { useSendAdminMessageMutation } from "@/slices/aiApiSlice"
+import { useSelector } from "react-redux"
+import type { RootState } from "@/store/store"
 import { BarChart, Bar, XAxis, YAxis, Tooltip, ResponsiveContainer, CartesianGrid, PieChart, Pie, Cell, LineChart, Line, Legend } from 'recharts';
 
 interface AIMessage {
@@ -16,9 +18,21 @@ interface DisplayMessage {
 
 const COLORS = ['#4f46e5', '#10b981', '#f59e0b', '#ec4899', '#8b5cf6'];
 
+// Strip [Internal Context ...] blocks that should never be shown to the user
+const stripInternalContext = (text: string): string => {
+    if (!text) return "";
+    const marker = "\n[Internal Context";
+    const idx = text.indexOf(marker);
+    if (idx !== -1) return text.substring(0, idx).trim();
+    // Also handle without leading newline
+    if (text.startsWith("[Internal Context")) return "";
+    return text;
+};
+
 const formatAiText = (text: string) => {
     if (!text) return "";
-    let safe = text.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
+    let safe = stripInternalContext(text);
+    safe = safe.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
 
     // Markdown Table Parser
     safe = safe.replace(/(?:^|\n)\|(.+)\|\n\|(?:[-:]+[-| :]*)\|\n((?:\|.*\|\n?)*)/g, (header, body) => {
@@ -43,13 +57,33 @@ const formatAiText = (text: string) => {
 };
 
 export default function AdminAiChat() {
-    const [messages, setMessages] = useState<DisplayMessage[]>([
-        { from: "ai", text: "Senior Business Analyst initialized. How can I assist with your store analytics today?" }
-    ])
-    const [history, setHistory] = useState<AIMessage[]>([])
+    const { userInfo } = useSelector((state: RootState) => state.auth)
+    
+    // Unique keys for this admin
+    const MESSAGES_KEY = `techmart_admin_chat_${userInfo?._id}_messages`
+    const HISTORY_KEY = `techmart_admin_chat_${userInfo?._id}_history`
+
+    const [messages, setMessages] = useState<DisplayMessage[]>(() => {
+        const saved = localStorage.getItem(MESSAGES_KEY)
+        return saved ? JSON.parse(saved) : [
+            { from: "ai", text: "Senior Business Analyst initialized. How can I assist with your store analytics today?" }
+        ]
+    })
+    const [history, setHistory] = useState<AIMessage[]>(() => {
+        const saved = localStorage.getItem(HISTORY_KEY)
+        return saved ? JSON.parse(saved) : []
+    })
     const [input, setInput] = useState("")
     const [sendMessage, { isLoading }] = useSendAdminMessageMutation()
     const bottomRef = useRef<HTMLDivElement>(null)
+
+    // Save on changes
+    useEffect(() => {
+        if (userInfo?._id) {
+            localStorage.setItem(MESSAGES_KEY, JSON.stringify(messages))
+            localStorage.setItem(HISTORY_KEY, JSON.stringify(history))
+        }
+    }, [messages, history, userInfo?._id, MESSAGES_KEY, HISTORY_KEY])
 
     useEffect(() => {
         bottomRef.current?.scrollIntoView({ behavior: "smooth" })
@@ -75,7 +109,7 @@ export default function AdminAiChat() {
 
             setMessages(prev => [...prev, {
                 from: "ai",
-                text: res.message,
+                text: stripInternalContext(res.message),
                 data: res.data,
                 fn: res.functionCalled,
             }])
@@ -96,9 +130,10 @@ export default function AdminAiChat() {
                     isSystemMessage: true
                 }).unwrap()
 
+
                 setMessages(prev => [...prev, {
                     from: "ai",
-                    text: autoRes.message,
+                    text: stripInternalContext(autoRes.message),
                     data: autoRes.data,
                     fn: autoRes.functionCalled,
                 }])
@@ -288,8 +323,10 @@ export default function AdminAiChat() {
     const renderData = (fn: string, data: any) => {
         if (!fn || !data) return null;
 
-        if (fn === "renderChart" && data.chartData) {
-            const chartNode = renderChartNode(data.chartData);
+        if (fn === "renderChart") {
+            // data can be { chartData: { title, type, data } } or { success, chartData: { ... } }
+            const chart = data.chartData || data;
+            const chartNode = renderChartNode(chart);
             if (chartNode) return chartNode;
         }
 
@@ -329,7 +366,12 @@ export default function AdminAiChat() {
                     <div className="font-mono text-[9px] text-text2 tracking-widest uppercase">Admin Secure Portal</div>
                 </div>
                 <button
-                    onClick={() => { setMessages([{ from: "ai", text: "Session Reset. Ready for analytics." }]); setHistory([]) }}
+                    onClick={() => { 
+                        setMessages([{ from: "ai", text: "Session Reset. Ready for analytics." }]); 
+                        setHistory([]);
+                        localStorage.removeItem(MESSAGES_KEY);
+                        localStorage.removeItem(HISTORY_KEY);
+                    }}
                     className="ml-auto font-mono text-[9px] tracking-widest uppercase text-muted
                      hover:text-a2 transition-colors cursor-pointer"
                 >

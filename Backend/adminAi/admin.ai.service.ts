@@ -3,11 +3,18 @@ import { functionDefinitions } from "./admin.ai.definitions.js";
 
 const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEYTwo!);
 
-export const createAdminChatModel = () => {
-    return genAI.getGenerativeModel({
-        model: "gemini-2.5-flash", // We use standard flash here instead of flash-lite because it handles data numbers better!
-        tools: [{ functionDeclarations: functionDefinitions }],
-        systemInstruction: `
+// Admin AI needs stronger models for data analysis & function-calling.
+// Prioritize full-capability models before lite fallbacks.
+export const ADMIN_MODELS = [
+    "gemini-2.5-flash",
+    "gemini-3-flash",
+    "gemini-2.5-flash-lite",
+    "gemini-3.1-flash-lite"
+] as const;
+
+export const sleep = (ms: number) => new Promise<void>(r => setTimeout(r, ms));
+
+const ADMIN_SYSTEM_INSTRUCTION = `
 You are the TechMart Senior Business & Tech Consultant. You are speaking directly to the Store Administrator.
 Your mission is to provide expert-level analysis of sales data, inventory management, and technical business strategy.
 
@@ -28,6 +35,12 @@ GOLDEN RULES
 3. SPEAK FREELY AS AN EXPERT: Use your consultant tone to explain *why* certain products are performing well or *how* to fix low stock levels. Be descriptive and insightful.
 4. VISUALS: If the admin asks for a chart/graph, call 'renderChart' AFTER fetching the data. ALWAYS provide a Markdown table and a consultant-level summary underneath any chart.
 5. BE PROFESSIONAL & POLISHED: Use line breaks, clean formatting, and clear business language.
-        `
+`;
+
+export const createAdminModelInstance = (model: string) => {
+    return genAI.getGenerativeModel({
+        model,
+        tools: [{ functionDeclarations: functionDefinitions }],
+        systemInstruction: ADMIN_SYSTEM_INSTRUCTION,
     });
 };

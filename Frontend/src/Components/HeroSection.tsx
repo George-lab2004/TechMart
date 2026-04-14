@@ -2,9 +2,9 @@ import AnimatedDot from "@/Components/AnimatedDot";
 import { Carousel } from "@/Components/Carousel";
 import { Button } from "@/Components/ui/button";
 import { Card, CardDescription, CardHeader, CardTitle } from "@/Components/ui/card";
-import { motion } from "framer-motion";
+import { motion, useAnimation } from "framer-motion";
 import { ArrowRight, Play, type LucideIcon } from "lucide-react";
-import { type ReactNode, useRef } from "react";
+import { type ReactNode, useEffect, useRef } from "react";
 
 export interface FloatingCard {
   icon: LucideIcon;
@@ -36,11 +36,31 @@ export default function HeroSection({
 }: HeroSectionProps) {
 
   const constraintsRef = useRef<HTMLDivElement>(null);
+  const controls = useAnimation();
 
+  useEffect(() => {
+    const run = async () => {
+      await controls.start({
+        y: [0, -15, 0],
+        transition: { duration: 3, ease: "easeInOut" },
+      });
+    };
+
+    // run immediately
+    run();
+
+    // force restart every 5 seconds
+    const interval = setInterval(() => {
+      controls.stop(); // 👈 stop anything currently running
+      run();           // 👈 restart clean
+    }, 5000);
+
+    return () => clearInterval(interval);
+  }, []);
   return (
-    <div className="relative z-10 flex flex-col md:flex-row md:items-center md:justify-between gap-8 w-[calc(100%-40px)] md:w-[calc(100%-80px)] mt-16 md:mt-24 ms-5 md:ms-10">
+    <div className="relative z-10 flex flex-col md:flex-row md:items-center md:justify-between gap-12 md:gap-8 w-[calc(100%-40px)] md:w-[calc(100%-80px)] mt-12 md:mt-24 ms-5 md:ms-10">
       {/* Left: text + CTAs */}
-      <div className="flex-1 flex-col">
+      <div className="flex-1 flex flex-col items-center text-center md:items-start md:text-left">
         {/* Badge pill */}
         <span className="bg-surf border border-gb py-1 font-mono text-xs tracking-[1px] uppercase px-3 rounded-3xl flex items-center gap-3 w-fit shadow-sm text-text2">
           <AnimatedDot size="sm" />
@@ -50,7 +70,7 @@ export default function HeroSection({
         {headline}
 
         {/* Subtext */}
-        <p className="mt-4 md:max-w-1/2 text-text2 text-lg leading-relaxed">
+        <p className="mt-4 max-w-[90%] md:max-w-1/2 text-text2 text-base md:text-lg leading-relaxed">
           {subtext}
         </p>
 
@@ -73,8 +93,11 @@ export default function HeroSection({
         </div>
       </div>
 
-      {/* Right: carousel + floating cards — hidden on mobile */}
-      <div ref={constraintsRef} className="hidden md:block md:max-w-[30%] max-w-75 shrink-0 self-center me-30 mt-15 relative">
+      {/* Right: carousel + floating cards */}
+      <div
+        ref={constraintsRef}
+        className="w-full md:max-w-[30%] max-w-[320px] md:max-w-75 shrink-0 self-center md:me-30 mt-10 md:mt-15 relative"
+      >
         <Carousel onActiveChange={onActiveChange} />
 
         {floatingCards.map((card, i) => (
@@ -83,14 +106,14 @@ export default function HeroSection({
             drag
             dragConstraints={constraintsRef}
             dragTransition={{ power: 0.5 }}
-            animate={{ y: [0, -15, 0] }}
+            animate={controls}
             transition={{
               duration: 3,
               repeat: Infinity,
               ease: "easeInOut",
               delay: card.delay ?? i,
             }}
-            className={`absolute ${card.position} w-36`}
+            className={`absolute ${card.position} w-28 md:w-36 scale-75 md:scale-100 z-20`}
           >
             <Card className="py-3 gap-2 bg-surf/80 backdrop-blur-md border-gb shadow-lg">
               <CardHeader className="px-4 gap-1.5">

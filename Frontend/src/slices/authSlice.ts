@@ -5,6 +5,7 @@ interface UserInfo {
     name: string;
     email: string;
     isAdmin: boolean;
+    isDemo?: boolean;
     expiresAt?: number;
     delivery?: {
         title: string;
@@ -49,8 +50,9 @@ const authSlice = createSlice({
     initialState,
     reducers: {
         setCredentials: (state, action: PayloadAction<UserInfo>) => {
-            state.userInfo = action.payload;
-            localStorage.setItem('userInfo', JSON.stringify(action.payload));
+            const data = { ...action.payload, isDemo: action.payload.email === "admin@techmart.dev" };
+            state.userInfo = data;
+            localStorage.setItem('userInfo', JSON.stringify(data));
         },
         logout: (state) => {
             state.userInfo = null;

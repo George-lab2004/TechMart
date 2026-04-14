@@ -15,20 +15,25 @@ function CategroiesSection() {
         <div className="py-12">
             <h2 className="text-4xl font-display uppercase tracking-widest mb-8 px-4 text-text">Top Categories</h2>
             <div className="flex items-center justify-end px-4 mb-2 gap-2">
-                <span className="text-xs uppercase tracking-widest text-muted-foreground">
-                    Scroll for more
-                </span>
+                {categories.length > 5 && (
+                    <div className="flex items-center gap-2">
+                        <span className="text-xs uppercase tracking-widest text-muted-foreground">
+                            Scroll for more
+                        </span>
+                        <motion.div
+                            animate={{ x: [0, 8, 0] }}
+                            transition={{
+                                duration: 1,
+                                repeat: Infinity,
+                                ease: "easeInOut"
+                            }}
+                        >
+                            <ArrowRight className="w-4 h-4 text-muted-foreground" />
+                        </motion.div>
+                    </div>
+                )}
 
-                <motion.div
-                    animate={{ x: [0, 8, 0] }}
-                    transition={{
-                        duration: 1,
-                        repeat: Infinity,
-                        ease: "easeInOut"
-                    }}
-                >
-                    <ArrowRight className="w-4 h-4 text-muted-foreground" />
-                </motion.div>
+
             </div>
             <div className="flex gap-8 overflow-x-auto pb-10 pt-4 no-scrollbar scroll-smooth px-4">
 

@@ -16,15 +16,11 @@ interface Review {
   createdAt: string
 }
 
-interface RatingBreakdown {
-  five: number; four: number; three: number; two: number; one: number
-}
-
 interface Props {
   productId: string
   rating: number
   numReviews: number
-  ratingBreakdown: RatingBreakdown
+  ratingBreakdown?: { five: number; four: number; three: number; two: number; one: number }
 }
 
 // ── Star renderer ─────────────────────────────────────────────
@@ -71,23 +67,41 @@ function StarPicker({ value, onChange }: { value: number; onChange: (v: number) 
   )
 }
 
-// ── Rating bar row ────────────────────────────────────────────
-function BarRow({ star, count, total, active, onClick }: {
-  star: number; count: number; total: number; active: boolean; onClick: () => void
+// ── Rating row (Premium Glassy) ───────────────────────────────
+function RatingRow({ star, count, active, onClick }: {
+  star: number; count: number; active: boolean; onClick: () => void
 }) {
-  const pct = total > 0 ? Math.round((count / total) * 100) : 0
   return (
-    <div className="flex items-center gap-3 group cursor-pointer" onClick={onClick}>
-      <span className="font-mono text-[10px] text-text2 w-9 text-right shrink-0">
-        {star} star
-      </span>
-      <div className="flex-1 h-[6px] rounded-full bg-gb overflow-hidden">
-        <div
-          className={`h-full rounded-full transition-all duration-700 ${active ? "bg-a" : "bg-amber-400 group-hover:bg-amber-300"}`}
-          style={{ width: `${pct}%` }}
-        />
+    <div 
+      onClick={onClick}
+      className={`group relative flex flex-col items-center justify-center p-4 rounded-2xl border transition-all duration-300 cursor-pointer overflow-hidden
+        ${active 
+          ? "bg-a/20 border-a/50 shadow-[0_0_20px_rgba(var(--ag-rgb),0.15)]" 
+          : "bg-white/[0.03] border-white/10 hover:bg-white/[0.06] hover:border-a/30 hover:-translate-y-1 hover:shadow-xl"}`}
+    >
+      {/* Background Glow Decor */}
+      <div className={`absolute -right-4 -top-4 w-12 h-12 rounded-full blur-2xl transition-opacity duration-500
+        ${active ? "bg-a/30 opacity-100" : "bg-a/10 opacity-0 group-hover:opacity-100"}`} />
+
+      <div className="relative z-10 flex flex-col items-center gap-1">
+        <div className="flex items-center gap-1.5">
+          <span className={`text-2xl font-black font-display tracking-tight transition-colors ${active ? "text-a" : "text-text"}`}>
+            {star}
+          </span>
+          <Star 
+            size={18} 
+            className={`transition-all duration-300 ${active ? "fill-a text-a scale-110" : "fill-amber-400 text-amber-400 group-hover:scale-110"}`} 
+          />
+        </div>
+        
+        <div className="flex flex-col items-center">
+          <span className="text-[9px] uppercase tracking-[2px] font-black text-muted opacity-60">Stars</span>
+          <div className={`mt-2 px-2 py-0.5 rounded-lg text-[10px] font-mono font-bold transition-all
+            ${active ? "bg-a text-bg" : "bg-white/5 text-text2 group-hover:bg-a/10 group-hover:text-a"}`}>
+            {count}
+          </div>
+        </div>
       </div>
-      <span className="font-mono text-[10px] text-muted w-7 shrink-0">{pct}%</span>
     </div>
   )
 }
@@ -227,36 +241,26 @@ const SORT_OPTIONS = [
 ]
 
 // ── Main component ────────────────────────────────────────────
-export default function RatingSection({ productId, rating, numReviews, ratingBreakdown }: Props) {
+export default function RatingSection({ productId, rating, numReviews }: Props) {
   const [activeStar, setActiveStar] = useState(0)
   const [sort, setSort] = useState("recent")
   const [showModal, setShowModal] = useState(false)
 
   const { userInfo } = useSelector((state: RootState) => state.auth)
-  const { data: reviewsData } = useGetProductReviewsQuery(productId, { skip: !userInfo })
+  // Reviews are now public — no longer skipping for guests
+  const { data: reviewsData, isLoading } = useGetProductReviewsQuery(productId)
 
   const reviews: Review[] = reviewsData?.result?.reviews ?? []
 
-  const { total, breakdown } = useMemo(() => {
-    const b = ratingBreakdown || { five: 0, four: 0, three: 0, two: 0, one: 0 }
-    let t = (b.five || 0) + (b.four || 0) + (b.three || 0) + (b.two || 0) + (b.one || 0)
-
-    // Fallback: If breakdown is empty but we have reviews, calculate from reviews array
-    if (t === 0 && reviews.length > 0) {
-      const calcB: Record<number, number> = { 5: 0, 4: 0, 3: 0, 2: 0, 1: 0 }
-      reviews.forEach(r => {
-        const star = Math.round(r.rating)
-        if (star >= 1 && star <= 5) calcB[star]++
-      })
-      return { total: reviews.length, breakdown: calcB }
-    }
-
-    const numericBreakdown: Record<number, number> = {
-      5: b.five, 4: b.four, 3: b.three, 2: b.two, 1: b.one
-    }
-
-    return { total: t, breakdown: numericBreakdown }
-  }, [ratingBreakdown, reviews])
+  // Simplified logic: calculate breakdown directly from reviews
+  const breakdown = useMemo(() => {
+    const calc: Record<number, number> = { 5: 0, 4: 0, 3: 0, 2: 0, 1: 0 }
+    reviews.forEach(r => {
+      const s = Math.round(r.rating)
+      if (s >= 1 && s <= 5) calc[s]++
+    })
+    return calc
+  }, [reviews])
 
   const filtered = useMemo(() => {
     let r = [...reviews]
@@ -282,49 +286,27 @@ export default function RatingSection({ productId, rating, numReviews, ratingBre
         <span className="font-mono text-[10px] tracking-[3px] uppercase text-muted">Customer Reviews</span>
       </div>
 
-      {/* Overview — score + bars */}
-      <div className="grid grid-cols-1 sm:grid-cols-[200px_1fr] gap-6 mb-8">
+      {/* Overview — score + rating tiles */}
+      <div className="grid grid-cols-1 lg:grid-cols-[200px_1fr] gap-6 mb-8 items-center">
         {/* Score card */}
-        <div className="bg-surf border border-gb rounded-2xl p-6 flex flex-col items-center justify-center gap-2 text-center">
+        <div className="bg-surf border border-gb rounded-2xl p-6 flex flex-col items-center justify-center gap-2 text-center h-full">
           <div className="font-display text-6xl leading-none text-text">{rating.toFixed(1)}</div>
           <Stars rating={rating} size={18} />
-          <div className="text-sm text-text2">{numReviews.toLocaleString()} reviews</div>
+          <div className="text-[10px] uppercase tracking-widest text-muted font-mono">{numReviews.toLocaleString()} reviews</div>
         </div>
 
-        {/* Bars */}
-        <div className="flex flex-col justify-center gap-2.5">
+        {/* Premium Rating Tiles Grid */}
+        <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-4">
           {[5, 4, 3, 2, 1].map(s => (
-            <BarRow
+            <RatingRow
               key={s}
               star={s}
               count={breakdown[s] ?? 0}
-              total={total}
               active={activeStar === s}
               onClick={() => toggleStar(s)}
             />
           ))}
         </div>
-      </div>
-
-      {/* Filter pills */}
-      <div className="flex gap-2 flex-wrap mb-6">
-        <button
-          onClick={() => setActiveStar(0)}
-          className={`font-mono text-[10px] tracking-widest uppercase px-4 py-2 rounded-full border transition-all duration-200
-            ${!activeStar ? "bg-a/10 border-a/30 text-a" : "border-gb text-text2 hover:border-a/30 hover:text-text"}`}
-        >
-          All Stars
-        </button>
-        {[5, 4, 3, 2, 1].map(s => (
-          <button
-            key={s}
-            onClick={() => toggleStar(s)}
-            className={`font-mono text-[10px] tracking-widest uppercase px-4 py-2 rounded-full border transition-all duration-200
-              ${activeStar === s ? "bg-a/10 border-a/30 text-a" : "border-gb text-text2 hover:border-a/30 hover:text-text"}`}
-          >
-            {s} Stars
-          </button>
-        ))}
       </div>
 
       {/* Sort row */}
@@ -344,23 +326,18 @@ export default function RatingSection({ productId, rating, numReviews, ratingBre
       </div>
 
       {/* Reviews list */}
-      {!userInfo ? (
-        <div className="text-center py-16 border-2 border-dashed border-gb rounded-2xl bg-surf/10">
-          <Star size={40} className="mx-auto text-muted opacity-20 mb-4" />
-          <p className="text-[10px] font-black uppercase tracking-widest font-mono text-muted">Sign in to view reviews</p>
-        </div>
-      ) : (
-        <div className="flex flex-col gap-3">
-          {filtered.length === 0 ? (
-            <div className="text-center py-16 border-2 border-dashed border-gb rounded-2xl bg-surf/10">
-              <Star size={40} className="mx-auto text-muted opacity-20 mb-4" />
-              <p className="text-[10px] font-black uppercase tracking-widest font-mono text-muted">No reviews yet — be the first!</p>
-            </div>
-          ) : (
-            filtered.map(r => <ReviewCard key={r._id} review={r} />)
-          )}
-        </div>
-      )}
+      <div className="flex flex-col gap-3">
+        {isLoading ? (
+          <div className="py-10 flex justify-center"><Stars rating={0} /></div>
+        ) : filtered.length === 0 ? (
+          <div className="text-center py-16 border-2 border-dashed border-gb rounded-2xl bg-surf/10">
+            <Star size={40} className="mx-auto text-muted opacity-20 mb-4" />
+            <p className="text-[10px] font-black uppercase tracking-widest font-mono text-muted">No reviews yet — be the first!</p>
+          </div>
+        ) : (
+          filtered.map(r => <ReviewCard key={r._id} review={r} />)
+        )}
+      </div>
 
       {/* Write review button */}
       <button

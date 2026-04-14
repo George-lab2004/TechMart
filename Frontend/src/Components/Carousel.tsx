@@ -7,41 +7,42 @@ import {
 } from '@/Components/ui/carousel'
 import { Zap, Shield, Cpu, Wifi, Battery, Smartphone, Watch, Headphones, Monitor, Speaker, Mouse, Laptop } from 'lucide-react'
 import { useGetTopSellingProductsQuery } from '@/slices/productApiSlice'
+import { Link } from 'react-router-dom'
 
 // Map categories to icons
 const CAT_ICONS: Record<string, any> = {
-    Laptop: Laptop,
-    Audio: Headphones,
-    Wearable: Watch,
-    Monitor: Monitor,
-    Accessories: Mouse,
-    Smartphone: Smartphone,
-    Speaker: Speaker,
+  Laptop: Laptop,
+  Audio: Headphones,
+  Wearable: Watch,
+  Monitor: Monitor,
+  Accessories: Mouse,
+  Smartphone: Smartphone,
+  Speaker: Speaker,
 }
 
 // Map tech specs to Lucide icons
 const SPEC_ICONS: Record<string, any> = {
-    Chip: Cpu,
-    Battery: Battery,
-    Charge: Zap,
-    Security: Shield,
-    Wifi: Wifi,
-    Wireless: Wifi,
-    ANC: Shield,
-    Refresh: Zap,
+  Chip: Cpu,
+  Battery: Battery,
+  Charge: Zap,
+  Security: Shield,
+  Wifi: Wifi,
+  Wireless: Wifi,
+  ANC: Shield,
+  Refresh: Zap,
 }
 
 const getSpecIcon = (label: string) => {
-    const key = Object.keys(SPEC_ICONS).find(k => label.includes(k))
-    return key ? SPEC_ICONS[key] : Zap
+  const key = Object.keys(SPEC_ICONS).find(k => label.includes(k))
+  return key ? SPEC_ICONS[key] : Zap
 }
 
 
 
 export function Carousel({ onActiveChange }: { onActiveChange?: (index: number) => void }) {
-  const [api, setApi]         = useState<CarouselApi>()
+  const [api, setApi] = useState<CarouselApi>()
   const [current, setCurrent] = useState(0)
-  const [count, setCount]     = useState(0)
+  const [count, setCount] = useState(0)
 
   const { data: topData, isLoading } = useGetTopSellingProductsQuery()
   const products = topData?.result || []
@@ -56,8 +57,8 @@ export function Carousel({ onActiveChange }: { onActiveChange?: (index: number) 
     badge: p.badge || 'Trending',
     badgeColor: 'bg-a/10 text-a',
     features: (p.quickSpecs || []).slice(0, 3).map((s: any) => ({
-        icon: getSpecIcon(s.label),
-        label: s.value
+      icon: getSpecIcon(s.label),
+      label: s.value
     }))
   }))
 
@@ -87,47 +88,49 @@ export function Carousel({ onActiveChange }: { onActiveChange?: (index: number) 
         <CarouselContent>
           {slides.map((slide) => (
             <CarouselItem key={slide.id}>
-              <div className="bg-surf border border-gb rounded-3xl overflow-hidden shadow-[0_8px_40px_rgba(0,0,0,0.1)] dark:shadow-[0_8px_40px_rgba(0,0,0,0.5)] transition-colors">
+              <Link to={`/products/${slide.id}`}>
+                <div className="bg-surf border border-gb rounded-3xl overflow-hidden shadow-[0_8px_40px_rgba(0,0,0,0.1)] dark:shadow-[0_8px_40px_rgba(0,0,0,0.5)] transition-colors">
 
-                {/* Top — image area */}
-                <div className={`bg-linear-to-br ${slide.bg} flex items-center justify-center h-72 relative`}>
-                  {typeof slide.icon === 'string' && slide.icon.startsWith('http') ? (
-                    <img src={slide.icon} alt={slide.name} className="h-56 w-auto object-contain drop-shadow-2xl select-none" />
-                  ) : typeof slide.icon === 'string' ? (
-                    <span className="text-[90px] leading-none select-none drop-shadow-lg">{slide.icon}</span>
-                  ) : (
-                    <slide.icon size={90} className="text-white drop-shadow-lg" />
-                  )}
-                  <span className={`absolute top-4 right-4 text-[10px] font-mono font-semibold uppercase tracking-widest px-3 py-1 rounded-full ${slide.badgeColor} border border-current/20`}>
-                    {slide.badge}
-                  </span>
-                </div>
+                  {/* Top — image area */}
+                  <div className={`bg-linear-to-br ${slide.bg} flex items-center justify-center h-72 relative`}>
+                    {typeof slide.icon === 'string' && slide.icon.startsWith('http') ? (
+                      <img src={slide.icon} alt={slide.name} className="h-56 w-auto object-contain drop-shadow-2xl select-none" />
+                    ) : typeof slide.icon === 'string' ? (
+                      <span className="text-[90px] leading-none select-none drop-shadow-lg">{slide.icon}</span>
+                    ) : (
+                      <slide.icon size={90} className="text-white drop-shadow-lg" />
+                    )}
+                    <span className={`absolute top-4 right-4 text-[10px] font-mono font-semibold uppercase tracking-widest px-3 py-1 rounded-full ${slide.badgeColor} border border-current/20`}>
+                      {slide.badge}
+                    </span>
+                  </div>
 
-                {/* Bottom — info */}
-                <div className="p-10 ">
-                  <div className="flex items-start justify-between mb-3">
-                    <div>
-                      <p className="text-[11px] font-mono uppercase tracking-[2px] text-muted mb-1">{slide.category}</p>
-                      <h3 className="text-xl font-display font-bold text-text tracking-wide">{slide.name}</h3>
+                  {/* Bottom — info */}
+                  <div className="p-10 ">
+                    <div className="flex items-start justify-between mb-3">
+                      <div>
+                        <p className="text-[11px] font-mono uppercase tracking-[2px] text-muted mb-1">{slide.category}</p>
+                        <h3 className="text-xl font-display font-bold text-text tracking-wide">{slide.name}</h3>
+                      </div>
+                      <div className="text-right">
+                        <p className="text-[11px] text-muted font-mono mb-1">FROM</p>
+                        <p className="text-xl font-bold font-display text-a">{slide.price}</p>
+                      </div>
                     </div>
-                    <div className="text-right">
-                      <p className="text-[11px] text-muted font-mono mb-1">FROM</p>
-                      <p className="text-xl font-bold font-display text-a">{slide.price}</p>
+
+                    {/* Feature pills */}
+                    <div className="flex flex-wrap gap-2 mt-4">
+                      {slide.features.map(({ icon: Icon, label }: { icon: any; label: string }) => (
+                        <span key={label} className="flex items-center gap-1.5 bg-bg border border-gb rounded-xl px-3 py-1.5 text-[12px] font-body text-text2">
+                          <Icon size={12} className="text-a shrink-0" />
+                          {label}
+                        </span>
+                      ))}
                     </div>
                   </div>
 
-                  {/* Feature pills */}
-                  <div className="flex flex-wrap gap-2 mt-4">
-                    {slide.features.map(({ icon: Icon, label }: { icon: any; label: string }) => (
-                      <span key={label} className="flex items-center gap-1.5 bg-bg border border-gb rounded-xl px-3 py-1.5 text-[12px] font-body text-text2">
-                        <Icon size={12} className="text-a shrink-0" />
-                        {label}
-                      </span>
-                    ))}
-                  </div>
                 </div>
-
-              </div>
+              </Link>
             </CarouselItem>
           ))}
         </CarouselContent>
@@ -141,11 +144,10 @@ export function Carousel({ onActiveChange }: { onActiveChange?: (index: number) 
             type="button"
             onClick={() => api?.scrollTo(i, false)}
             aria-label={`Go to slide ${i + 1}`}
-            className={`rounded-full transition-all duration-300 cursor-pointer ${
-              i === current
-                ? 'w-6 h-2 bg-a'
-                : 'w-2 h-2 bg-muted hover:bg-text2'
-            }`}
+            className={`rounded-full transition-all duration-300 cursor-pointer ${i === current
+              ? 'w-6 h-2 bg-a'
+              : 'w-2 h-2 bg-muted hover:bg-text2'
+              }`}
           />
         ))}
       </div>

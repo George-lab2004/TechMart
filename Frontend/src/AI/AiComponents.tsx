@@ -4,7 +4,8 @@
 
 import { useState, useRef, useEffect } from "react"
 import { useSendMessageMutation } from "@/slices/aiApiSlice"
-import { useDispatch } from "react-redux"
+import { useDispatch, useSelector } from "react-redux"
+import type { RootState } from "@/store/store"
 import { addToCart, removeFromCart, clearCart } from "@/slices/cartSlice"
 import { apiSlice } from "@/slices/apiSlice"
 import toast from "react-hot-toast"
@@ -37,14 +38,34 @@ const productListFns = new Set([
 ])
 
 export default function AiChat() {
-    const [messages, setMessages] = useState<DisplayMessage[]>([
-        { from: "ai", text: "Hi! I'm your TechMart AI assistant. Ask me to search products, compare items, manage your cart, and more." }
-    ])
-    const [history, setHistory] = useState<AIMessage[]>([])
+    const { userInfo } = useSelector((state: RootState) => state.auth)
+    const dispatch = useDispatch()
+    
+    // Unique keys for this user
+    const MESSAGES_KEY = `techmart_chat_${userInfo?._id}_messages`
+    const HISTORY_KEY = `techmart_chat_${userInfo?._id}_history`
+
+    const [messages, setMessages] = useState<DisplayMessage[]>(() => {
+        const saved = localStorage.getItem(MESSAGES_KEY)
+        return saved ? JSON.parse(saved) : [
+            { from: "ai", text: "Hi! I'm your TechMart AI assistant. Ask me to search products, compare items, manage your cart, and more." }
+        ]
+    })
+    const [history, setHistory] = useState<AIMessage[]>(() => {
+        const saved = localStorage.getItem(HISTORY_KEY)
+        return saved ? JSON.parse(saved) : []
+    })
     const [input, setInput] = useState("")
     const [sendMessage, { isLoading }] = useSendMessageMutation()
     const bottomRef = useRef<HTMLDivElement>(null)
-    const dispatch = useDispatch()
+
+    // Save on changes
+    useEffect(() => {
+        if (userInfo?._id) {
+            localStorage.setItem(MESSAGES_KEY, JSON.stringify(messages))
+            localStorage.setItem(HISTORY_KEY, JSON.stringify(history))
+        }
+    }, [messages, history, userInfo?._id, MESSAGES_KEY, HISTORY_KEY])
 
     useEffect(() => {
         bottomRef.current?.scrollIntoView({ behavior: "smooth" })
@@ -336,7 +357,12 @@ export default function AiChat() {
                     </div>
                 </div>
                 <button
-                    onClick={() => { setMessages([{ from: "ai", text: "Chat cleared. How can I help?" }]); setHistory([]) }}
+                    onClick={() => { 
+                        setMessages([{ from: "ai", text: "Chat cleared. How can I help?" }]); 
+                        setHistory([]);
+                        localStorage.removeItem(MESSAGES_KEY);
+                        localStorage.removeItem(HISTORY_KEY);
+                    }}
                     className="ml-auto font-mono text-[9px] tracking-widest uppercase text-muted
                      hover:text-a2 transition-colors cursor-pointer"
                 >

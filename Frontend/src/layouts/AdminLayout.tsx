@@ -62,6 +62,21 @@ export default function AdminLayout() {
                     <Outlet />
                 </motion.div>
             </main>
+            
+            {/* 🔗 Discreet Demo Footer */}
+            {userInfo?.isDemo && (
+                <footer className="py-6 px-10 border-t border-gb bg-bg/50 backdrop-blur-sm">
+                    <div className="max-w-7xl mx-auto flex flex-col sm:flex-row items-center justify-between gap-4">
+                        <p className="text-[10px] font-mono text-text2 opacity-40 hover:opacity-100 transition-opacity">
+                            Interested in testing full administrative rights? Let's connect on LinkedIn.
+                        </p>
+                        <p className="text-[9px] font-black uppercase tracking-[0.2em] text-a opacity-20">
+                            TechMart Architecture • Portfolio Edition
+                        </p>
+                    </div>
+                </footer>
+            )}
+
             <AdminChatWidget />
         </div>
     )

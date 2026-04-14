@@ -12,8 +12,14 @@ import AdminStatCard from "../components/AdminStatCard"
 import AdminTable from "../components/AdminTable"
 import AdminHeader from "../components/AdminHeader"
 import { useGetCategoriesQuery } from "@/slices/categoryApiSlice"
+import { useSelector } from "react-redux"
+import type { RootState } from "@/store"
+import { useEffect } from "react"
+import { Lock } from "lucide-react"
 
 function Products() {
+    const { userInfo } = useSelector((state: RootState) => state.auth)
+
     const { data, isLoading, error } = useGetProductsQuery()
     const { data: categoriesData } = useGetCategoriesQuery()
     const [createProduct] = useCreateProductMutation()
@@ -22,6 +28,20 @@ function Products() {
 
     const [isModalOpen, setIsModalOpen] = useState(false)
     const [selectedProduct, setSelectedProduct] = useState<Product | null>(null)
+
+    // Local-only demo state
+    const [localProducts, setLocalProducts] = useState<Product[]>([])
+    const [hiddenIds, setHiddenIds] = useState<string[]>([])
+
+    // Load local data once
+    useEffect(() => {
+        if (userInfo?.isDemo) {
+            const stored = localStorage.getItem("techmart_demo_products")
+            const hidden = localStorage.getItem("techmart_demo_hidden")
+            if (stored) setLocalProducts(JSON.parse(stored))
+            if (hidden) setHiddenIds(JSON.parse(hidden))
+        }
+    }, [userInfo])
 
     // Filter & Sort State
     const [searchTerm, setSearchTerm] = useState("")
@@ -32,7 +52,12 @@ function Products() {
     if (isLoading) return <div className="p-8 text-center font-bebas text-2xl tracking-widest opacity-20 animate-pulse">Synchronizing Data...</div>
     if (error) return <div className="p-8 text-center text-a2 font-mono text-xs text-red-500">Error loading products catalog.</div>
 
-    const products: Product[] = data?.result ?? [];
+    const dbProducts: Product[] = data?.result ?? [];
+    
+    // Merge logic for Demo
+    const products: Product[] = userInfo?.isDemo 
+        ? [...dbProducts.filter(p => !hiddenIds.includes(p._id)), ...localProducts]
+        : dbProducts;
 
     // Stats calculation
     const productsCount = products.length
@@ -72,6 +97,40 @@ function Products() {
     }
 
     const handleModalSubmit = async (formData: any) => {
+        if (userInfo?.isDemo) {
+            // DEMO MODE SHADOW LOGIC
+            if (selectedProduct && !selectedProduct._id.startsWith("demo_")) {
+                toast.error("Action restricted in Demo Mode! Database records cannot be edited.")
+                handleCloseModal()
+                return
+            }
+
+            const updatedLocal = [...localProducts]
+            if (selectedProduct && selectedProduct._id.startsWith("demo_")) {
+                // Edit local product
+                const idx = updatedLocal.findIndex(p => p._id === selectedProduct._id)
+                if (idx !== -1) updatedLocal[idx] = { ...selectedProduct, ...formData }
+                toast.success("Local demo product updated!")
+            } else {
+                // Add new local product
+                const newProd: Product = {
+                    ...formData,
+                    _id: `demo_${Date.now()}`,
+                    createdAt: new Date().toISOString(),
+                    numReviews: 0,
+                    rating: 0,
+                    soldCount: 0
+                }
+                updatedLocal.push(newProd)
+                toast.success("Product added as local demo item! 🚀")
+            }
+
+            setLocalProducts(updatedLocal)
+            localStorage.setItem("techmart_demo_products", JSON.stringify(updatedLocal))
+            handleCloseModal()
+            return
+        }
+
         try {
             if (selectedProduct) {
                 await updateProduct({ id: selectedProduct._id, data: formData }).unwrap()
@@ -88,6 +147,24 @@ function Products() {
     }
 
     const handleDelete = async (id: string) => {
+        if (userInfo?.isDemo) {
+            if (window.confirm("Are you sure? In Demo Mode, real products are only hidden for your session, while local products are removed.")) {
+                if (id.startsWith("demo_")) {
+                    // Remove from local
+                    const updated = localProducts.filter(p => p._id !== id)
+                    setLocalProducts(updated)
+                    localStorage.setItem("techmart_demo_products", JSON.stringify(updated))
+                } else {
+                    // Hide DB product
+                    const updated = [...hiddenIds, id]
+                    setHiddenIds(updated)
+                    localStorage.setItem("techmart_demo_hidden", JSON.stringify(updated))
+                }
+                toast.success("Product removed from your view.")
+            }
+            return
+        }
+
         if (window.confirm("Are you sure you want to delete this product? This action is irreversible. 🚨")) {
             try {
                 await deleteProduct(id).unwrap()
@@ -216,12 +293,31 @@ function Products() {
                         <td className="px-6 py-4 text-center font-mono text-[10px] text-a3">{product.soldCount || 0}</td>
                         <td className="px-6 py-4">
                             <div className="flex items-center justify-center gap-3">
-                                <button onClick={() => handleOpenModal(product)} className="text-a hover:text-a/80 font-bold uppercase text-[10px] tracking-widest">
-                                    Edit
-                                </button>
-                                <button onClick={() => handleDelete(product._id)} className="text-a2 hover:text-a2/80 font-bold uppercase text-[10px] tracking-widest">
-                                    Delete
-                                </button>
+                                {userInfo?.isDemo && !product._id.startsWith("demo_") ? (
+                                    <>
+                                        <button 
+                                            title="Editing disabled in Demo Mode"
+                                            className="text-muted/40 cursor-not-allowed font-bold uppercase text-[10px] tracking-widest flex items-center gap-1"
+                                        >
+                                            <Lock size={10} /> Edit
+                                        </button>
+                                        <button 
+                                            onClick={() => handleDelete(product._id)}
+                                            className="text-a2 hover:text-a2/80 font-bold uppercase text-[10px] tracking-widest"
+                                        >
+                                            Hide
+                                        </button>
+                                    </>
+                                ) : (
+                                    <>
+                                        <button onClick={() => handleOpenModal(product)} className="text-a hover:text-a/80 font-bold uppercase text-[10px] tracking-widest">
+                                            Edit
+                                        </button>
+                                        <button onClick={() => handleDelete(product._id)} className="text-a2 hover:text-a2/80 font-bold uppercase text-[10px] tracking-widest">
+                                            Delete
+                                        </button>
+                                    </>
+                                )}
                             </div>
                         </td>
                     </tr>

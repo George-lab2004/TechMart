@@ -1,7 +1,11 @@
 import { motion } from "framer-motion"
-import { ShieldCheck, Settings, Users, ShoppingBag } from "lucide-react"
+import { ShieldCheck, Settings, Users, ShoppingBag, Info } from "lucide-react"
+import { useSelector } from "react-redux"
+import type { RootState } from "@/store/store"
 
 export default function Dashboard() {
+    const { userInfo } = useSelector((state: RootState) => state.auth)
+
     return (
         <div className="flex flex-col items-center justify-center min-h-[60vh] gap-8">
             <motion.div
@@ -40,6 +44,22 @@ export default function Dashboard() {
                     </motion.div>
                 ))}
             </div>
+
+            {/* Demo Notice */}
+            {userInfo?.isDemo && (
+                <motion.div 
+                    initial={{ opacity: 0 }}
+                    animate={{ opacity: 1 }}
+                    transition={{ delay: 0.8 }}
+                    className="mt-12 p-4 rounded-2xl bg-a/5 border border-a/10 flex items-center gap-3 text-left max-w-xl"
+                >
+                    <Info className="text-a shrink-0" size={18} />
+                    <p className="text-[11px] text-text2 leading-relaxed italic">
+                        I've optimized this demo to be a clean, read-only experience for core data. This allows every reviewer 
+                        to see the store as intended! Any products you add are stored in your local session for testing.
+                    </p>
+                </motion.div>
+            )}
         </div>
     )
 }

@@ -1,5 +1,8 @@
 import { useGetOrdersQuery, useUpdateOrderStatusMutation, type IOrder } from "@/slices/ordersApiSlice"
 import { useState } from "react"
+import { useSelector } from "react-redux"
+import type { RootState } from "@/store"
+import { Lock } from "lucide-react"
 import AdminHeader from "../components/AdminHeader"
 import AdminStatCard from "../components/AdminStatCard"
 import AdminTable from "../components/AdminTable"
@@ -8,6 +11,7 @@ import OrderDetailsModal from "./OrderDetailsModal"
 
 
 function Orders() {
+    const { userInfo } = useSelector((state: RootState) => state.auth)
     const { data, isLoading, error } = useGetOrdersQuery()
     const [updateStatus] = useUpdateOrderStatusMutation()
 
@@ -57,6 +61,10 @@ function Orders() {
         })
 
     const handleUpdateStatus = async (id: string, status: string) => {
+        if (userInfo?.isDemo) {
+            toast.error("Action restricted in Demo Mode! Database orders cannot be modified.")
+            return
+        }
         try {
             await updateStatus({ orderId: id, status }).unwrap()
             toast.success(`Order status updated to ${status}`)
@@ -203,18 +211,24 @@ function Orders() {
                         {/* Actions */}
                         <td className="px-6 py-4">
                             <div className="flex items-center justify-center">
-                                <select
-                                    value={order.status}
-                                    onClick={(e) => e.stopPropagation()} // Prevent modal from opening
-                                    onChange={(e) => handleUpdateStatus(order._id, e.target.value)}
-                                    className="bg-surf border border-gb rounded-lg px-2 py-1 text-[10px] font-bold uppercase tracking-widest text-text outline-none focus:border-a transition-all relative z-10"
-                                >
-                                    <option value="pending">Pending</option>
-                                    <option value="processing">Processing</option>
-                                    <option value="shipped">Shipped</option>
-                                    <option value="delivered">Delivered</option>
-                                    <option value="cancelled">Cancelled</option>
-                                </select>
+                                {userInfo?.isDemo ? (
+                                    <div className="flex items-center gap-1.5 px-3 py-1.5 bg-gb/30 rounded-lg text-[9px] font-bold uppercase tracking-widest text-muted/60 border border-gb">
+                                        <Lock size={10} /> {order.status}
+                                    </div>
+                                ) : (
+                                    <select
+                                        value={order.status}
+                                        onClick={(e) => e.stopPropagation()} // Prevent modal from opening
+                                        onChange={(e) => handleUpdateStatus(order._id, e.target.value)}
+                                        className="bg-surf border border-gb rounded-lg px-2 py-1 text-[10px] font-bold uppercase tracking-widest text-text outline-none focus:border-a transition-all relative z-10"
+                                    >
+                                        <option value="pending">Pending</option>
+                                        <option value="processing">Processing</option>
+                                        <option value="shipped">Shipped</option>
+                                        <option value="delivered">Delivered</option>
+                                        <option value="cancelled">Cancelled</option>
+                                    </select>
+                                )}
                             </div>
                         </td>
                     </tr>
