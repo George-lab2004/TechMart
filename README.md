@@ -4,7 +4,7 @@
 
 ### A full-stack e-commerce experience powered by **Agentic AI**, built with React, Node.js, and Google Gemini
 
-[![Live Demo](https://img.shields.io/badge/🌐_Live_Demo-tech--mart--theta.vercel.app-4f8eff?style=for-the-badge)](https://tech-mart-theta.vercel.app)
+[![Live Demo](https://img.shields.io/badge/🌐_Live_Demo-tech--mart--e1dv.vercel.app-4f8eff?style=for-the-badge)](https://tech-mart-e1dv.vercel.app)
 [![React](https://img.shields.io/badge/React-19-61dafb?style=flat-square&logo=react)](https://react.dev)
 [![Node.js](https://img.shields.io/badge/Node.js-Express_5-339933?style=flat-square&logo=node.js)](https://nodejs.org)
 [![MongoDB](https://img.shields.io/badge/MongoDB-Mongoose_9-47A248?style=flat-square&logo=mongodb)](https://mongodb.com)
