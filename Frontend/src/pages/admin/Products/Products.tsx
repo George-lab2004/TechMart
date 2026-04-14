@@ -13,12 +13,11 @@ import AdminTable from "../components/AdminTable"
 import AdminHeader from "../components/AdminHeader"
 import { useGetCategoriesQuery } from "@/slices/categoryApiSlice"
 import { useSelector } from "react-redux"
-import type { RootState } from "@/store"
 import { useEffect } from "react"
 import { Lock } from "lucide-react"
 
 function Products() {
-    const { userInfo } = useSelector((state: RootState) => state.auth)
+    const { userInfo } = useSelector((state: any) => state.auth)
 
     const { data, isLoading, error } = useGetProductsQuery()
     const { data: categoriesData } = useGetCategoriesQuery()
@@ -53,9 +52,9 @@ function Products() {
     if (error) return <div className="p-8 text-center text-a2 font-mono text-xs text-red-500">Error loading products catalog.</div>
 
     const dbProducts: Product[] = data?.result ?? [];
-    
+
     // Merge logic for Demo
-    const products: Product[] = userInfo?.isDemo 
+    const products: Product[] = userInfo?.isDemo
         ? [...dbProducts.filter(p => !hiddenIds.includes(p._id)), ...localProducts]
         : dbProducts;
 
@@ -178,9 +177,9 @@ function Products() {
 
     return (
         <>
-            <AdminHeader 
-                title="Products" 
-                description="Manage your products" 
+            <AdminHeader
+                title="Products"
+                description="Manage your products"
                 buttonText="+ Add Product"
                 onButtonClick={() => handleOpenModal()}
             />
@@ -295,13 +294,13 @@ function Products() {
                             <div className="flex items-center justify-center gap-3">
                                 {userInfo?.isDemo && !product._id.startsWith("demo_") ? (
                                     <>
-                                        <button 
+                                        <button
                                             title="Editing disabled in Demo Mode"
                                             className="text-muted/40 cursor-not-allowed font-bold uppercase text-[10px] tracking-widest flex items-center gap-1"
                                         >
                                             <Lock size={10} /> Edit
                                         </button>
-                                        <button 
+                                        <button
                                             onClick={() => handleDelete(product._id)}
                                             className="text-a2 hover:text-a2/80 font-bold uppercase text-[10px] tracking-widest"
                                         >

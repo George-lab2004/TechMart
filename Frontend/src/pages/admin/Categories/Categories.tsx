@@ -14,11 +14,10 @@ import AdminStatCard from "../components/AdminStatCard"
 import AdminTable from "../components/AdminTable"
 import CategoryModal from "./components/CategoryModel"
 import { useSelector } from "react-redux"
-import type { RootState } from "@/store"
 import { Lock } from "lucide-react"
 
 function Categories() {
-    const { userInfo } = useSelector((state: RootState) => state.auth)
+    const { userInfo } = useSelector((state: any) => state.auth)
 
     const { data, isLoading, error } = useGetCategoriesQuery()
     const [createCategory] = useCreateCategoryMutation()
@@ -177,13 +176,13 @@ function Categories() {
                             <div className="flex justify-center gap-3">
                                 {userInfo?.isDemo ? (
                                     <>
-                                        <button 
+                                        <button
                                             title="Editing disabled in Demo Mode"
                                             className="text-muted/40 cursor-not-allowed font-bold uppercase text-[10px] tracking-widest flex items-center gap-1"
                                         >
                                             <Lock size={10} /> Edit
                                         </button>
-                                        <button 
+                                        <button
                                             title="Deletion disabled in Demo Mode"
                                             className="text-muted/20 cursor-not-allowed font-bold uppercase text-[10px] tracking-widest"
                                         >

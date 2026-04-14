@@ -9,10 +9,9 @@ import type { user } from "@/slices/usersApiSlice"
 import UserInsightsModal from "./components/UserInsightsModal"
 import { BarChart3, Lock } from "lucide-react"
 import { useSelector } from "react-redux"
-import type { RootState } from "@/store"
 
 function Users() {
-    const { userInfo } = useSelector((state: RootState) => state.auth)
+    const { userInfo } = useSelector((state: any) => state.auth)
     const { data, isLoading, error } = useGetUsersQuery()
     const [deleteUser] = useDeleteUserMutation()
     const [updateUser] = useUpdateUserMutation()
@@ -207,13 +206,13 @@ function Users() {
 
                                 {userInfo?.isDemo ? (
                                     <>
-                                        <button 
+                                        <button
                                             title="Editing disabled in Demo Mode"
                                             className="text-muted/40 cursor-not-allowed font-bold uppercase text-[10px] tracking-widest flex items-center gap-1"
                                         >
                                             <Lock size={10} /> Toggle
                                         </button>
-                                        <button 
+                                        <button
                                             title="Deletion disabled in Demo Mode"
                                             className="text-muted/20 cursor-not-allowed font-bold uppercase text-[10px] tracking-widest"
                                         >
@@ -242,7 +241,7 @@ function Users() {
                     </tr>
                 )}
             />
-            <UserInsightsModal 
+            <UserInsightsModal
                 isOpen={isInsightsOpen}
                 onClose={() => setIsInsightsOpen(false)}
                 user={selectedUser}

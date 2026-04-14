@@ -1,4 +1,4 @@
-<![CDATA[<div align="center">
+<div align="center">
 
 # ⚡ TechMart — Premium E-Commerce Platform
 
@@ -513,4 +513,4 @@ The admin AI assistant generates live Recharts visualizations (bar, line, pie) f
 Built with ☕ and a lot of TypeScript
 
 </div>
-]]>
+

@@ -1,7 +1,6 @@
 import { useGetOrdersQuery, useUpdateOrderStatusMutation, type IOrder } from "@/slices/ordersApiSlice"
 import { useState } from "react"
 import { useSelector } from "react-redux"
-import type { RootState } from "@/store"
 import { Lock } from "lucide-react"
 import AdminHeader from "../components/AdminHeader"
 import AdminStatCard from "../components/AdminStatCard"
@@ -11,7 +10,7 @@ import OrderDetailsModal from "./OrderDetailsModal"
 
 
 function Orders() {
-    const { userInfo } = useSelector((state: RootState) => state.auth)
+    const { userInfo } = useSelector((state: any) => state.auth)
     const { data, isLoading, error } = useGetOrdersQuery()
     const [updateStatus] = useUpdateOrderStatusMutation()
 
@@ -237,9 +236,9 @@ function Orders() {
 
             {/* ── Details Modal ──────────────── */}
             {selectedOrder && (
-                <OrderDetailsModal 
-                    order={selectedOrder} 
-                    onClose={() => setSelectedOrder(null)} 
+                <OrderDetailsModal
+                    order={selectedOrder}
+                    onClose={() => setSelectedOrder(null)}
                 />
             )}
         </>

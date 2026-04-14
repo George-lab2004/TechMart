@@ -3,7 +3,6 @@ import GridBackground from "@/Components/GridBackground";
 import HeroHeadline from "@/Components/HeroHeadline";
 import HeroSection from "@/Components/HeroSection";
 import Marquee from "./Components/marquee";
-import { motion } from "framer-motion";
 import { Truck, ShieldCheck, Zap, Cpu, Battery, Wifi } from "lucide-react";
 import CategroiesSection from "./Components/categroiesSection";
 import { useGetTopSellingProductsQuery } from "@/slices/productApiSlice";
@@ -54,36 +53,36 @@ const heroCards = [
 export default function Home() {
   const { data: topData } = useGetTopSellingProductsQuery()
   const [activeIndex, setActiveIndex] = useState(0)
-  
+
   const topProduct = topData?.result?.[activeIndex] || topData?.result?.[0]
 
   const dynamicCards = topProduct && topProduct.quickSpecs && topProduct.quickSpecs.length >= 3
     ? [
-        {
-          icon: getSpecIcon(topProduct.quickSpecs[0].label, Truck),
-          iconColor: "text-a",
-          title: topProduct.quickSpecs[0].label,
-          description: topProduct.quickSpecs[0].value,
-          position: "-top-5 md:-top-10 -left-5 md:-left-10",
-          delay: 0,
-        },
-        {
-          icon: getSpecIcon(topProduct.quickSpecs[1].label, ShieldCheck),
-          iconColor: "text-a3",
-          title: topProduct.quickSpecs[1].label,
-          description: topProduct.quickSpecs[1].value,
-          position: "-top-5 md:-top-10 -right-5 md:-right-10",
-          delay: 1,
-        },
-        {
-          icon: getSpecIcon(topProduct.quickSpecs[2].label, Zap),
-          iconColor: "text-a2",
-          title: topProduct.quickSpecs[2].label,
-          description: topProduct.quickSpecs[2].value,
-          position: "-bottom-5 md:-bottom-10 -right-5 md:-right-10",
-          delay: 2,
-        },
-      ]
+      {
+        icon: getSpecIcon(topProduct.quickSpecs[0].label, Truck),
+        iconColor: "text-a",
+        title: topProduct.quickSpecs[0].label,
+        description: topProduct.quickSpecs[0].value,
+        position: "-top-5 md:-top-10 -left-5 md:-left-10",
+        delay: 0,
+      },
+      {
+        icon: getSpecIcon(topProduct.quickSpecs[1].label, ShieldCheck),
+        iconColor: "text-a3",
+        title: topProduct.quickSpecs[1].label,
+        description: topProduct.quickSpecs[1].value,
+        position: "-top-5 md:-top-10 -right-5 md:-right-10",
+        delay: 1,
+      },
+      {
+        icon: getSpecIcon(topProduct.quickSpecs[2].label, Zap),
+        iconColor: "text-a2",
+        title: topProduct.quickSpecs[2].label,
+        description: topProduct.quickSpecs[2].value,
+        position: "-bottom-5 md:-bottom-10 -right-5 md:-right-10",
+        delay: 2,
+      },
+    ]
     : heroCards;
 
   return (
