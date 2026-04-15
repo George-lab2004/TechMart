@@ -28,6 +28,18 @@ export interface user {
         phone?: string
     }[]
 }
+
+interface Pagination {
+    page: number;
+    limit: number;
+    total: number;
+    pages: number;
+}
+
+interface PaginatedUsersResponse {
+    users: user[];
+    pagination: Pagination;
+}
 export const profileApiSlice = apiSlice.injectEndpoints({
     endpoints: (builder) => ({
 
@@ -72,9 +84,9 @@ export const profileApiSlice = apiSlice.injectEndpoints({
         }),
 
         // ADMIN ENDPOINTS
-        getUsers: builder.query<user[], void>({
-            query: () => ({
-                url: GET_ALL_USERS_URL,
+        getUsers: builder.query<PaginatedUsersResponse, number | void>({
+            query: (page = 1) => ({
+                url: `${GET_ALL_USERS_URL}?page=${page}&limit=10`,
             }),
             providesTags: ['User'],
             keepUnusedDataFor: 5,

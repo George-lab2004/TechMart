@@ -45,6 +45,18 @@ export interface IOrder {
     createdAt: Date
     updatedAt: Date
 }
+
+interface Pagination {
+    page: number;
+    limit: number;
+    total: number;
+    pages: number;
+}
+
+interface PaginatedOrdersResponse {
+    orders: IOrder[];
+    pagination: Pagination;
+}
 export const ordersApiSlice = apiSlice.injectEndpoints({
     endpoints: (builder) => ({
         createOrder: builder.mutation<IOrder, any>({
@@ -67,9 +79,9 @@ export const ordersApiSlice = apiSlice.injectEndpoints({
             }),
             providesTags: ['Order'],
         }),
-        getOrders: builder.query<IOrder[], void>({
-            query: () => ({
-                url: ORDERS_URL,
+        getOrders: builder.query<PaginatedOrdersResponse, number | void>({
+            query: (page = 1) => ({
+                url: `${ORDERS_URL}?page=${page}&limit=10`,
             }),
             providesTags: ['Order'],
             keepUnusedDataFor: 5,

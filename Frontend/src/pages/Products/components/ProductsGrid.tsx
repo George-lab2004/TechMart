@@ -38,10 +38,10 @@ function SkeletonCard({ isListView }: { isListView: boolean }) {
 }
 
 const SORT_OPTIONS = [
-  { label: "Featured",          key: "featured"   },
-  { label: "Price: Low \u2192 High", key: "price-asc"  },
+  { label: "Featured", key: "featured" },
+  { label: "Price: Low \u2192 High", key: "price-asc" },
   { label: "Price: High \u2192 Low", key: "price-desc" },
-  { label: "Top Rated",         key: "rating"     },
+  { label: "Top Rated", key: "rating" },
 ];
 
 const ITEMS_PER_PAGE = 6;
@@ -117,7 +117,7 @@ function FilterPanels({
         </div>
         <div className="relative w-full">
           <div className="absolute top-1/2 -translate-y-1/2 h-1 rounded-full bg-a pointer-events-none"
-               style={{ width: `${maxPrice > 0 ? (priceRange / maxPrice) * 100 : 0}%` }} />
+            style={{ width: `${maxPrice > 0 ? (priceRange / maxPrice) * 100 : 0}%` }} />
           <input type="range" min="0" max={maxPrice} step={Math.max(1, Math.floor(maxPrice / 60))} value={priceRange}
             onChange={(e) => { setPriceActive(true); setPriceRange(Number(e.target.value)); }}
             className="relative w-full h-1 rounded-full appearance-none bg-gb accent-blue-500 cursor-pointer" />
@@ -217,9 +217,9 @@ export default function ProductsGrid({
   }, [sorted]);
 
   const totalPages = Math.ceil(sorted.length / ITEMS_PER_PAGE);
-  const paginated  = sorted.slice((currentPage - 1) * ITEMS_PER_PAGE, currentPage * ITEMS_PER_PAGE);
-  const firstItem  = (currentPage - 1) * ITEMS_PER_PAGE + 1;
-  const lastItem   = Math.min(currentPage * ITEMS_PER_PAGE, sorted.length);
+  const paginated = sorted.slice((currentPage - 1) * ITEMS_PER_PAGE, currentPage * ITEMS_PER_PAGE);
+  const firstItem = (currentPage - 1) * ITEMS_PER_PAGE + 1;
+  const lastItem = Math.min(currentPage * ITEMS_PER_PAGE, sorted.length);
 
   return (
     <>
@@ -276,16 +276,15 @@ export default function ProductsGrid({
                 {sortOpen && (
                   <motion.div
                     initial={{ opacity: 0, y: -6, scale: 0.97 }}
-                    animate={{ opacity: 1, y: 0,  scale: 1    }}
-                    exit={{    opacity: 0, y: -6, scale: 0.97 }}
+                    animate={{ opacity: 1, y: 0, scale: 1 }}
+                    exit={{ opacity: 0, y: -6, scale: 0.97 }}
                     className="absolute right-0 top-12 z-50 w-48 rounded-xl border border-gb bg-surf2 backdrop-blur-xl overflow-hidden shadow-xl"
                   >
                     {SORT_OPTIONS.map(o => (
                       <button key={o.key}
                         onClick={() => { setSortKey(o.key); setSortOpen(false); }}
-                        className={`w-full text-left px-4 py-2.5 text-sm transition-colors ${
-                          sortKey === o.key ? "text-a bg-a/10" : "text-text2 hover:bg-gb hover:text-text"
-                        }`}>
+                        className={`w-full text-left px-4 py-2.5 text-sm transition-colors ${sortKey === o.key ? "text-a bg-a/10" : "text-text2 hover:bg-gb hover:text-text"
+                          }`}>
                         {o.label}
                       </button>
                     ))}

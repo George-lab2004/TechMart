@@ -1,10 +1,23 @@
-import { PRODUCTS_URL } from "@/constants";
+import { PRODUCTS_URL, ALL_PRODUCTS_URL } from "@/constants";
 import { apiSlice } from "./apiSlice";
 import type { Product } from "@/pages/Products/components/ProductCard";
+
+interface Pagination {
+  page: number;
+  limit: number;
+  total: number;
+  pages: number;
+}
 
 interface ProductsResponse {
   message: string;
   result: Product[];
+}
+
+interface PaginatedProductsResponse {
+  message: string;
+  result: Product[];
+  pagination: Pagination;
 }
 
 interface SingleProductResponse {
@@ -14,10 +27,15 @@ interface SingleProductResponse {
 
 export const productApiSlice = apiSlice.injectEndpoints({
   endpoints: (builder) => ({
-    getProducts: builder.query<ProductsResponse, void>({
-      query: () => ({ url: PRODUCTS_URL }),
+    getProducts: builder.query<PaginatedProductsResponse, number | void>({
+      query: (page = 1) => ({ url: `${PRODUCTS_URL}?page=${page}&limit=10` }),
       providesTags: ["Product"],
       keepUnusedDataFor: 5,
+    }),
+    getAllProducts: builder.query<ProductsResponse, void>({
+      query: () => ({ url: ALL_PRODUCTS_URL }),
+      providesTags: ["Product"],
+      keepUnusedDataFor: 60,
     }),
     getTopSellingProducts: builder.query<ProductsResponse, void>({
       query: () => ({ url: `${PRODUCTS_URL}/top` }),
@@ -69,6 +87,7 @@ export const productApiSlice = apiSlice.injectEndpoints({
 
 export const {
   useGetProductsQuery,
+  useGetAllProductsQuery,
   useGetTopSellingProductsQuery,
   useGetSingleProductQuery,
   useCreateProductMutation,

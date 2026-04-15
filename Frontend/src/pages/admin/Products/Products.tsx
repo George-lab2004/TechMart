@@ -11,6 +11,7 @@ import ProductModal from "./components/ProductModal"
 import AdminStatCard from "../components/AdminStatCard"
 import AdminTable from "../components/AdminTable"
 import AdminHeader from "../components/AdminHeader"
+import PaginationBar from "../components/PaginationBar"
 import { useGetCategoriesQuery } from "@/slices/categoryApiSlice"
 import { useSelector } from "react-redux"
 import { useEffect } from "react"
@@ -18,8 +19,8 @@ import { Lock } from "lucide-react"
 
 function Products() {
     const { userInfo } = useSelector((state: any) => state.auth)
-
-    const { data, isLoading, error } = useGetProductsQuery()
+    const [page, setPage] = useState(1)
+    const { data, isLoading, error } = useGetProductsQuery(page)
     const { data: categoriesData } = useGetCategoriesQuery()
     const [createProduct] = useCreateProductMutation()
     const [updateProduct] = useUpdateProductMutation()
@@ -51,7 +52,8 @@ function Products() {
     if (isLoading) return <div className="p-8 text-center font-bebas text-2xl tracking-widest opacity-20 animate-pulse">Synchronizing Data...</div>
     if (error) return <div className="p-8 text-center text-a2 font-mono text-xs text-red-500">Error loading products catalog.</div>
 
-    const dbProducts: Product[] = data?.result ?? [];
+    const dbProducts: Product[] = data?.result ?? []
+    const pagination = data?.pagination
 
     // Merge logic for Demo
     const products: Product[] = userInfo?.isDemo
@@ -59,7 +61,7 @@ function Products() {
         : dbProducts;
 
     // Stats calculation
-    const productsCount = products.length
+    const productsCount = pagination?.total ?? products.length
     const inStockCount = products.filter((product) => product.countInStock > 0).length
     const outOfStockCount = products.filter((product) => product.countInStock === 0).length
     const LowStock = products.filter((product) => product.countInStock < 5).length
@@ -200,7 +202,7 @@ function Products() {
                 data={filteredProducts}
                 isLoading={isLoading}
                 searchTerm={searchTerm}
-                onSearchChange={setSearchTerm}
+                onSearchChange={(v) => { setSearchTerm(v); setPage(1) }}
                 filters={[
                     {
                         label: "Category",
@@ -322,6 +324,16 @@ function Products() {
                     </tr>
                 )}
             />
+
+            {pagination && pagination.pages > 1 && (
+                <PaginationBar
+                    page={pagination.page}
+                    pages={pagination.pages}
+                    total={pagination.total}
+                    limit={pagination.limit}
+                    onChange={(p) => { setPage(p); setSearchTerm("") }}
+                />
+            )}
 
             <ProductModal
                 isOpen={isModalOpen}

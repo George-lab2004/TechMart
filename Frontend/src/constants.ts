@@ -4,7 +4,8 @@ export const BASE_URL = import.meta.env.DEV
 
 export const USERS_URL = '/api/users'
 // PRODUCTS
-export const PRODUCTS_URL = '/api/products'
+export const PRODUCTS_URL     = '/api/products'       // admin (paginated)
+export const ALL_PRODUCTS_URL = '/api/products/all'   // public storefront (all)
 
 // USERS
 export const SIGNIN_URL = '/api/signIn'

@@ -1,4 +1,4 @@
-﻿import { type CSSProperties, useEffect, useState } from "react";
+import { type CSSProperties, useEffect, useState } from "react";
 import { motion } from "framer-motion";
 import { Mouse, Laptop, Smartphone, Headphones, Gamepad2, Tv2, Watch, Camera, Zap } from "lucide-react";
 import GridBackground from "@/Components/GridBackground";
@@ -7,7 +7,7 @@ import CountUp from "@/Components/CountUp";
 import type { Product } from "./components/ProductCard";
 import ProductsGrid from "./components/ProductsGrid";
 import Loader from "@/Components/Loader";
-import { useGetProductsQuery } from "@/slices/productApiSlice";
+import { useGetAllProductsQuery } from "@/slices/productApiSlice";
 import { useSearchParams } from "react-router-dom";
 
 const stats = [
@@ -82,7 +82,7 @@ export default function Products() {
   const [isListView, setIsListView]             = useState(false);
   const [filterDrawerOpen, setFilterDrawerOpen] = useState(false);
   const [isFiltering, setIsFiltering]           = useState(false);
-  const { data, isLoading, isError }            = useGetProductsQuery();
+  const { data, isLoading, isError }            = useGetAllProductsQuery();
   const products: Product[]                     = data?.result ?? [];
 
 

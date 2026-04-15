@@ -4,6 +4,25 @@ import "../Models/categoryModel.js"
 import { asyncHandler } from "../Middleware/asyncHandler.js"
 
 const getProduct = asyncHandler(async (req: Request, res: Response) => {
+  // If ?page is passed (admin), paginate. Otherwise return all (public storefront).
+  const page  = Number(req.query.page)  || 1
+  const limit = Number(req.query.limit) || 10
+  const skip  = (page - 1) * limit
+
+  const [result, total] = await Promise.all([
+    Product.find().populate("category", "name slug").skip(skip).limit(limit),
+    Product.countDocuments()
+  ])
+
+  res.status(200).json({
+    message: "SUCCESS",
+    result,
+    pagination: { page, limit, total, pages: Math.ceil(total / limit) }
+  })
+})
+
+// Public storefront — returns ALL products, no pagination
+const getAllProducts = asyncHandler(async (req: Request, res: Response) => {
   const result = await Product.find().populate("category", "name slug")
   res.status(200).json({ message: "SUCCESS", result })
 })
@@ -114,4 +133,4 @@ const getTopSellingProducts = asyncHandler(async (req: Request, res: Response) =
     res.status(200).json({ message: "SUCCESS", result });
 })
 
-export { getProduct, getTopSellingProducts, getSingleProduct, getProductByCategory, addProduct, updateProduct, deleteProduct, createProductReview, getProductReviews }
+export { getProduct, getAllProducts, getTopSellingProducts, getSingleProduct, getProductByCategory, addProduct, updateProduct, deleteProduct, createProductReview, getProductReviews }

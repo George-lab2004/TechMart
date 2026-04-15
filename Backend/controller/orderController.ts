@@ -79,8 +79,19 @@ const getOrderById = asyncHandler(async (req: CustomRequest, res: Response) => {
 // @route   GET /api/orders
 // @access  Private/Admin
 const getOrders = asyncHandler(async (req: CustomRequest, res: Response) => {
-    const orders = await Order.find({}).populate("user", "id name email");
-    res.status(200).json(orders);
+    const page  = Number(req.query.page)  || 1
+    const limit = Number(req.query.limit) || 10
+    const skip  = (page - 1) * limit
+
+    const [orders, total] = await Promise.all([
+        Order.find({}).populate("user", "id name email").skip(skip).limit(limit).sort({ createdAt: -1 }),
+        Order.countDocuments()
+    ])
+
+    res.status(200).json({
+        orders,
+        pagination: { page, limit, total, pages: Math.ceil(total / limit) }
+    })
 });
 
 // @desc    Update order to delivered

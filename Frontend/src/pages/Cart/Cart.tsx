@@ -3,7 +3,7 @@ import { ArrowBigRight, Minus, Plus, TicketPlus, Trash, Truck } from "lucide-rea
 import { useDispatch, useSelector } from "react-redux"
 import type { RootState } from "@/store/store"
 import { addToCart, removeFromCart, type CartItem } from "@/slices/cartSlice"
-import { useGetProductsQuery } from "@/slices/productApiSlice"
+import { useGetAllProductsQuery } from "@/slices/productApiSlice"
 import type { Product } from "@/pages/Products/components/ProductCard"
 import { motion } from "framer-motion"
 import {
@@ -43,7 +43,7 @@ export default function Cart() {
   const totalPrice = userInfo && cartData ? cartData.totalPrice : Number(reduxTotalPrice);
 
   // ── Live stock from API ────────────────────────────────────
-  const { data: productsData } = useGetProductsQuery()
+  const { data: productsData } = useGetAllProductsQuery()
   const stockMap = new Map<string, number>(
     (productsData?.result ?? []).map((p: Product) => [p._id, p.countInStock])
   )

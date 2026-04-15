@@ -4,6 +4,7 @@ import toast from "react-hot-toast"
 import AdminHeader from "../components/AdminHeader"
 import AdminStatCard from "../components/AdminStatCard"
 import AdminTable from "../components/AdminTable"
+import PaginationBar from "../components/PaginationBar"
 import { useGetUsersQuery, useDeleteUserMutation, useUpdateUserMutation } from "@/slices/usersApiSlice"
 import type { user } from "@/slices/usersApiSlice"
 import UserInsightsModal from "./components/UserInsightsModal"
@@ -11,8 +12,9 @@ import { BarChart3, Lock } from "lucide-react"
 import { useSelector } from "react-redux"
 
 function Users() {
+    const [page, setPage] = useState(1)
     const { userInfo } = useSelector((state: any) => state.auth)
-    const { data, isLoading, error } = useGetUsersQuery()
+    const { data, isLoading, error } = useGetUsersQuery(page)
     const [deleteUser] = useDeleteUserMutation()
     const [updateUser] = useUpdateUserMutation()
 
@@ -36,10 +38,11 @@ function Users() {
             </div>
         )
 
-    const users: user[] = data ?? []
+    const users: user[] = data?.users ?? []
+    const pagination = data?.pagination
 
     // ── Stats ────────────────────────────
-    const total = users.length
+    const total = pagination?.total ?? 0
     const admins = users.filter(u => u.isAdmin).length
     const customers = total - admins
     const verified = users.filter(u => u.confirmedEmail).length
@@ -123,7 +126,7 @@ function Users() {
                 data={filteredUsers}
                 isLoading={isLoading}
                 searchTerm={searchTerm}
-                onSearchChange={setSearchTerm}
+                onSearchChange={(v) => { setSearchTerm(v); setPage(1) }}
                 filters={[
                     {
                         label: "Role",
@@ -240,6 +243,17 @@ function Users() {
                     </tr>
                 )}
             />
+
+            {pagination && pagination.pages > 1 && (
+                <PaginationBar
+                    page={pagination.page}
+                    pages={pagination.pages}
+                    total={pagination.total}
+                    limit={pagination.limit}
+                    onChange={(p) => { setPage(p); setSearchTerm("") }}
+                />
+            )}
+
             <UserInsightsModal
                 isOpen={isInsightsOpen}
                 onClose={() => setIsInsightsOpen(false)}

@@ -5,13 +5,15 @@ import { Lock } from "lucide-react"
 import AdminHeader from "../components/AdminHeader"
 import AdminStatCard from "../components/AdminStatCard"
 import AdminTable from "../components/AdminTable"
+import PaginationBar from "../components/PaginationBar"
 import toast from "react-hot-toast"
 import OrderDetailsModal from "./OrderDetailsModal"
 
 
 function Orders() {
+    const [page, setPage] = useState(1)
     const { userInfo } = useSelector((state: any) => state.auth)
-    const { data, isLoading, error } = useGetOrdersQuery()
+    const { data, isLoading, error } = useGetOrdersQuery(page)
     const [updateStatus] = useUpdateOrderStatusMutation()
 
     // ── UI State ─────────────────────────
@@ -34,10 +36,11 @@ function Orders() {
             </div>
         )
 
-    const orders: IOrder[] = data ?? []
+    const orders: IOrder[] = data?.orders ?? []
+    const pagination = data?.pagination
 
     // ── Stats ────────────────────────────
-    const totalOrders = orders.length
+    const totalOrders = pagination?.total ?? 0
     const paidOrders = orders.filter(o => o.isPaid).length
     const deliveredOrders = orders.filter(o => o.status === "delivered").length
     const pendingOrders = orders.filter(o => o.status === "pending").length
@@ -233,6 +236,16 @@ function Orders() {
                     </tr>
                 )}
             />
+
+            {pagination && pagination.pages > 1 && (
+                <PaginationBar
+                    page={pagination.page}
+                    pages={pagination.pages}
+                    total={pagination.total}
+                    limit={pagination.limit}
+                    onChange={(p) => { setPage(p); setSearchTerm("") }}
+                />
+            )}
 
             {/* ── Details Modal ──────────────── */}
             {selectedOrder && (
