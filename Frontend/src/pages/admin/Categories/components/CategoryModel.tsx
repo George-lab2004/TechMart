@@ -115,9 +115,28 @@ export default function CategoryModal({ isOpen, onClose, onSubmit, initialData }
                     />
 
                     {/* Colors */}
-                    <div className="flex gap-4">
-                        <input type="color" name="color" value={formData.color} onChange={handleChange} />
-                        <input type="color" name="glowColor" value={formData.glowColor} onChange={handleChange} />
+                    <div className="grid grid-cols-2 gap-4">
+                        <div className="flex flex-col gap-2 p-4 bg-surf2 rounded-xl border border-gb">
+                            <div className="flex flex-col">
+                                <label className="text-[10px] font-bold uppercase tracking-widest text-text">Primary Accent</label>
+                                <span className="text-[9px] text-muted leading-tight mt-1">Used for card backgrounds and main blocks.</span>
+                            </div>
+                            <div className="flex items-center gap-3 mt-2">
+                                <input type="color" name="color" value={formData.color} onChange={handleChange} className="w-8 h-8 rounded-full border-0 bg-transparent cursor-pointer" />
+                                <span className="font-mono text-[10px] text-text2 uppercase">{formData.color}</span>
+                            </div>
+                        </div>
+
+                        <div className="flex flex-col gap-2 p-4 bg-surf2 rounded-xl border border-gb">
+                            <div className="flex flex-col">
+                                <label className="text-[10px] font-bold uppercase tracking-widest text-text">Glow & Text Accent</label>
+                                <span className="text-[9px] text-muted leading-tight mt-1">Used for neon shadows and colored typography.</span>
+                            </div>
+                            <div className="flex items-center gap-3 mt-2">
+                                <input type="color" name="glowColor" value={formData.glowColor} onChange={handleChange} className="w-8 h-8 rounded-full border-0 bg-transparent cursor-pointer" />
+                                <span className="font-mono text-[10px] text-text2 uppercase">{formData.glowColor}</span>
+                            </div>
+                        </div>
                     </div>
 
                     {/* Actions */}

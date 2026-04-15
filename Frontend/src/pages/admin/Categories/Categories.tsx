@@ -119,7 +119,7 @@ function Categories() {
                     "Category",
                     "Slug",
                     "Image",
-                    "Color",
+                    "Brand Colors",
                     "Actions"
                 ]}
                 data={filtered}
@@ -156,19 +156,32 @@ function Categories() {
                             </div>
                         </td>
 
-                        {/* Color */}
+                        {/* Brand Colors */}
                         <td className="px-6 py-4">
-                            {cat.color && (
-                                <div className="flex items-center gap-2">
-                                    <div
-                                        className="w-4 h-4 rounded-full border"
-                                        style={{ background: cat.color }}
-                                    />
-                                    <span className="text-[10px] font-mono">
-                                        {cat.color}
-                                    </span>
-                                </div>
-                            )}
+                            <div className="flex flex-col gap-2">
+                                {cat.color && (
+                                    <div className="flex items-center gap-2" title="Primary Accent">
+                                        <div
+                                            className="w-3.5 h-3.5 rounded-full border border-gb shadow-sm"
+                                            style={{ backgroundColor: cat.color }}
+                                        />
+                                        <span className="text-[9px] font-mono uppercase text-muted">
+                                            {cat.color} (Primary)
+                                        </span>
+                                    </div>
+                                )}
+                                {(cat as any).glowColor && (
+                                    <div className="flex items-center gap-2" title="Glow & Text Accent">
+                                        <div
+                                            className="w-3.5 h-3.5 rounded-full border border-gb shadow-[0_0_8px] shadow-current"
+                                            style={{ backgroundColor: (cat as any).glowColor, color: (cat as any).glowColor }}
+                                        />
+                                        <span className="text-[9px] font-mono uppercase text-muted">
+                                            {(cat as any).glowColor} (Glow)
+                                        </span>
+                                    </div>
+                                )}
+                            </div>
                         </td>
 
                         {/* Actions */}

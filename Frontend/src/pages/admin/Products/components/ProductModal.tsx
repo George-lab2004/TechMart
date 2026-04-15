@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react"
-import { X, Plus, Trash2, Layout, Image as ImageIcon, Cpu, Palette, Tag, Truck } from "lucide-react"
+import { X, Plus, Trash2, Layout, Image as ImageIcon, Cpu, Palette, Tag, Truck, Menu } from "lucide-react"
 import { useGetCategoriesQuery } from "@/slices/categoryApiSlice"
 
 interface ProductModalProps {
@@ -21,6 +21,7 @@ const TABS = [
 export default function ProductModal({ isOpen, onClose, onSubmit, initialData }: ProductModalProps) {
     const { data: categoriesData } = useGetCategoriesQuery()
     const [activeTab, setActiveTab] = useState('basic')
+    const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false)
     const [formData, setFormData] = useState<any>({
         name: "",
         slug: "",
@@ -120,27 +121,49 @@ export default function ProductModal({ isOpen, onClose, onSubmit, initialData }:
 
             <div className="relative w-full max-w-5xl bg-surf rounded-3xl overflow-hidden shadow-2xl border border-gb flex flex-col max-h-[90vh]">
                 {/* Header */}
-                <div className="flex items-center justify-between px-8 py-6 border-b border-gb bg-surf2">
-                    <div className="flex flex-col">
-                        <h2 className="text-2xl font-bebas tracking-widest text-text">
-                            {initialData ? 'Update Terminal' : 'Initialize Product'}
-                        </h2>
-                        <span className="text-[10px] font-mono uppercase tracking-[0.2em] text-muted opacity-60">
-                            {initialData ? `Editing CID-${initialData._id.slice(-6)}` : 'Catalog Protocol Alpha'}
-                        </span>
+                <div className="flex items-center justify-between px-6 md:px-8 py-5 md:py-6 border-b border-gb bg-surf2 z-30">
+                    <div className="flex items-center gap-4">
+                        <button
+                            type="button"
+                            className="md:hidden p-2 -ml-2 rounded-lg bg-gb hover:bg-gb/80 text-text transition-colors"
+                            onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
+                        >
+                            <Menu size={20} />
+                        </button>
+                        <div className="flex flex-col">
+                            <h2 className="text-xl md:text-2xl font-bebas tracking-widest text-text">
+                                {initialData ? 'Update Terminal' : 'Initialize Product'}
+                            </h2>
+                            <span className="text-[10px] font-mono uppercase tracking-[0.2em] text-muted opacity-60 hidden sm:block">
+                                {initialData ? `Editing CID-${initialData._id.slice(-6)}` : 'Catalog Protocol Alpha'}
+                            </span>
+                        </div>
                     </div>
-                    <button onClick={onClose} className="w-10 h-10 rounded-full border border-gb flex items-center justify-center hover:bg-a2 hover:text-white hover:border-a2 transition-all group">
-                        <X size={18} className="group-hover:rotate-90 transition-transform" />
+                    <button onClick={onClose} className="w-8 h-8 md:w-10 md:h-10 rounded-full border border-gb flex items-center justify-center hover:bg-a2 hover:text-white hover:border-a2 transition-all group">
+                        <X size={16} className="group-hover:rotate-90 transition-transform md:w-[18px] md:h-[18px]" />
                     </button>
                 </div>
 
-                <div className="flex flex-1 overflow-hidden">
+                <div className="flex flex-1 overflow-hidden relative">
+                    {/* Mobile Overlay */}
+                    {isMobileMenuOpen && (
+                        <div
+                            className="absolute inset-0 bg-black/60 backdrop-blur-sm z-10 md:hidden"
+                            onClick={() => setIsMobileMenuOpen(false)}
+                        />
+                    )}
+
                     {/* Sidebar Tabs */}
-                    <div className="w-64 bg-surf2 border-r border-gb flex flex-col py-6">
+                    <div className={`
+                        absolute md:relative z-20 h-full w-64 bg-surf2 border-r border-gb flex flex-col py-6 
+                        transition-transform duration-300 transform 
+                        ${isMobileMenuOpen ? 'translate-x-0' : '-translate-x-full md:translate-x-0'}
+                    `}>
                         {TABS.map(tab => (
                             <button
+                                type="button"
                                 key={tab.id}
-                                onClick={() => setActiveTab(tab.id)}
+                                onClick={() => { setActiveTab(tab.id); setIsMobileMenuOpen(false); }}
                                 className={`flex items-center gap-4 px-8 py-4 transition-all relative ${activeTab === tab.id ? 'text-a bg-surf ring-1 ring-inset ring-gb' : 'text-muted hover:text-text hover:bg-surf/50'
                                     }`}
                             >
@@ -387,9 +410,10 @@ export default function ProductModal({ isOpen, onClose, onSubmit, initialData }:
 
                         {/* Footer */}
                         <div className="px-10 py-6 border-t border-gb bg-surf2 flex items-center justify-between">
+                            <br />
                             <div className="flex items-center gap-2">
                                 <div className={`w-2 h-2 rounded-full animate-pulse ${initialData ? 'bg-a' : 'bg-a3'}`} />
-                                <span className="text-[9px] font-mono uppercase tracking-[0.2em] text-muted">
+                                <span className="text-[9px] flex  font-mono uppercase tracking-[0.2em] text-muted">
                                     System Ready: Proceed with {initialData ? 'Modification' : 'Creation'}
                                 </span>
                             </div>
