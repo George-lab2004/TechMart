@@ -12,7 +12,14 @@
 [![Gemini AI](https://img.shields.io/badge/Google_Gemini-Agentic_AI-8E75B2?style=flat-square&logo=google)](https://ai.google.dev)
 
 </div>
+## 🔑 Demo Access
 
+To explore admin features:
+
+Email: `admin@techmart.dev`  
+Password: `TechMart@Admin2026`
+
+Admin dashboard includes full AI access with read-only protection on production-like data.
 ---
 
 ## 📋 Table of Contents
