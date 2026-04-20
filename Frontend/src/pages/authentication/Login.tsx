@@ -29,6 +29,7 @@ export default function Login() {
   const [syncCart] = useSyncCartMutation();
   const { cartItems } = useSelector((state: RootState) => state.cart);
   const [mode, setMode] = useState<"idle" | "email" | "password">("idle");
+  const [activeTab, setActiveTab] = useState("signIn");
   useEffect(() => {
     if (userInfo) {
       navigate("/");
@@ -82,19 +83,12 @@ export default function Login() {
 
   const onSignUpSubmit = async (data: any) => {
     try {
-      const res = await register(data).unwrap();
-      dispatch(setCredentials({ ...res }));
+      await register(data).unwrap();
 
-      if (cartItems?.length > 0) {
-        await syncCart([...cartItems]).unwrap();
-        dispatch(clearCart());
-        localStorage.removeItem("cartItems");
-      }
-
-      toast.success("Welcome back!");
-      navigate("/login");
+      toast.success("Account created successfully. Please log in.");
+      setActiveTab("signIn");
     } catch (err: any) {
-      toast.error(err?.data?.message || err.error || "Login failed");
+      toast.error(err?.data?.message || err.error || "Registration failed");
     }
   };
 
@@ -175,7 +169,7 @@ export default function Login() {
               </div>
 
               {/* Tabs */}
-              <Tabs defaultValue="signIn" className="w-full">
+              <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
                 <TabsList className="w-full">
                   <TabsTrigger value="signIn" className="flex-1 font-mono text-xs tracking-widest uppercase">
                     Sign In
