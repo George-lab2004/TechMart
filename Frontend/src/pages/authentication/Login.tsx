@@ -92,7 +92,7 @@ export default function Login() {
       }
 
       toast.success("Welcome back!");
-      navigate("/");
+      navigate("/login");
     } catch (err: any) {
       toast.error(err?.data?.message || err.error || "Login failed");
     }
